@@ -2,19 +2,19 @@
 
 A simple practice English until it clicks.
 
-ENGSPHERE is a lightweight browser-based English learning app designed to help learners practice grammar, vocabulary, and sentence structure in a simple but effective loop: read the rule, do a quick quiz, and review the explanation. The app is built as a single-page static web app and runs directly in the browser without a backend or installation step.
+ENGSPHERE is a lightweight browser-based English learning app designed to help learners practice grammar, vocabulary, and sentence structure through a simple study loop: read the rule, complete a short exercise, and review the explanation. The project is a static single-page app that runs directly in the browser without a backend or dependency installation.
 
 ## What this project does
 
-ENGSPHERE teaches English through a focused study flow:
+ENGSPHERE focuses on practical English learning through:
 
-- Tenses and grammar explanations
-- Vocabulary flashcards by category
-- Multiple-choice practice questions
-- AI-style adaptive test generation based on topic and level
-- Progress tracking with XP, streaks, and badges
+- grammar explanations and examples
+- vocabulary flashcards by category
+- multiple-choice practice questions
+- topic-based quiz flow with selectable difficulty
+- progress tracking using XP, streaks, and badges
 
-It is aimed at learners who are not complete beginners but are not fully fluent yet. The app is designed to make practice feel manageable, clear, and gradual.
+It is intended for learners who are past the absolute beginner stage but still need structured repetition and feedback.
 
 ## Main features
 
@@ -23,26 +23,26 @@ It is aimed at learners who are not complete beginners but are not fully fluent 
 The app includes learning content for:
 
 - 12 English tenses
-- "To be" forms (am / is / are / was / were)
-- Vocabulary categories
-- Grammar fundamentals such as parts of speech and sentence structure
+- "to be" forms (am / is / are / was / were)
+- vocabulary categories
+- grammar basics such as parts of speech and sentence structure
 
 ### Practice
 
-Users can do:
+Users can take:
 
-- Quick Quiz with topic and difficulty selection
-- AI Adaptive Test with custom topic, level, and number of questions
+- a quick quiz with topic and difficulty selection
+- a topic-based test flow that draws from the local question bank in the app
 
 ### Progress tracking
 
 The app tracks:
 
-- Current learner level
-- XP gained from tests
-- Daily streaks
-- Achievement badges
-- Recent test history
+- current learner level
+- XP earned from completed quizzes
+- daily streaks
+- achievement badges
+- recent test history
 
 ## Repository structure
 
@@ -51,19 +51,18 @@ README.md
 index.html
 ```
 
-The full application is contained in `index.html`, including:
+The full app is contained in `index.html`, including:
 
 - HTML structure
 - CSS styling
 - JavaScript logic
-- Tense lesson data
-- Vocabulary data
-- Quiz question banks
-- Progress logic and UI behavior
+- lesson data for tenses and vocabulary
+- quiz question bank
+- UI logic for practice and progress tracking
 
 ## How it works
 
-When the page loads, the user sees a landing page introducing the app and its method. After pressing "Get Started", the app navigates to the main interface with four main sections:
+When the page loads, the user sees a landing page introducing the app and its method. After clicking "Get Started", the app opens the main interface with four main sections:
 
 - Dashboard
 - Materials
@@ -72,10 +71,10 @@ When the page loads, the user sees a landing page introducing the app and its me
 
 From there, the learner can:
 
-1. Study grammar or vocabulary
-2. Answer quick practice questions
-3. Review feedback for each answer
-4. Build streaks and XP over time
+1. study grammar or vocabulary
+2. answer short practice questions
+3. read explanations for each answer
+4. track progress over time
 
 ## How to run
 
@@ -125,15 +124,15 @@ http://localhost:8000
 
 The dashboard shows:
 
-- User greeting
-- Current level
+- a greeting message
+- current level
 - XP progress
-- Streak count
-- Shortcut cards for lessons and quizzes
+- streak count
+- shortcut cards for lessons and practice
 
 ### Materials
 
-Contains four learning tabs:
+The app includes four learning tabs:
 
 - Tenses
 - To Be
@@ -146,7 +145,7 @@ Each section includes explanations and examples.
 
 Users can choose a topic and difficulty and start a quiz.
 
-Topics include:
+Available topics include:
 
 - Mixed
 - Tenses
@@ -154,7 +153,7 @@ Topics include:
 - Vocabulary
 - Grammar
 
-Difficulty options:
+Difficulty levels include:
 
 - Beginner
 - Intermediate
@@ -165,10 +164,10 @@ Difficulty options:
 The progress page tracks:
 
 - XP and level
-- Daily streak
-- Badges
-- Recent test history
-- Reset progress option
+- daily streak
+- badges
+- recent test history
+- reset progress option
 
 ## Tense coverage
 
@@ -208,57 +207,55 @@ The vocabulary section includes topics such as:
 
 Each vocabulary item includes:
 
-- Word
-- Part of speech
-- Meaning
-- Example sentence
+- word
+- part of speech
+- meaning
+- example sentence
 
 ## Grammar topics included
 
-The app introduces fundamental grammar ideas, including:
+The app introduces grammar fundamentals, including:
 
-- Noun
-- Verb
-- Adjective
-- Adverb
-- Pronoun
-- Preposition
-- Conjunction
-- Article
-- Subject-verb agreement
-- Sentence structure
-- Negative and question forms
+- noun
+- verb
+- adjective
+- adverb
+- pronoun
+- preposition
+- conjunction
+- article
+- subject-verb agreement
+- sentence structure
+- negative and question forms
 
 ## Intended use
 
 This project is meant to support self-paced English learning, especially for:
 
-- Students preparing grammar basics
-- Learners practicing regular vocabulary recall
-- People who want short, focused study sessions
-- Anyone wanting a simple English practice tool without a complicated setup
+- students reviewing grammar basics
+- learners practicing regular vocabulary recall
+- people who want short, focused study sessions
+- anyone who wants a simple English practice tool without extra setup
 
 ## Notes
 
 - This repository is intentionally minimal and static.
 - It does not require Node.js, npm, a database, or a backend server for the basic experience.
 - The project is best suited as a frontend demo or lightweight learning app.
-
-## License
-
-This repository does not currently include a license file. If you plan to publish or distribute it externally, you may want to add a license explicitly.
+- The app contains UI elements for profile/login flows, but no real authentication system or backend is implemented in this repository.
+- The question generation flow is driven by client-side data and UI logic rather than a live AI service.
 
 ## Future improvements
 
 Possible upgrades for this project include:
 
-- Splitting CSS and JavaScript into separate files
-- Adding real backend persistence for user progress
-- Integrating a real AI API for adaptive questions
-- Adding authentication and user accounts
-- Supporting multi-language interface options
-- Adding export/import of study data
+- splitting CSS and JavaScript into separate files
+- adding real persistence for user progress
+- integrating a real AI or backend service for adaptive questions
+- adding authentication and user accounts
+- supporting multi-language interface options
+- adding export/import of study data
 
 ## Summary
 
-ENGSPHERE is a clean, simple English-learning app that combines grammar explanations, vocab practice, and interactive quizzes in one browser-based experience. It is especially useful as a lightweight study tool for learners who want direct, repetitive practice that reinforces understanding rather than just passive reading.
+ENGSPHERE is a simple English-learning app that combines grammar explanations, vocabulary practice, and interactive quizzes in one browser-based experience. It is best described as a lightweight static study tool for learners who want clear explanations, repetition, and short practice sessions without a complicated setup.
