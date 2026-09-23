@@ -76,48 +76,6 @@ From there, the learner can:
 3. read explanations for each answer
 4. track progress over time
 
-## How to run
-
-Because this project is a static HTML app, there is no build step or dependency installation required.
-
-### Option 1: Open directly in a browser
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/fadhilarsalan25-coder/ENGSPHERE.git
-cd ENGSPHERE
-```
-
-2. Open `index.html` in your browser.
-
-On macOS:
-
-```bash
-open index.html
-```
-
-On Linux:
-
-```bash
-xdg-open index.html
-```
-
-On Windows, double-click the file in File Explorer.
-
-### Option 2: Serve locally with Python
-
-```bash
-cd ENGSPHERE
-python3 -m http.server 8000
-```
-
-Then open:
-
-```text
-http://localhost:8000
-```
-
 ## App flow
 
 ### Dashboard
