@@ -1,6 +1,6 @@
 # ENGSPHERE
 
-A simple practice English until it clicks.
+PRACTICE ENGLISH UNTIL IT CLICKS.
 
 ENGSPHERE is a lightweight browser-based English learning app designed to help learners practice grammar, vocabulary, and sentence structure through a simple study loop: read the rule, complete a short exercise, and review the explanation. The project is a static single-page app that runs directly in the browser without a backend or dependency installation.
 
