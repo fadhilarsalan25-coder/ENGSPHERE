@@ -1,0 +1,52 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="orbGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 120) rotate(52) scale(330)">
+      <stop offset="0" stop-color="#B9F3FF"/>
+      <stop offset="0.18" stop-color="#5AD0FF"/>
+      <stop offset="0.5" stop-color="#0A82E8"/>
+      <stop offset="0.8" stop-color="#0B2F97"/>
+      <stop offset="1" stop-color="#07184D"/>
+    </radialGradient>
+    <linearGradient id="orbSurface" x1="80" y1="90" x2="420" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B8F5FF"/>
+      <stop offset="0.18" stop-color="#72D9FF"/>
+      <stop offset="0.42" stop-color="#1EA0FF"/>
+      <stop offset="0.7" stop-color="#0C4DDD"/>
+      <stop offset="1" stop-color="#051E6C"/>
+    </linearGradient>
+    <linearGradient id="waveA" x1="120" y1="140" x2="350" y2="410" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="0.25" stop-color="#D9F6FF" stop-opacity="0.8"/>
+      <stop offset="0.7" stop-color="#D9F6FF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="waveB" x1="70" y1="120" x2="420" y2="395" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F6FDFF" stop-opacity="0.96"/>
+      <stop offset="0.28" stop-color="#E4F9FF" stop-opacity="0.86"/>
+      <stop offset="0.62" stop-color="#D6F1FF" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.16"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#0A4BCE" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <circle cx="256" cy="256" r="202" fill="url(#orbGlow)"/>
+    <circle cx="256" cy="256" r="198" fill="url(#orbSurface)"/>
+  </g>
+
+  <g opacity="0.96">
+    <path d="M94 244C108 209 137 180 179 162C222 143 268 147 304 171C349 201 382 208 421 184C442 172 456 171 470 177V222C455 213 441 215 421 227C389 247 346 248 305 223C262 196 210 194 169 220C134 243 114 270 98 299C87 319 75 337 58 344V285C69 271 82 256 94 244Z" fill="url(#waveA)"/>
+    <path d="M67 307C104 272 143 255 177 264C209 272 228 296 252 306C281 318 319 320 351 302C383 284 403 284 432 294V339C413 333 396 336 372 346C340 360 309 366 275 355C237 343 211 312 173 310C146 308 117 325 90 344C72 356 52 366 35 370V323C48 319 57 315 67 307Z" fill="url(#waveB)"/>
+    <path d="M102 164C143 131 180 122 214 135C248 149 280 175 311 181C347 189 389 179 433 146V180C400 216 370 228 331 223C292 218 257 193 220 182C182 170 150 171 112 194L102 164Z" fill="url(#waveA)" opacity="0.8"/>
+    <path d="M115 376C150 346 188 340 226 351C271 364 311 400 363 399C395 398 422 387 449 367V396C416 419 380 432 340 432C288 432 247 404 202 390C171 380 142 378 115 376Z" fill="url(#waveB)" opacity="0.86"/>
+  </g>
+
+  <g opacity="0.9">
+    <path d="M121 211C146 171 185 144 227 139C276 132 320 154 349 176C382 201 399 213 430 202" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round"/>
+    <path d="M128 293C156 325 194 350 235 355C277 360 323 345 362 312C386 291 409 282 438 287" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" opacity="0.9"/>
+  </g>
+
+  <circle cx="256" cy="256" r="196" stroke="rgba(255,255,255,0.14)" stroke-width="8"/>
+</svg>
