@@ -341,3 +341,309 @@
       btn.classList.toggle('active', isActive);
     });
                              
+  function initNavigation() {
+    document.querySelectorAll('.topnav button[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setView(btn.dataset.view);
+      });
+    });
+    document.querySelectorAll('[data-goto]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setView(btn.dataset.goto);
+      });
+    });
+    document.getElementById('appHomeBtn').addEventListener('click', () => {
+      setView('dashboard');
+    });
+    document.getElementById('landingLoginBtn').addEventListener('click', () => {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      setView('dashboard');
+    });
+    document.getElementById('getStartedBtn').addEventListener('click', () => {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      setView('dashboard');
+    });
+    document.getElementById('getStartedBtn2').addEventListener('click', () => {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      setView('dashboard');
+    });
+  }
+
+  function renderBadges() {
+    const shelf = document.getElementById('badgeShelf');
+    if (!shelf) return;
+    const badges = [
+      { name: 'First quiz', unlocked: state.history.length >= 1 },
+      { name: '10 XP', unlocked: state.xp >= 10 },
+      { name: 'Streak 3', unlocked: state.streak >= 3 }
+    ];
+    shelf.innerHTML = badges.map(b => `
+      <div class="badge-item ${b.unlocked ? 'unlocked' : 'locked'}">
+        <div class="b-ic">${b.unlocked ? '🏆' : '🔒'}</div>
+        <div class="b-name">${b.name}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderHistory() {
+    const rows = document.getElementById('historyRows');
+    if (!rows) return;
+    if (!state.history.length) {
+      rows.innerHTML = '<div class="empty-state">No recent quiz attempts yet.</div>';
+      return;
+    }
+    rows.innerHTML = state.history.slice(0, 6).map(item => `
+      <div class="history-row">
+        <span>${item.label}</span>
+        <span class="h-score">${item.score}%</span>
+      </div>
+    `).join('');
+  }
+
+  function addXp(amount, label) {
+    state.xp = Math.max(0, Math.min(500, state.xp + amount));
+    state.history.unshift({ label, score: amount ? 100 : 0 });
+    state.history = state.history.slice(0, 8);
+    syncLevelUI();
+    renderBadges();
+    renderHistory();
+    saveState();
+  }
+
+  function startQuickQuiz() {
+    const topic = state.selectedTopic;
+    const difficulty = state.selectedDifficulty;
+    const source = topic === 'mixed' ? BANK : { [topic]: BANK[topic] };
+    let list = [];
+    if (topic === 'mixed') {
+      Object.keys(BANK).forEach(key => {
+        list = list.concat(BANK[key][difficulty]);
+      });
+    } else {
+      list = BANK[topic][difficulty].slice();
+    }
+    const questions = list.slice(0, 6).map(q => ({ ...q }));
+    state.quiz = {
+      questions,
+      current: 0,
+      score: 0,
+      answered: false,
+      finished: false
+    };
+    renderQuiz();
+  }
+
+  function renderQuiz() {
+    const playArea = document.getElementById('quizPlayArea');
+    if (!state.quiz || !playArea) return;
+    const q = state.quiz.questions[state.quiz.current];
+    if (!q) {
+      const score = Math.round((state.quiz.score / state.quiz.questions.length) * 100);
+      playArea.innerHTML = `
+        <div class="card quiz-results">
+          <div class="score">${score}%</div>
+          <div class="xp-earned">+${Math.max(5, Math.round(score / 10))} XP</div>
+          <div class="badge-toast-list">
+            <span class="pill active">${state.selectedTopic}</span>
+            <span class="pill active">${state.selectedDifficulty}</span>
+          </div>
+          <button class="btn btn-primary" id="quizAgainBtn">Try again</button>
+        </div>
+      `;
+      document.getElementById('quizAgainBtn').addEventListener('click', startQuickQuiz);
+      addXp(Math.max(5, Math.round(score / 10)), 'Quick quiz');
+      state.quiz = null;
+      return;
+    }
+    const progress = state.quiz.questions.map((_, i) => `<span class="dot ${i < state.quiz.current ? 'done' : i === state.quiz.current ? 'current' : ''}"></span>`).join('');
+    playArea.innerHTML = `
+      <div class="card quiz-stage quiz-question">
+        <div class="quiz-progress">${progress}</div>
+        <h3>${q.q}</h3>
+        <div class="quiz-options">
+          ${q.options.map((opt, idx) => `<button class="quiz-option" data-index="${idx}">${opt}</button>`).join('')}
+        </div>
+        <div class="quiz-actions">
+          <button class="btn btn-ghost btn-sm" id="skipQuizBtn">Skip</button>
+        </div>
+      </div>
+    `;
+    playArea.querySelectorAll('.quiz-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pick = Number(btn.dataset.index);
+        const correct = pick === q.answer;
+        if (correct) state.quiz.score += 1;
+        playArea.innerHTML = `
+          <div class="card quiz-stage quiz-question">
+            <div class="quiz-progress">${progress}</div>
+            <h3>${q.q}</h3>
+            <div class="quiz-options">
+              ${q.options.map((opt, idx) => {
+                let classes = 'quiz-option';
+                if (idx === q.answer) classes += ' correct';
+                if (idx === pick && !correct) classes += ' incorrect';
+                return `<button class="${classes}" disabled>${opt}</button>`;
+              }).join('')}
+            </div>
+            <div class="quiz-feedback ${correct ? '' : 'wrong'}">${correct ? 'Correct! ' : 'Not quite. '}${q.explain}</div>
+            <div class="quiz-actions">
+              <button class="btn btn-primary btn-sm" id="nextQuizBtn">${state.quiz.current === state.quiz.questions.length - 1 ? 'Finish' : 'Next question'}</button>
+            </div>
+          </div>
+        `;
+        document.getElementById('nextQuizBtn').addEventListener('click', () => {
+          state.quiz.current += 1;
+          renderQuiz();
+        });
+      });
+    });
+    document.getElementById('skipQuizBtn').addEventListener('click', () => {
+      state.quiz.current += 1;
+      renderQuiz();
+    });
+  }
+
+  function bindChipSelectors() {
+    document.querySelectorAll('[data-topic]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const actual = btn.dataset.topic;
+        document.querySelectorAll('[data-topic]').forEach(i => {
+          i.classList.toggle('active', i === btn && i.closest('#quizTopicChips') || i === btn && i.closest('#aiTopicChips'));
+        });
+        state.selectedTopic = actual;
+      });
+    });
+    document.querySelectorAll('[data-diff]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedDifficulty = btn.dataset.diff;
+        document.querySelectorAll('[data-diff]').forEach(i => i.classList.toggle('active', i === btn));
+      });
+    });
+    document.querySelectorAll('[data-count]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedAIQuestions = Number(btn.dataset.count);
+        document.querySelectorAll('[data-count]').forEach(i => i.classList.toggle('active', i === btn));
+      });
+    });
+    document.querySelectorAll('[data-msub]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedMaterial = btn.dataset.msub;
+        document.querySelectorAll('[data-msub]').forEach(i => i.classList.toggle('active', i === btn));
+        const hideMap = { tenses: 'msub-tenses', tobe: 'msub-tobe', vocabulary: 'msub-vocabulary', grammar: 'msub-grammar' };
+        Object.entries(hideMap).forEach(([key, id]) => {
+          const node = document.getElementById(id);
+          if (node) node.classList.toggle('hidden', key !== state.selectedMaterial);
+        });
+      });
+    });
+    document.getElementById('startQuizBtn').addEventListener('click', startQuickQuiz);
+    document.getElementById('generateAiBtn').addEventListener('click', () => {
+      // AI test hook: simulate generation with the same dataset for this static build.
+      const list = BANK[state.selectedTopic === 'mixed' ? 'tenses' : state.selectedTopic][state.selectedDifficulty].slice(0, state.selectedAIQuestions);
+      const area = document.getElementById('aiPlayArea');
+      area.innerHTML = `<div class="card quiz-question"><h3>${state.selectedTopic === 'mixed' ? 'Mixed review' : state.selectedTopic}</h3><p>AI-generated test ready for ${state.selectedAIQuestions} questions.</p><button class="btn btn-primary" id="aiStartBtn">Start test</button></div>`;
+      document.getElementById('aiStartBtn').addEventListener('click', () => {
+        const items = list.map(q => ({ ...q }));
+        area.innerHTML = `
+          <div class="card quiz-stage quiz-question">
+            <h3>${items[0].q}</h3>
+            <div class="quiz-options">
+              ${items[0].options.map((opt, idx) => `<button class="quiz-option" data-ai-index="${idx}">${opt}</button>`).join('')}
+            </div>
+          </div>
+        `;
+        area.querySelectorAll('[data-ai-index]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const correct = Number(btn.dataset.aiIndex) === items[0].answer;
+            area.innerHTML = `
+              <div class="card quiz-stage quiz-question">
+                <h3>${items[0].q}</h3>
+                ${items[0].options.map((opt, idx) => {
+                  let cls = 'quiz-option';
+                  if (idx === items[0].answer) cls += ' correct';
+                  if (idx === Number(btn.dataset.aiIndex) && !correct) cls += ' incorrect';
+                  return `<button class="${cls}" disabled>${opt}</button>`;
+                }).join('')}
+                <div class="quiz-feedback ${correct ? '' : 'wrong'}">${correct ? 'Correct! ' : 'Not quite. '}${items[0].explain}</div>
+                <div class="quiz-actions"><button class="btn btn-primary btn-sm" id="aiNextBtn">Next</button></div>
+              </div>
+            `;
+            document.getElementById('aiNextBtn').addEventListener('click', () => {
+              const next = items.slice(1);
+              if (!next.length) {
+                area.innerHTML = `<div class="card quiz-results"><div class="score">${correct ? 100 : 80}%</div><div class="xp-earned">+10 XP</div><button class="btn btn-primary" id="aiAgainBtn">Practice again</button></div>`;
+                document.getElementById('aiAgainBtn').addEventListener('click', () => document.getElementById('generateAiBtn').click());
+                addXp(10, 'AI test');
+                return;
+              }
+              const q = next[0];
+              area.innerHTML = `
+                <div class="card quiz-stage quiz-question">
+                  <h3>${q.q}</h3>
+                  <div class="quiz-options">
+                    ${q.options.map((opt, idx) => `<button class="quiz-option" data-ai-index="${idx}">${opt}</button>`).join('')}
+                  </div>
+                </div>
+              `;
+              area.querySelectorAll('[data-ai-index]').forEach(nextBtn => {
+                nextBtn.addEventListener('click', () => {
+                  const right = Number(nextBtn.dataset.aiIndex) === q.answer;
+                  area.innerHTML = `
+                    <div class="card quiz-stage quiz-question">
+                      <h3>${q.q}</h3>
+                      ${q.options.map((opt, idx) => {
+                        let cls = 'quiz-option';
+                        if (idx === q.answer) cls += ' correct';
+                        if (idx === Number(nextBtn.dataset.aiIndex) && !right) cls += ' incorrect';
+                        return `<button class="${cls}" disabled>${opt}</button>`;
+                      }).join('')}
+                      <div class="quiz-feedback ${right ? '' : 'wrong'}">${right ? 'Correct! ' : 'Not quite. '}${q.explain}</div>
+                      <div class="quiz-actions"><button class="btn btn-primary btn-sm" id="aiNextBtn2">Next</button></div>
+                    </div>
+                  `;
+                  document.getElementById('aiNextBtn2').addEventListener('click', () => {
+                    const next2 = next.slice(1);
+                    if (!next2.length) {
+                      area.innerHTML = `<div class="card quiz-results"><div class="score">90%</div><div class="xp-earned">+10 XP</div><button class="btn btn-primary" id="aiAgainBtn">Practice again</button></div>`;
+                      document.getElementById('aiAgainBtn').addEventListener('click', () => document.getElementById('generateAiBtn').click());
+                      addXp(10, 'AI test');
+                      return;
+                    }
+                    const q2 = next2[0];
+                    area.innerHTML = `
+                      <div class="card quiz-stage quiz-question">
+                        <h3>${q2.q}</h3>
+                        <div class="quiz-options">
+                          ${q2.options.map((opt, idx) => `<button class="quiz-option" data-ai-index="${idx}">${opt}</button>`).join('')}
+                        </div>
+                      </div>
+                    `;
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+  function init() {
+    loadState();
+    applyStreak();
+    syncLevelUI();
+    renderTenses();
+    renderVocabulary();
+    renderBadges();
+    renderHistory();
+    initNavigation();
+    bindChipSelectors();
+    setView('dashboard');
+    saveState();
+  }
+
+  init();
+})();
