@@ -1,67 +1,117 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const navLinks = document.querySelectorAll('.nav-link');
-  navLinks.forEach((link) => {
-    link.addEventListener('click', () => {
-      navLinks.forEach((item) => item.classList.remove('active'));
-      link.classList.add('active');
-    });
+(() => {
+  'use strict';
+
+  const SELECTORS = Object.freeze({
+    navigation: '.nav-link, [data-view]',
+    flashcard: '.flashcard',
+    quizOption: '.quiz-option',
+    quizFeedback: '.quiz-feedback',
+    nextQuestion: '[data-next-question]'
   });
 
-  const flashcards = document.querySelectorAll('.flashcard');
-  flashcards.forEach((card) => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('is-flipped');
-    });
+  const QUIZ_MESSAGES = Object.freeze({
+    initial: 'Choose the best answer to continue.',
+    correct: 'Correct — this answer matches the rule and the sentence pattern.',
+    incorrect: 'Not quite — the correct form is based on the tense and subject pattern.'
   });
 
-  const quizOptions = document.querySelectorAll('.quiz-option');
-  const quizFeedback = document.querySelector('.quiz-feedback');
-  const nextBtn = document.querySelector('[data-next-question]');
+  /**
+   * Return the quiz scope for an element. Generated quiz content can be
+   * replaced at runtime, so event delegation is used instead of cached nodes.
+   */
+  const getQuizScope = (element) => (
+    element.closest('.quiz-question, .quiz-stage, [data-quiz]') || document
+  );
 
-  let answered = false;
+  const getQuizOptions = (scope) => (
+    [...scope.querySelectorAll(SELECTORS.quizOption)]
+  );
 
-  quizOptions.forEach((option) => {
-    option.addEventListener('click', () => {
-      if (answered) return;
+  const getQuizFeedback = (scope) => scope.querySelector(SELECTORS.quizFeedback);
 
-      answered = true;
-      const isCorrect = option.dataset.correct === 'true';
+  const setActiveNavigation = (activeLink, navigationLinks) => {
+    navigationLinks.forEach((link) => {
+      link.classList.toggle('active', link === activeLink);
+    });
+  };
 
-      quizOptions.forEach((item) => {
-        item.disabled = true;
-        if (item.dataset.correct === 'true') {
-          item.classList.add('is-correct');
-        }
-      });
+  const toggleFlashcard = (card) => {
+    // `.flipped` is the class used by the existing EngSphere stylesheet.
+    card.classList.toggle('flipped');
+  };
 
-      if (isCorrect) {
-        option.classList.add('is-correct');
-        if (quizFeedback) {
-          quizFeedback.textContent = 'Correct — this answer matches the rule and the sentence pattern.';
-          quizFeedback.classList.remove('is-wrong');
-        }
-      } else {
-        option.classList.add('is-wrong');
-        if (quizFeedback) {
-          quizFeedback.textContent = 'Not quite — the correct form is based on the tense and subject pattern.';
-          quizFeedback.classList.add('is-wrong');
-        }
+  const answerQuiz = (option) => {
+    const scope = getQuizScope(option);
+    const options = getQuizOptions(scope);
+    const feedback = getQuizFeedback(scope);
+
+    if (option.disabled || options.some((item) => item.disabled)) return;
+
+    const isCorrect = option.dataset.correct === 'true';
+
+    options.forEach((item) => {
+      item.disabled = true;
+      item.classList.toggle('correct', item.dataset.correct === 'true');
+      item.classList.remove('incorrect');
+    });
+
+    if (!isCorrect) {
+      option.classList.add('incorrect');
+    }
+
+    if (feedback) {
+      feedback.textContent = isCorrect ? QUIZ_MESSAGES.correct : QUIZ_MESSAGES.incorrect;
+      feedback.classList.toggle('wrong', !isCorrect);
+    }
+  };
+
+  const resetQuiz = (button) => {
+    const scope = getQuizScope(button);
+    const feedback = getQuizFeedback(scope);
+
+    getQuizOptions(scope).forEach((option) => {
+      option.disabled = false;
+      option.classList.remove('correct', 'incorrect');
+    });
+
+    if (feedback) {
+      feedback.textContent = QUIZ_MESSAGES.initial;
+      feedback.classList.remove('wrong');
+    }
+  };
+
+  const init = () => {
+    const navigationLinks = [...document.querySelectorAll(SELECTORS.navigation)];
+
+    document.addEventListener('click', (event) => {
+      const navigationLink = event.target.closest(SELECTORS.navigation);
+      if (navigationLink && navigationLinks.includes(navigationLink)) {
+        setActiveNavigation(navigationLink, navigationLinks);
+        return;
+      }
+
+      const flashcard = event.target.closest(SELECTORS.flashcard);
+      if (flashcard) {
+        toggleFlashcard(flashcard);
+        return;
+      }
+
+      const quizOption = event.target.closest(SELECTORS.quizOption);
+      if (quizOption) {
+        answerQuiz(quizOption);
+        return;
+      }
+
+      const nextQuestion = event.target.closest(SELECTORS.nextQuestion);
+      if (nextQuestion) {
+        resetQuiz(nextQuestion);
       }
     });
-  });
+  };
 
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      answered = false;
-      quizOptions.forEach((option) => {
-        option.disabled = false;
-        option.classList.remove('is-correct', 'is-wrong');
-      });
-
-      if (quizFeedback) {
-        quizFeedback.textContent = 'Choose the best answer to continue.';
-        quizFeedback.classList.remove('is-wrong');
-      }
-    });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
   }
-});
+})();
