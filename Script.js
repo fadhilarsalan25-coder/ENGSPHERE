@@ -249,3 +249,95 @@
     document.getElementById('dashXpText').textContent = state.xp + ' / 100 XP';
     document.getElementById('progXpText').textContent = state.xp + ' / 100 XP';
     document.getElementById('dashStreak').textContent 
+    document.getElementById('progStreak').textContent = String(state.streak);
+    document.getElementById('miniStreak').textContent = String(state.streak);
+    document.getElementById('dashLevelWord').textContent = levelLabel(level);
+    const profile = state.profiles[state.activeProfile] || state.profiles[0];
+    document.getElementById('profileNameLabel').textContent = profile.name;
+    document.getElementById('profileAvatar').textContent = profile.initials;
+  }
+
+  function levelLabel(level) {
+    if (level <= 2) return 'Beginner';
+    if (level <= 5) return 'Intermediate';
+    return 'Advanced';
+  }
+
+  function renderTenses() {
+    const grid = document.getElementById('tenseGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    TENSES.forEach((tense, index) => {
+      const card = document.createElement('div');
+      card.className = 'card tense-card' + (state.openTense === index ? ' open' : '');
+      card.innerHTML = `
+        <div class="tc-top">
+          <div>
+            <div class="tc-aspect">${tense.aspect}</div>
+            <h4>${tense.name}</h4>
+          </div>
+          <span class="chev">▼</span>
+        </div>
+        <div class="tc-formula">${tense.formula}</div>
+        <div class="tense-detail" style="max-height:${state.openTense === index ? '420px' : '0px'};">
+          <div class="tense-detail-inner">
+            <ul>
+              ${tense.uses.map(u => `<li>${u}</li>`).join('')}
+            </ul>
+            <div class="tc-examples">
+              ${tense.ex.map(e => `<div class="tc-example">${e}</div>`).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        state.openTense = state.openTense === index ? null : index;
+        renderTenses();
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  function renderVocabulary() {
+    const grid = document.getElementById('vocabGrid');
+    const tabs = document.getElementById('vocabCategoryTabs');
+    if (!grid || !tabs) return;
+    const categories = Object.keys(VOCAB);
+    tabs.innerHTML = categories.map((cat, idx) => `<button class="pill ${idx === 0 ? 'active' : ''}" data-vocab-cat="${cat}">${cat}</button>`).join('');
+    const category = tabs.dataset.active || categories[0];
+    const activeWords = VOCAB[category] || VOCAB[categories[0]];
+    grid.innerHTML = activeWords.map((item, idx) => `
+      <div class="flashcard" data-flip="${idx}">
+        <div class="flashcard-inner">
+          <div class="flashcard-face flashcard-front">
+            <div class="word">${item.w}</div>
+            <div class="pos">${item.p}</div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <div class="mean">${item.m}</div>
+            <div class="ex">${item.e}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    tabs.querySelectorAll('[data-vocab-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.dataset.active = btn.dataset.vocabCat;
+        renderVocabulary();
+      });
+    });
+    grid.querySelectorAll('.flashcard').forEach(card => {
+      card.addEventListener('click', () => card.classList.toggle('flipped'));
+    });
+  }
+
+  function setView(name) {
+    state.currentView = name;
+    document.querySelectorAll('.view').forEach(view => {
+      view.classList.toggle('hidden', view.dataset.view !== name);
+    });
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      const isActive = btn.dataset.view === name;
+      btn.classList.toggle('active', isActive);
+    });
+                             
