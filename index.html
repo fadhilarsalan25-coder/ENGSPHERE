@@ -4,428 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EngSphere — Practice English Until It Clicks</title>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAf+0lEQVR42tWbebydZXXvv+t5nvfd895nTE7mBBICCUNAcACUgHXG4VqT2kpvrVevYwfrtR+1Q0itvfW2vV4vttrWWr[...]
+<meta name="description" content="A comprehensive English learning web application featuring grammar lessons, vocabulary flashcards, adaptive quizzes, and a targeted review dashboard for mastering previously missed questions.">
+<meta property="og:title" content="EngSphere — Practice English Until It Clicks">
+<meta property="og:description" content="A comprehensive English learning web application featuring grammar lessons, vocabulary flashcards, adaptive quizzes, and a targeted review dashboard for mastering previously missed questions.">
+<link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="app.js" defer></script>
-<style>
-  :root{
-    --ink:#04070f;
-    --navy-950:#060c1c;
-    --navy-900:#0a1428;
-    --navy-800:#0f1d38;
-    --navy-700:#142449;
-    --navy-600:#1b3160;
-    --navy-500:#254080;
-    --line:rgba(148,178,255,0.14);
-    --line-strong:rgba(148,178,255,0.26);
-    --sky:#4fc3ff;
-    --sky-bright:#8adfff;
-    --sky-dim:#2f7bc7;
-    --amber:#ffb648;
-    --amber-dim:#d99530;
-    --text:#eaf1ff;
-    --muted:#93a4c9;
-    --muted-dim:#66739a;
-    --success:#4ade80;
-    --danger:#ff7a7a;
-    --r-sm:10px;
-    --r-md:16px;
-    --r-lg:26px;
-    --r-pill:999px;
-    --font-d:'Space Grotesk',sans-serif;
-    --font-b:'Inter',sans-serif;
-    --sp-1:.25rem;--sp-2:.5rem;--sp-3:.75rem;--sp-4:1rem;--sp-5:1.5rem;--sp-6:2rem;--sp-7:3rem;--sp-8:4.5rem;
-    --shadow-1:0 1px 2px rgba(0,0,0,.4);
-    --shadow-2:0 8px 30px rgba(2,6,20,.55);
-    --ease:cubic-bezier(.22,.9,.32,1);
-  }
-  *,*::before,*::after{box-sizing:border-box;}
-  :root{
-    box-sizing:border-box;
-    padding-top:env(safe-area-inset-top,0px);
-    padding-bottom:env(safe-area-inset-bottom,0px);
-  }
-  html{
-    scroll-behavior:smooth;
-    background:var(--navy-950);
-    scroll-padding-top:env(safe-area-inset-top,0px);
-  }
-  body{
-    margin:0;
-    background:var(--navy-950);
-    color:var(--text);
-    font-family:var(--font-b);
-    font-size:16px;
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3,h4{
-    font-family:var(--font-d);
-    font-weight:600;
-    line-height:1.15;
-    margin:0 0 var(--sp-3);
-    letter-spacing:-0.01em;
-  }
-  p{margin:0 0 var(--sp-4);color:var(--muted);}
-  a{color:inherit;}
-  button{font-family:var(--font-b);}
-  img{max-width:100%;display:block;}
-  ::selection{background:var(--sky);color:var(--navy-950);}
-  :focus-visible{outline:2px solid var(--sky-bright);outline-offset:3px;border-radius:4px;}
-
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}
-  }
-
-  .hidden{display:none !important;}
-  .container{max-width:1180px;margin:0 auto;padding:0 var(--sp-6);}
-  @media (max-width:640px){.container{padding:0 var(--sp-4);}}
-
-  /* Buttons */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-    font-family:var(--font-b);font-weight:700;font-size:.95rem;
-    padding:.85rem 1.6rem;border-radius:var(--r-pill);border:1px solid transparent;
-    cursor:pointer;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s var(--ease),border-color .15s var(--ease);
-    text-decoration:none;white-space:nowrap;
-  }
-  .btn:active{transform:scale(.97);}
-  .btn-primary{background:linear-gradient(135deg,var(--sky) 0%,#2f8fe0 100%);color:#04101f;box-shadow:0 6px 24px rgba(79,195,255,.35);}
-  .btn-primary:hover{box-shadow:0 8px 30px rgba(79,195,255,.5);transform:translateY(-1px);}
-  .btn-ghost{background:transparent;border-color:var(--line-strong);color:var(--text);}
-  .btn-ghost:hover{border-color:var(--sky);background:rgba(79,195,255,.08);}
-  .btn-sm{padding:.55rem 1.1rem;font-size:.85rem;}
-  .btn-block{width:100%;}
-  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none !important;}
-
-  .pill{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:var(--r-pill);border:1px solid var(--line-strong);font-size:.82rem;font-weight:600;color:var(--muted);background:transparent;transition:all .15s var(--ease);}
-  .pill:hover{border-color:var(--sky-dim);color:var(--text);}
-  .pill.active{background:var(--sky);border-color:var(--sky);color:#04101f;}
-
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:var(--r-md);}
-
-  /* Landing page */
-  #landing{position:relative;overflow:hidden;background:var(--navy-950);}
-  .landing-bgwrap{position:absolute;inset:0;z-index:0;}
-  .landing-bgwrap img{
-    position:absolute;left:50%;top:0;transform:translateX(-50%);
-    width:100%;min-width:1100px;height:auto;
-    filter:saturate(1.2) brightness(.5) hue-rotate(-6deg) contrast(1.08);
-    opacity:.9;
-  }
-  .landing-bgwrap::after{
-    content:"";position:absolute;inset:0;
-    background:
-      radial-gradient(60% 50% at 50% 28%, rgba(79,195,255,.16), transparent 70%),
-      linear-gradient(180deg, rgba(6,12,28,.35) 0%, rgba(6,12,28,.55) 38%, var(--navy-950) 92%);
-  }
-  .landing-nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:var(--sp-5) 0;}
-  .brand{display:flex;align-items:center;gap:.6rem;font-family:var(--font-d);font-weight:700;font-size:1.15rem;letter-spacing:-.01em;}
-  .brand img{width:30px;height:30px;object-fit:contain;}
-  .landing-hero{position:relative;z-index:2;padding:var(--sp-4) 0 var(--sp-8);text-align:center;display:flex;flex-direction:column;align-items:center;}
-  .hero-orb-wrap{position:relative;width:180px;height:180px;margin:var(--sp-4) 0 var(--sp-5);}
-  .hero-orb-wrap img{width:100%;height:100%;object-fit:contain;position:relative;z-index:1;animation:orbRise 1.1s var(--ease) both, orbGlow 3.6s ease-in-out 1.1s infinite;}
-  .hero-orb-wrap::before{
-    content:"";position:absolute;inset:-30%;border-radius:50%;
-    background:radial-gradient(circle, rgba(79,195,255,.45), transparent 65%);
-    filter:blur(18px);animation:orbGlow 3.6s ease-in-out infinite;
-  }
-  @keyframes orbRise{from{opacity:0;transform:translateY(18px) scale(.92);}to{opacity:1;transform:translateY(0) scale(1);}}
-  @keyframes orbGlow{0%,100%{opacity:.75;}50%{opacity:1;}}
-  .hero-eyebrow-word{font-family:var(--font-d);font-weight:700;font-size:1.6rem;letter-spacing:-.02em;color:var(--sky-bright);margin-bottom:var(--sp-2);}
-  .landing-hero h1{font-size:clamp(2.1rem,5vw,3.6rem);max-width:16ch;margin-bottom:var(--sp-4);}
-  .landing-hero .lede{font-size:1.15rem;max-width:46ch;color:var(--muted);margin-bottom:var(--sp-6);}
-  .hero-ctas{display:flex;gap:var(--sp-3);flex-wrap:wrap;justify-content:center;margin-bottom:var(--sp-7);}
-  .hero-ctas .btn-primary{padding:1rem 2.1rem;font-size:1rem;}
-
-  .landing-features{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-5);padding-bottom:var(--sp-8);}
-  .lf-item{padding:var(--sp-5);border-radius:var(--r-md);border:1px solid var(--line);background:rgba(6,12,28,.4);backdrop-filter:blur(6px);}
-  .lf-item .lf-num{font-family:var(--font-d);font-weight:700;color:var(--sky);font-size:.85rem;margin-bottom:var(--sp-2);}
-  .lf-item h3{font-size:1.1rem;margin-bottom:var(--sp-2);}
-  .lf-item p{font-size:.92rem;margin:0;}
-  @media (max-width:800px){.landing-features{grid-template-columns:1fr;}}
-
-  .landing-strip{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-5);padding:var(--sp-5) 0 var(--sp-8);border-top:1px solid var(--line);}
-  .ls-item{display:flex;align-items:baseline;gap:.7rem;}
-  .ls-n{font-family:var(--font-d);font-weight:700;font-size:2rem;color:var(--sky-bright);line-height:1;flex-shrink:0;}
-  .ls-l{font-size:.85rem;color:var(--muted);line-height:1.4;}
-  @media (max-width:760px){.landing-strip{grid-template-columns:1fr;gap:var(--sp-4);padding-bottom:var(--sp-6);}}
-
-  .landing-body{position:relative;z-index:2;background:var(--navy-950);}
-  .lsec{padding:var(--sp-8) 0;border-top:1px solid var(--line);}
-  .lsec:first-child{border-top:none;}
-  .lsec-head{margin-bottom:var(--sp-6);}
-  .lsec-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);}
-  .lsec-lede{font-size:1.02rem;max-width:62ch;margin:0;}
-
-  .about-split{display:grid;grid-template-columns:1.15fr 1fr;gap:var(--sp-6);align-items:start;}
-  @media (max-width:840px){.about-split{grid-template-columns:1fr;}}
-  .about-text h3{font-size:1.2rem;margin-bottom:var(--sp-3);}
-  .about-text p{max-width:60ch;font-size:.97rem;}
-  .about-card{padding:var(--sp-6);}
-  .about-card h4{font-size:1rem;margin-bottom:var(--sp-4);}
-  .loop-list{list-style:none;counter-reset:loop;padding:0;margin:0 0 var(--sp-4);}
-  .loop-list li{counter-increment:loop;position:relative;padding-left:2.2rem;margin-bottom:var(--sp-3);font-size:.92rem;color:var(--muted);line-height:1.5;}
-  .loop-list li::before{content:counter(loop);position:absolute;left:0;top:0;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--navy-700);border:1px solid var(--sky-dim);color:var(--sky-bright);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.7rem;}
-  .loop-list li span{color:var(--text);font-weight:700;}
-  .loop-note{font-size:.85rem;margin:0;padding-top:var(--sp-3);border-top:1px solid var(--line);}
-
-  .moat-list{display:flex;flex-direction:column;gap:var(--sp-4);}
-  .moat-row{display:grid;grid-template-columns:.8fr 1.4fr;gap:var(--sp-5);align-items:center;padding:var(--sp-5);border:1px solid var(--line);border-radius:var(--r-md);background:linear-gradient(90deg,rgba(255,255,255,.015),rgba(79,195,255,.02));}
-  @media (max-width:800px){.moat-row{grid-template-columns:1fr;gap:var(--sp-3);}}
-  .moat-vs p{font-size:.9rem;margin:0;color:var(--muted-dim);}
-  .vs-old{display:block;font-size:.72rem;font-weight:700;color:var(--muted-dim);margin-bottom:.3rem;}
-  .moat-new h4{font-size:1.05rem;margin-bottom:.35rem;color:var(--sky-bright);}
-  .moat-new p{font-size:.93rem;margin:0;}
-
-  .method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-4);}
-  @media (max-width:900px){.method-grid{grid-template-columns:1fr 1fr;}}
-  @media (max-width:600px){.method-grid{grid-template-columns:1fr;}}
-  .method-card{padding:var(--sp-5);}
-  .method-card h4{font-size:1rem;margin-bottom:.4rem;}
-  .method-card p{font-size:.89rem;margin:0;}
-
-  .final-cta{text-align:center;padding:var(--sp-8) 0;}
-  .final-cta h2{font-size:clamp(1.7rem,4vw,2.6rem);margin-bottom:var(--sp-3);}
-  .final-cta p{margin-bottom:var(--sp-5);}
-  .final-cta .btn-primary{padding:1rem 2.4rem;font-size:1rem;}
-
-  .landing-footer{position:relative;z-index:2;text-align:center;padding:var(--sp-6) 0;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted-dim);background:var(--navy-950);}
-
-  /* App shell */
-  #app{min-height:100vh;display:flex;flex-direction:column;}
-  .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(6,12,28,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
-  .topbar-inner{display:flex;align-items:center;gap:var(--sp-6);padding:.85rem 0;}
-  .topbar .brand{cursor:pointer;flex-shrink:0;}
-  .topnav{display:flex;gap:.35rem;flex:1;}
-  .topnav button{
-    background:transparent;border:none;color:var(--muted);font-weight:600;font-size:.9rem;
-    padding:.6rem 1rem;border-radius:var(--r-pill);cursor:pointer;transition:all .15s var(--ease);
-  }
-  .topnav button:hover{color:var(--text);background:rgba(255,255,255,.04);}
-  .topnav button.active{color:#04101f;background:var(--sky);}
-  .stats-chip{display:flex;align-items:center;gap:.9rem;flex-shrink:0;}
-  .stat-mini{display:flex;align-items:center;gap:.35rem;font-size:.85rem;font-weight:700;color:var(--text);}
-  .stat-mini .ic{width:18px;height:18px;flex-shrink:0;}
-  .level-badge-mini{display:flex;align-items:center;gap:.5rem;padding:.35rem .7rem .35rem .4rem;border-radius:var(--r-pill);background:var(--navy-800);border:1px solid var(--line-strong);}
-  .level-ring-mini{position:relative;width:26px;height:26px;flex-shrink:0;}
-  .level-ring-mini svg{transform:rotate(-90deg);}
-  .level-ring-mini .bg{stroke:var(--navy-600);}
-  .level-ring-mini .fg{stroke:var(--sky);stroke-linecap:round;transition:stroke-dashoffset .6s var(--ease);}
-
-  @media (max-width:900px){
-    .topnav{position:fixed;left:0;right:0;bottom:0;top:auto;background:var(--navy-900);border-top:1px solid var(--line);justify-content:space-around;padding:.4rem .4rem calc(.4rem + env(safe-area-inset-bottom,0px));}
-    .topnav button{flex-direction:column;font-size:.68rem;padding:.4rem .3rem;gap:.15rem;flex:1;}
-    #app{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px));}
-    .topbar-inner{padding:.7rem 0;}
-  }
-
-  .view{padding:var(--sp-6) 0 var(--sp-8);flex:1;width:100%;}
-  .view-head{margin-bottom:var(--sp-6);}
-  .view-head h2{font-size:1.9rem;}
-  .view-head p{max-width:60ch;}
-
-  .subtabs{display:flex;gap:.5rem;margin-bottom:var(--sp-6);flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:var(--sp-4);}
-
-  /* Dashboard */
-  .dash-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:var(--sp-5);margin-bottom:var(--sp-6);}
-  @media (max-width:800px){.dash-grid{grid-template-columns:1fr;}}
-  .welcome-card{padding:var(--sp-6);position:relative;overflow:hidden;}
-  .welcome-card::before{content:"";position:absolute;top:-40%;right:-20%;width:60%;height:180%;background:radial-gradient(circle,rgba(79,195,255,.14),transparent 70%);pointer-events:none;}
-  .welcome-card h2{font-size:1.6rem;position:relative;}
-  .welcome-card p{position:relative;}
-  .level-card{padding:var(--sp-6);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.3rem;}
-  .level-ring-big{position:relative;width:132px;height:132px;margin-bottom:var(--sp-3);}
-  .level-ring-big svg{transform:rotate(-90deg);width:100%;height:100%;}
-  .level-ring-big .bg{stroke:var(--navy-700);}
-  .level-ring-big .fg{stroke:url(#ringGrad);stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease);}
-  .level-ring-big .ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  .level-ring-big .ring-label .n{font-family:var(--font-d);font-size:2rem;font-weight:700;line-height:1;}
-  .level-ring-big .ring-label .l{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:.15rem;}
-  .streak-line{display:flex;align-items:center;gap:.4rem;color:var(--amber);font-weight:700;font-size:.95rem;}
-
-  .quicklink-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-4);}
-  @media (max-width:700px){.quicklink-grid{grid-template-columns:1fr 1fr;}}
-  @media (max-width:440px){.quicklink-grid{grid-template-columns:1fr;}}
-  .ql-item{padding:var(--sp-5);cursor:pointer;transition:transform .15s var(--ease),border-color .15s var(--ease);}
-  .ql-item:hover{transform:translateY(-3px);border-color:var(--sky-dim);}
-  .ql-item .ic{font-size:1.5rem;margin-bottom:var(--sp-2);display:block;}
-  .ql-item h3{font-size:1rem;margin-bottom:.2rem;}
-  .ql-item p{font-size:.82rem;margin:0;}
-
-  /* Materials: tenses grid */
-  .tense-matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-4);margin-bottom:var(--sp-5);}
-  .tense-matrix-row-label{display:none;}
-  @media (max-width:760px){.tense-matrix{grid-template-columns:1fr;}}
-  .tense-card{padding:var(--sp-4) var(--sp-5);cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease);}
-  .tense-card:hover{border-color:var(--sky-dim);}
-  .tense-card .tc-top{display:flex;align-items:center;justify-content:space-between;}
-  .tense-card .tc-aspect{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-dim);font-weight:700;}
-  .tense-card h4{font-size:1.05rem;margin:.3rem 0 .3rem;font-family:var(--font-d);}
-  .tense-card .tc-formula{font-family:'Space Grotesk',monospace;font-size:.82rem;color:var(--sky-bright);}
-  .tense-card .chev{transition:transform .2s var(--ease);color:var(--muted);}
-  .tense-card.open .chev{transform:rotate(180deg);}
-  .tense-detail{overflow:hidden;max-height:0;transition:max-height .3s var(--ease);}
-  .tense-detail-inner{padding-top:var(--sp-4);border-top:1px solid var(--line);margin-top:var(--sp-4);}
-  .tense-detail-inner ul{margin:0 0 var(--sp-3);padding-left:1.2rem;color:var(--muted);font-size:.9rem;}
-  .tense-detail-inner li{margin-bottom:.3rem;}
-  .tc-examples{display:flex;flex-direction:column;gap:.4rem;}
-  .tc-example{font-size:.88rem;padding:.5rem .7rem;background:var(--navy-900);border-radius:var(--r-sm);border-left:2px solid var(--sky-dim);color:var(--text);}
-
-  /* To be */
-  .tobe-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);margin-bottom:var(--sp-5);}
-  @media (max-width:760px){.tobe-grid{grid-template-columns:1fr;}}
-  .conj-table{width:100%;border-collapse:collapse;font-size:.92rem;}
-  .conj-table th{text-align:left;color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;padding:.5rem .3rem;border-bottom:1px solid var(--line-strong);}
-  .conj-table td{padding:.55rem .3rem;border-bottom:1px solid var(--line);}
-  .conj-table td.form{color:var(--sky-bright);font-weight:700;font-family:var(--font-d);}
-  .rule-card{padding:var(--sp-5);margin-bottom:var(--sp-4);}
-  .rule-card h4{font-size:1rem;margin-bottom:.4rem;}
-  .rule-card .tc-formula{font-family:'Space Grotesk',monospace;color:var(--sky-bright);font-size:.85rem;display:block;margin-bottom:.5rem;}
-
-  /* Vocabulary */
-  .vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);}
-  @media (max-width:900px){.vocab-grid{grid-template-columns:repeat(3,1fr);}}
-  @media (max-width:640px){.vocab-grid{grid-template-columns:repeat(2,1fr);}}
-  .flashcard{perspective:1200px;height:150px;cursor:pointer;}
-  .flashcard-inner{position:relative;width:100%;height:100%;transition:transform .5s var(--ease);transform-style:preserve-3d;}
-  .flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
-  .flashcard-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r-md);border:1px solid var(--line);padding:var(--sp-4);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
-  .flashcard-front{background:linear-gradient(160deg,var(--navy-800),var(--navy-900));}
-  .flashcard-front .word{font-family:var(--font-d);font-weight:700;font-size:1.15rem;}
-  .flashcard-front .pos{font-size:.7rem;color:var(--muted-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:.3rem;}
-  .flashcard-back{background:linear-gradient(160deg,var(--sky-dim),var(--navy-700));transform:rotateY(180deg);}
-  .flashcard-back .mean{font-weight:700;font-size:.95rem;margin-bottom:.35rem;}
-  .flashcard-back .ex{font-size:.78rem;font-style:italic;color:rgba(234,241,255,.85);}
-
-  /* Grammar */
-  .pos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);margin-bottom:var(--sp-6);}
-  @media (max-width:900px){.pos-grid{grid-template-columns:repeat(2,1fr);}}
-  .pos-card{padding:var(--sp-4);}
-  .pos-card h4{font-size:.95rem;margin-bottom:.25rem;}
-  .pos-card p{font-size:.82rem;margin-bottom:.4rem;}
-  .pos-card .ex{font-size:.78rem;color:var(--sky-bright);}
-
-  /* Practice / quiz */
-  .quiz-setup{max-width:640px;padding:var(--sp-6);}
-  .setup-row{margin-bottom:var(--sp-5);}
-  .setup-row label{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:.6rem;}
-  .chip-row{display:flex;gap:.5rem;flex-wrap:wrap;}
-
-  .quiz-stage{max-width:680px;}
-  .quiz-progress{display:flex;gap:.35rem;margin-bottom:var(--sp-5);}
-  .quiz-progress .dot{flex:1;height:5px;border-radius:3px;background:var(--navy-700);}
-  .quiz-progress .dot.done{background:var(--sky);}
-  .quiz-progress .dot.current{background:var(--sky-dim);}
-  .quiz-question{padding:var(--sp-6);}
-  .quiz-question h3{font-size:1.3rem;margin-bottom:var(--sp-5);}
-  .quiz-options{display:flex;flex-direction:column;gap:.7rem;}
-  .quiz-option{
-    text-align:left;padding:.9rem 1.1rem;border-radius:var(--r-sm);border:1px solid var(--line-strong);
-    background:var(--navy-900);color:var(--text);font-size:.95rem;cursor:pointer;transition:all .15s var(--ease);
-  }
-  .quiz-option:hover:not(:disabled){border-color:var(--sky);background:var(--navy-800);}
-  .quiz-option.correct{border-color:var(--success);background:rgba(74,222,128,.12);}
-  .quiz-option.incorrect{border-color:var(--danger);background:rgba(255,122,122,.12);}
-  .quiz-option:disabled{cursor:default;}
-  .quiz-feedback{margin-top:var(--sp-5);padding:var(--sp-4);border-radius:var(--r-sm);background:var(--navy-900);border-left:3px solid var(--sky);font-size:.9rem;}
-  .quiz-feedback.wrong{border-left-color:var(--danger);}
-  .quiz-actions{display:flex;justify-content:flex-end;margin-top:var(--sp-5);}
-
-  .quiz-results{padding:var(--sp-7) var(--sp-6);text-align:center;}
-  .quiz-results .score{font-family:var(--font-d);font-size:3.2rem;font-weight:700;color:var(--sky-bright);}
-  .quiz-results .xp-earned{color:var(--amber);font-weight:700;margin-bottom:var(--sp-5);}
-  .badge-toast-list{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin:var(--sp-4) 0;}
-
-  .ai-panel{padding:var(--sp-6);max-width:640px;}
-  .ai-loading{display:flex;flex-direction:column;align-items:center;gap:var(--sp-4);padding:var(--sp-7) 0;color:var(--muted);}
-  .spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--navy-700);border-top-color:var(--sky);animation:spin .8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .ai-error{padding:var(--sp-5);border-radius:var(--r-sm);background:rgba(255,122,122,.08);border:1px solid rgba(255,122,122,.3);font-size:.9rem;}
-
-  /* Progress */
-  .progress-top{display:grid;grid-template-columns:1fr 1.4fr;gap:var(--sp-5);margin-bottom:var(--sp-6);}
-  @media (max-width:800px){.progress-top{grid-template-columns:1fr;}}
-  .badge-shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3);padding:var(--sp-5);}
-  @media (max-width:500px){.badge-shelf{grid-template-columns:repeat(2,1fr);}}
-  .badge-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.4rem;padding:var(--sp-3);border-radius:var(--r-sm);}
-  .badge-item .b-ic{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:var(--navy-700);border:1px solid var(--line-strong);}
-  .badge-item.unlocked .b-ic{background:linear-gradient(135deg,var(--amber),#e08a1f);border-color:var(--amber);}
-  .badge-item.locked{opacity:.4;}
-  .badge-item .b-name{font-size:.72rem;font-weight:700;}
-  .history-list{padding:var(--sp-5);}
-  .history-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.88rem;}
-  .history-row:last-child{border-bottom:none;}
-  .history-row .h-score{font-weight:700;color:var(--sky-bright);}
-  .empty-state{text-align:center;padding:var(--sp-6);color:var(--muted-dim);font-size:.88rem;}
-  .danger-zone{margin-top:var(--sp-6);padding-top:var(--sp-5);border-top:1px solid var(--line);}
-
-  /* Modal & toast */
-  .modal-overlay{position:fixed;inset:0;background:rgba(4,7,15,.7);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:var(--sp-4);}
-  .modal-box{background:var(--navy-800);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--sp-6);max-width:420px;width:100%;}
-  .modal-box h3{margin-bottom:var(--sp-3);}
-  .modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:var(--sp-5);}
-
-  /* Auth (login / sign up) */
-  .auth-tabs{display:flex;gap:.4rem;margin-bottom:var(--sp-5);background:var(--navy-900);border-radius:var(--r-pill);padding:.25rem;}
-  .auth-tab{flex:1;background:transparent;border:none;color:var(--muted);font-weight:700;font-size:.85rem;padding:.55rem 0;border-radius:var(--r-pill);cursor:pointer;transition:all .15s var(--ease);}
-  .auth-tab.active{background:var(--sky);color:#04101f;}
-  .field-label{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:.5rem;}
-  .text-input{width:100%;padding:.75rem .9rem;border-radius:var(--r-sm);border:1px solid var(--line-strong);background:var(--navy-900);color:var(--text);font-size:.95rem;font-family:var(--font-b);}
-  .text-input:focus{border-color:var(--sky);outline:none;}
-  .profile-list{display:flex;flex-direction:column;gap:.5rem;max-height:280px;overflow-y:auto;}
-  .profile-row{display:flex;align-items:center;gap:.7rem;padding:.7rem;border-radius:var(--r-sm);border:1px solid var(--line-strong);background:var(--navy-900);color:var(--text);cursor:pointer;text-align:left;}
-  .profile-row:hover{border-color:var(--sky);}
-  .profile-row-info{display:flex;flex-direction:column;font-size:.85rem;}
-  .profile-row-info span{font-size:.76rem;color:var(--muted-dim);font-weight:400;}
-  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--sky-dim));color:#04101f;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:700;}
-  .avatar.sm{width:22px;height:22px;font-size:.72rem;}
-  .profile-pill{display:flex;align-items:center;gap:.4rem;background:var(--navy-800);border:1px solid var(--line-strong);border-radius:var(--r-pill);padding:.3rem .7rem .3rem .3rem;color:var(--text);font-weight:700;cursor:pointer;}
-  .profile-pill:hover{border-color:var(--sky-dim);}
-  @media (max-width:900px){.profile-pill span:last-child{display:none;}}
-
-  .toast-wrap{position:fixed;top:var(--sp-5);right:var(--sp-5);z-index:200;display:flex;flex-direction:column;gap:.6rem;}
-  @media (max-width:900px){.toast-wrap{top:auto;bottom:80px;right:var(--sp-4);left:var(--sp-4);}}
-  .toast{
-    background:var(--navy-800);border:1px solid var(--sky-dim);border-radius:var(--r-sm);padding:.85rem 1.1rem;
-    font-size:.85rem;font-weight:600;box-shadow:var(--shadow-2);
-    animation:toastIn .3s var(--ease) both;display:flex;align-items:center;gap:.5rem;
-  }
-  .toast.warn{border-color:var(--amber);}
-  @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
-
-  .section-fade{animation:secFade .35s var(--ease) both;}
-  @keyframes secFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-
-  .footer-note{text-align:center;padding:var(--sp-6) 0;color:var(--muted-dim);font-size:.8rem;}
-</style>
+<link rel="stylesheet" href="/Style.css">
 </head>
 <body>
-
+<div id="progress-bar" style="position: fixed; top: 0; left: 0; height: 4px; background: #3B4D36; width: 0%; z-index: 9999; transition: width 0.1s ease-out;"></div>
 <!-- Landing page -->
 <section id="landing">
-  <div class="landing-bgwrap"><img src="data:image/webp;base64,UklGRrADAQBXRUJQVlA4IKQDAQCw2gSdASp4BR8DPm0ylkikIraoJHGKOtANiWNu3L27ffe6MR3M9Pnps/0A0e7LL2u2Xtl6KTRfEOt3x/9F/xeePyX4EfVPxH+i+CT/J4ffSf+Pz[...]
   <div class="container">
     <div class="landing-nav">
-      <div class="brand"><img src="data:image/webp;base64,UklGRnhEAABXRUJQVlA4WAoAAAAQAAAA/wAA/wAAQUxQSL4LAAABwIZtm2nbld7v+8ZaG7FtH8S2bTvHRmzbtu3kNGK7Y9t2zrZmVX3vj41eY84xqn51XxExAfg/uAWAqKpVVpmqTaxqVV[...]
-      <button class="btn btn-ghost btn-sm" id="landingLoginBtn">Log in / Sign up</button>
+      <div class="brand"><img src="/assets/logo.png" alt="EngSphere Logo"> EngSphere</div>
+      <div style="display:flex;gap:.5rem;align-items:center;">
+        <div class="lang-switcher-wrap" id="landingLangWrap">
+          <button class="lang-btn" id="landingLangBtn" aria-label="Select Language" aria-expanded="false" title="Pilihan Bahasa / Select Language">
+            <span class="lang-icon">🌐</span>
+            <span class="lang-text" id="landingLangLabel">EN</span>
+            <span class="lang-arrow">▼</span>
+          </button>
+          <div class="lang-dropdown hidden" id="landingLangDropdown">
+            <button class="lang-opt active" data-set-lang="en">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="lang-name">English</span>
+              <span class="lang-check" id="checkLandingEn">✓</span>
+            </button>
+            <button class="lang-opt" data-set-lang="id">
+              <span class="lang-flag">🇮🇩</span>
+              <span class="lang-name">Bahasa Indonesia</span>
+              <span class="lang-check hidden" id="checkLandingId">✓</span>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="landingLoginBtn" data-i18n="landing_login">Log in</button>
+        <button class="btn btn-primary btn-sm" id="landingSignUpBtn" data-i18n="landing_signup">Sign up / Get Started</button>
+      </div>
     </div>
     <div class="landing-hero">
-      <div class="hero-orb-wrap"><img src="data:image/webp;base64,UklGRnhEAABXRUJQVlA4WAoAAAAQAAAA/wAA/wAAQUxQSL4LAAABwIZtm2nbld7v+8ZaG7FtH8S2bTvHRmzbtu3kNGK7Y9t2zrZmVX3vj41eY84xqn51XxExAfg/uAWAqKpVVp[...]
+      <div class="hero-orb-wrap"><img src="/assets/logo.png" alt="EngSphere Orb"></div>
       <div class="hero-eyebrow-word">EngSphere</div>
-      <h1>Practice English until it clicks.</h1>
-      <p class="lede">Clear lessons on tenses, verb forms, vocabulary and grammar — paired with quizzes that adjust to your level so practice never feels too easy or too hard.</p>
+      <h1 id="landingHeroTitle">Practice English until it clicks.</h1>
+      <p class="lede" id="landingHeroLede">Clear lessons on tenses, verb forms, vocabulary and grammar — paired with quizzes that adjust to your level so practice never feels too easy or too hard.</p>
       <div class="hero-ctas">
-        <button class="btn btn-primary" id="getStartedBtn">Get Started</button>
-        <a href="#whatsinside" class="btn btn-ghost">See what's inside</a>
+        <button class="btn btn-primary" id="getStartedBtn" data-i18n="landing_cta_start">🚀 Sign up / Get Started</button>
+        <button class="btn btn-ghost" id="landingHeroLoginBtn" data-i18n="landing_cta_login">Log in to account</button>
+        <a href="#whatsinside" class="btn btn-ghost" id="landingHeroSeeInside" data-i18n="landing_cta_inside">See what's inside</a>
       </div>
     </div>
     <div class="landing-strip">
-      <div class="ls-item"><span class="ls-n">12</span><span class="ls-l">tenses, each with formula, usage and examples</span></div>
-      <div class="ls-item"><span class="ls-n">3</span><span class="ls-l">levels — Beginner, Intermediate, Advanced</span></div>
-      <div class="ls-item"><span class="ls-n">∞</span><span class="ls-l">AI-generated questions, never the same test twice</span></div>
+      <div class="ls-item"><span class="ls-n">12</span><span class="ls-l" id="lsLabel1">tenses, each with formula, usage and examples</span></div>
+      <div class="ls-item"><span class="ls-n">3</span><span class="ls-l" id="lsLabel2">levels — Beginner, Intermediate, Advanced</span></div>
+      <div class="ls-item"><span class="ls-n">∞</span><span class="ls-l" id="lsLabel3">AI-generated questions, never the same test twice</span></div>
     </div>
   </div>
 
@@ -535,14 +168,17 @@
       </section>
 
       <section class="lsec final-cta">
-        <h2>Pick a level and start a round.</h2>
-        <p>It takes about three minutes. Your progress saves on this device.</p>
-        <button class="btn btn-primary" id="getStartedBtn2">Get Started</button>
+        <h2 id="finalCtaH2">Pick a level and start a round.</h2>
+        <p id="finalCtaP">It takes about three minutes. Your progress saves on this device.</p>
+        <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:var(--sp-4);">
+          <button class="btn btn-primary" id="getStartedBtn2" data-i18n="final_start">🚀 Sign up / Get Started Free</button>
+          <button class="btn btn-ghost" id="landingBottomLoginBtn" data-i18n="final_login">I already have an account</button>
+        </div>
       </section>
 
     </div>
   </div>
-  <div class="landing-footer">EngSphere — built for focused, self-paced English practice.</div>
+  <div class="landing-footer" id="landingFooter">EngSphere — built for focused, self-paced English practice.</div>
 </section>
 
 <!-- Main app -->
@@ -557,14 +193,33 @@
   </svg>
   <div class="topbar">
     <div class="container topbar-inner">
-      <div class="brand" id="appHomeBtn"><img src="data:image/webp;base64,UklGRnhEAABXRUJQVlA4WAoAAAAQAAAA/wAA/wAAQUxQSL4LAAABwIZtm2nbld7v+8ZaG7FtH8S2bTvHRmzbtu3kNGK7Y9t2zrZmVX3vj41eY84xqn51XxExAfg/uA[...]
+      <div class="brand" id="appHomeBtn"><img src="/assets/logo.png" alt="EngSphere Logo"> EngSphere</div>
       <nav class="topnav" id="topNav">
-        <button data-view="dashboard">🏠 Dashboard</button>
-        <button data-view="materials">📘 Materials</button>
-        <button data-view="practice">🎯 Practice</button>
-        <button data-view="progress">📈 Progress</button>
+        <button data-view="dashboard" data-i18n="nav_dashboard">🏠 Dashboard</button>
+        <button data-view="materials" data-i18n="nav_materials">📘 Materials</button>
+        <button data-view="practice" data-i18n="nav_practice">🎯 Practice</button>
+        <button data-view="progress" data-i18n="nav_progress">📈 Progress</button>
       </nav>
       <div class="stats-chip">
+        <div class="lang-switcher-wrap" id="appLangWrap">
+          <button class="lang-btn" id="appLangBtn" aria-label="Select Language" aria-expanded="false" title="Pilihan Bahasa / Select Language">
+            <span class="lang-icon">🌐</span>
+            <span class="lang-text" id="appLangLabel">EN</span>
+            <span class="lang-arrow">▼</span>
+          </button>
+          <div class="lang-dropdown hidden" id="appLangDropdown">
+            <button class="lang-opt active" data-set-lang="en">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="lang-name">English</span>
+              <span class="lang-check" id="checkAppEn">✓</span>
+            </button>
+            <button class="lang-opt" data-set-lang="id">
+              <span class="lang-flag">🇮🇩</span>
+              <span class="lang-name">Bahasa Indonesia</span>
+              <span class="lang-check hidden" id="checkAppId">✓</span>
+            </button>
+          </div>
+        </div>
         <div class="level-badge-mini">
           <div class="level-ring-mini">
             <svg width="26" height="26" viewBox="0 0 26 26">
@@ -575,9 +230,10 @@
           <span id="miniLevelLabel" style="font-size:.8rem;font-weight:700;">Lv 1</span>
         </div>
         <div class="stat-mini" title="Day streak">🔥<span id="miniStreak">0</span></div>
-        <button class="profile-pill" id="profilePillBtn">
-          <span class="avatar sm" id="profileAvatar">?</span>
-          <span id="profileNameLabel">Guest</span>
+        <button class="profile-pill" id="profilePillBtn" aria-label="Open profile, streak, XP and settings" title="Learner Profile & Settings">
+          <span class="avatar sm" id="profileAvatar">L</span>
+          <span id="profileNameLabel">Learner</span>
+          <span class="profile-pill-arrow">▾</span>
         </button>
       </div>
     </div>
@@ -589,10 +245,10 @@
       <div class="dash-grid">
         <div class="card welcome-card">
           <h2 id="dashGreeting">Welcome back</h2>
-          <p>You're set to <strong id="dashLevelWord">Beginner</strong> level. Jump back into a lesson or run a quick quiz to keep your streak alive.</p>
+          <p id="dashDesc">You're set to <strong id="dashLevelWord">Beginner</strong> level. Jump back into a lesson or run a quick quiz to keep your streak alive.</p>
           <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
-            <button class="btn btn-primary btn-sm" data-goto="practice">Start a quiz</button>
-            <button class="btn btn-ghost btn-sm" data-goto="materials">Browse materials</button>
+            <button class="btn btn-primary btn-sm" data-goto="practice" id="dashStartQuizBtn" data-i18n="dash_start_quiz">Start a quiz</button>
+            <button class="btn btn-ghost btn-sm" data-goto="materials" id="dashBrowseMatBtn" data-i18n="dash_browse_mat">Browse materials</button>
           </div>
         </div>
         <div class="card level-card">
@@ -611,8 +267,39 @@
         </div>
       </div>
 
+      <!-- REVIEW SECTION -->
+      <section class="review-section" id="reviewSection">
+        <div class="review-header">
+          <div class="review-title-wrap">
+            <span class="review-icon">🎯</span>
+            <div>
+              <h3 class="review-title">Targeted Review <span class="review-count-badge" id="reviewCountBadge" style="display:none;">0</span></h3>
+              <p class="review-subtitle">Questions you answered incorrectly during quizzes. Study the grammar explanations and retry each question until it clicks.</p>
+            </div>
+          </div>
+          <div class="review-header-actions" id="reviewHeaderActions">
+            <button class="btn btn-primary btn-sm" id="startReviewQuizBtn" style="display:none;">⚡ Start Review Quiz</button>
+            <button class="btn btn-ghost btn-sm" id="clearMasteredBtn" style="display:none;">Clear Mastered</button>
+          </div>
+        </div>
+
+        <div class="review-filters" id="reviewFiltersBar" style="display:none;">
+          <div class="review-tabs" id="reviewTabs">
+            <button class="review-tab active" data-review-filter="all">All</button>
+            <button class="review-tab" data-review-filter="tenses">Tenses</button>
+            <button class="review-tab" data-review-filter="tobe">To Be</button>
+            <button class="review-tab" data-review-filter="vocabulary">Vocabulary</button>
+            <button class="review-tab" data-review-filter="grammar">Grammar</button>
+          </div>
+          <div class="review-stats-summary" id="reviewStatsSummary">0 questions listed</div>
+        </div>
+
+        <div id="reviewQuestionsList" class="review-list"></div>
+      </section>
+
       <h3 style="font-size:1.1rem;margin-bottom:var(--sp-4);">Quick links</h3>
       <div class="quicklink-grid">
+        <div class="card ql-item" data-goto-review="true"><span class="ic">🎯</span><h3>Targeted Review</h3><p>Review and retry questions you answered incorrectly.</p></div>
         <div class="card ql-item" data-goto-material="tenses"><span class="ic">🕒</span><h3>Tenses</h3><p>All 12 tenses, explained with examples.</p></div>
         <div class="card ql-item" data-goto-material="tobe"><span class="ic">🔤</span><h3>To Be</h3><p>Am, is, are — and how they're used.</p></div>
         <div class="card ql-item" data-goto-material="vocabulary"><span class="ic">🗂️</span><h3>Vocabulary</h3><p>Flip cards across 6 everyday topics.</p></div>
@@ -828,662 +515,350 @@
   <div class="footer-note">EngSphere · Practice smarter, not longer.</div>
 </div>
 
+<!-- Auth Modal (Sign Up / Get Started & Log In) -->
+<div class="modal-overlay hidden" id="authModalOverlay">
+  <div class="modal-box auth-modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
+      <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:1.15rem;font-family:var(--font-d);">
+        <img src="/assets/logo.png" alt="EngSphere" style="width:24px;height:24px;"> EngSphere
+      </div>
+      <button type="button" class="modal-close-btn" id="closeAuthModalBtn" aria-label="Close modal">&times;</button>
+    </div>
+
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" id="authTabSignUp" data-auth-tab="signup">Sign Up / Get Started</button>
+      <button type="button" class="auth-tab" id="authTabLogin" data-auth-tab="login">Log In</button>
+    </div>
+
+    <!-- Feedback / Validation Alert Banner -->
+    <div id="authAlertBox" class="auth-alert hidden"></div>
+
+    <!-- SIGN UP PANE -->
+    <div id="authPaneSignUp">
+      <form id="authSignUpForm" novalidate>
+        <div style="margin-bottom:var(--sp-3);">
+          <label class="field-label" for="authSignUpName">Full Name or Nickname *</label>
+          <input type="text" class="text-input" id="authSignUpName" placeholder="e.g. Alex Rivera" maxlength="40" required autocomplete="name">
+        </div>
+        <div style="margin-bottom:var(--sp-3);">
+          <label class="field-label" for="authSignUpEmail">Email Address *</label>
+          <input type="email" class="text-input" id="authSignUpEmail" placeholder="e.g. alex@example.com" required autocomplete="email">
+        </div>
+        <div style="margin-bottom:var(--sp-4);">
+          <label class="field-label" for="authSignUpPassword">Create Password *</label>
+          <div class="input-with-action">
+            <input type="password" class="text-input" id="authSignUpPassword" placeholder="At least 8 characters" minlength="8" required autocomplete="new-password">
+            <button type="button" class="pw-toggle-btn" id="toggleSignUpPwBtn" aria-label="Toggle password visibility">👁️</button>
+          </div>
+        </div>
+        <div style="margin-bottom:var(--sp-3);">
+          <label class="field-label">Starting Proficiency Level</label>
+          <div class="auth-chip-row" id="authLevelChips">
+            <button type="button" class="pill active" data-level="beginner">Beginner (A1-A2)</button>
+            <button type="button" class="pill" data-level="intermediate">Intermediate (B1-B2)</button>
+            <button type="button" class="pill" data-level="advanced">Advanced (C1-C2)</button>
+          </div>
+        </div>
+        <div style="margin-bottom:var(--sp-4);">
+          <label class="field-label">Primary Learning Focus</label>
+          <div class="auth-chip-row" id="authGoalChips">
+            <button type="button" class="pill active" data-goal="conversation">Daily Speaking & Fluency</button>
+            <button type="button" class="pill" data-goal="grammar">Grammar & Tenses</button>
+            <button type="button" class="pill" data-goal="business">Work & Career</button>
+            <button type="button" class="pill" data-goal="academic">IELTS / TOEFL Prep</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="authSubmitSignUpBtn">🚀 Create Account & Start Learning</button>
+      </form>
+      <div class="auth-switch-text">
+        Already have an account? <button type="button" id="switchToLoginBtn">Log in here</button>
+      </div>
+      <div class="auth-divider"><span>or</span></div>
+      <button type="button" class="btn btn-ghost btn-block btn-sm" id="authQuickGuestBtn">⚡ Continue as Guest (Instant Access)</button>
+    </div>
+
+    <!-- LOG IN PANE -->
+    <div id="authPaneLogin" class="hidden">
+      <form id="authLoginForm" novalidate>
+        <div id="authSavedProfilesSection" style="margin-bottom:var(--sp-4);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;">
+            <label class="field-label" style="margin:0;">Saved Profiles</label>
+            <span style="font-size:.74rem;color:var(--muted);">Click to auto-fill</span>
+          </div>
+          <div class="profile-list" id="authProfileList"></div>
+        </div>
+        <div style="margin-bottom:var(--sp-3);">
+          <label class="field-label" for="authLoginIdentifier">Email or Username *</label>
+          <input type="text" class="text-input" id="authLoginIdentifier" placeholder="e.g. alex@example.com or Alex" required autocomplete="username">
+        </div>
+        <div style="margin-bottom:var(--sp-5);">
+          <label class="field-label" for="authLoginPassword">Password</label>
+          <div class="input-with-action">
+            <input type="password" class="text-input" id="authLoginPassword" placeholder="Enter account password" autocomplete="current-password">
+            <button type="button" class="pw-toggle-btn" id="toggleLoginPwBtn" aria-label="Toggle password visibility">👁️</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="authSubmitLoginBtn">Log In to EngSphere</button>
+      </form>
+      <div class="auth-switch-text">
+        Don't have an account yet? <button type="button" id="switchToSignUpBtn">Sign up free</button>
+      </div>
+      <div class="auth-divider"><span>or</span></div>
+      <button type="button" class="btn btn-ghost btn-block btn-sm" id="authLoginGuestBtn">⚡ Continue as Guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile & Settings Hub Modal -->
+<div class="modal-overlay hidden" id="profileModalOverlay">
+  <div class="modal-box profile-modal-box">
+    <div class="profile-modal-header">
+      <h3><span>👤</span> Learner Profile & Settings</h3>
+      <button class="modal-close-btn" id="closeProfileModalBtn" aria-label="Close modal">&times;</button>
+    </div>
+
+    <div class="profile-modal-body">
+      <!-- 1. Profile User Card -->
+      <div class="profile-user-card">
+        <div class="profile-user-main">
+          <div class="avatar lg" id="hubAvatar">L</div>
+          <div class="profile-user-meta">
+            <h4><span id="hubNameLabel">Learner</span> <button class="btn-text-action" id="hubEditNameBtn" title="Edit name">✏️ Edit</button></h4>
+            <p class="profile-user-email" id="hubEmailLabel">learner@engsphere.app</p>
+            <div class="profile-user-badge" id="hubLevelBadge">Level 1 · Beginner</div>
+          </div>
+        </div>
+        <div id="hubNameEditForm" class="hidden" style="width:100%;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--line);display:flex;gap:.5rem;">
+          <input type="text" class="text-input" id="hubNameEditInput" style="padding:.45rem .75rem;font-size:.88rem;" placeholder="New display name">
+          <button class="btn btn-primary btn-sm" id="hubSaveNameBtn">Save</button>
+          <button class="btn btn-ghost btn-sm" id="hubCancelNameBtn">Cancel</button>
+        </div>
+      </div>
+
+      <!-- 2. Amount of XP for Streak Metrics Box -->
+      <div class="profile-streak-box">
+        <div class="profile-streak-grid">
+          <div class="profile-metric">
+            <div class="profile-metric-val" id="hubMetricStreak">🔥 0</div>
+            <div class="profile-metric-lbl">Daily Streak</div>
+          </div>
+          <div class="profile-metric">
+            <div class="profile-metric-val" id="hubMetricXp">⚡ 0</div>
+            <div class="profile-metric-lbl">Total XP</div>
+          </div>
+          <div class="profile-metric">
+            <div class="profile-metric-val" id="hubMetricLevel">Lv 1</div>
+            <div class="profile-metric-lbl">Current Level</div>
+          </div>
+        </div>
+        <div class="profile-xp-progress">
+          <div class="profile-xp-track">
+            <div class="profile-xp-fill" id="hubXpBar" style="width:0%;"></div>
+          </div>
+          <div class="profile-xp-info">
+            <span id="hubXpProgressText">0 / 100 XP to next level</span>
+            <span id="hubStreakStatusText">Complete today's quiz to keep your streak!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Web Theme Switch & Language Selection -->
+      <div class="theme-switch-row">
+        <div class="theme-switch-info">
+          <div class="theme-switch-title">
+            <span>🎨</span> Web Theme Mode
+          </div>
+          <div class="theme-switch-sub" id="themeStatusLabel">Dark Navy Mode</div>
+        </div>
+        <div class="theme-toggle-switch" id="themeToggleBtn" role="switch" aria-checked="false" tabindex="0" title="Click to switch theme (Light / Dark)">
+          <span class="theme-icon-opt" title="Light Mode">☀️</span>
+          <span class="theme-icon-opt" title="Dark Mode">🌙</span>
+          <span class="theme-switch-thumb" id="themeSwitchThumb"></span>
+        </div>
+      </div>
+
+      <div class="theme-switch-row" style="margin-top:.6rem;">
+        <div class="theme-switch-info">
+          <div class="theme-switch-title">
+            <span>🌐</span> Language / Pilihan Bahasa
+          </div>
+          <div class="theme-switch-sub" id="modalLangStatusLabel">English (EN)</div>
+        </div>
+        <div class="lang-switcher-wrap" id="modalLangWrap">
+          <button class="lang-btn" id="modalLangBtn" aria-label="Select Language" aria-expanded="false" title="Pilihan Bahasa / Select Language">
+            <span class="lang-icon">🌐</span>
+            <span class="lang-text" id="modalLangLabel">EN</span>
+            <span class="lang-arrow">▼</span>
+          </button>
+          <div class="lang-dropdown hidden" id="modalLangDropdown">
+            <button class="lang-opt active" data-set-lang="en">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="lang-name">English</span>
+              <span class="lang-check" id="checkModalEn">✓</span>
+            </button>
+            <button class="lang-opt" data-set-lang="id">
+              <span class="lang-flag">🇮🇩</span>
+              <span class="lang-name">Bahasa Indonesia</span>
+              <span class="lang-check hidden" id="checkModalId">✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Settings Subtabs -->
+      <div class="prof-subtabs">
+        <button class="prof-subtab-btn active" data-prof-tab="data-control">🛠️ Data Control</button>
+        <button class="prof-subtab-btn" data-prof-tab="personalized">🎯 Personalized Learning</button>
+        <button class="prof-subtab-btn" data-prof-tab="help-center">❓ Help Center</button>
+      </div>
+
+      <!-- TAB 1: DATA CONTROL -->
+      <div class="setting-panel" id="profPanelDataControl">
+        <div class="setting-card">
+          <h5><span>💾</span> Export & Backup Data</h5>
+          <p>Export all your learned XP, streaks, completed test logs, and personalized preferences as a local JSON file.</p>
+          <div class="setting-btn-row">
+            <button class="btn btn-primary btn-sm" id="exportDataBtn">📥 Export Data (JSON)</button>
+            <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
+              📤 Import Backup
+              <input type="file" id="importBackupInput" accept=".json" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-card">
+          <h5><span>🎯</span> Targeted Review Mistake Queue</h5>
+          <p>You currently have <strong id="hubReviewCountText">0 questions</strong> in your targeted review queue. You can clear them without affecting your XP.</p>
+          <div class="setting-btn-row">
+            <button class="btn btn-ghost btn-sm" id="clearReviewQueueBtn">Clear Review Mistakes</button>
+            <button class="btn btn-ghost btn-sm" id="clearQuizHistoryBtn">Clear Test History Log</button>
+          </div>
+        </div>
+
+        <div class="setting-card" style="border-color:rgba(255,122,122,.3);">
+          <h5 style="color:var(--danger);"><span>⚠️</span> Reset All Learning Data</h5>
+          <p>Permanently reset your level, total XP, streak counters, badges, and history back to day one.</p>
+          <button class="btn btn-ghost btn-sm" id="hubResetAllBtn" style="color:var(--danger);border-color:rgba(255,122,122,.4);">Reset All Progress</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: PERSONALIZED LEARNING -->
+      <div class="setting-panel hidden" id="profPanelPersonalized">
+        <div class="setting-card">
+          <h5><span>🎯</span> Learning Focus & Custom Tutor Instructions</h5>
+          <p>Tell EngSphere what you want to achieve and customize your practice experience.</p>
+          <div style="margin-bottom:var(--sp-4);">
+            <label class="field-label">Target Learning Goal</label>
+            <select class="text-input" id="persGoalSelect">
+              <option value="conversation">🗣️ Daily Conversation & Fluency</option>
+              <option value="grammar">🧩 Grammar Foundation & Tenses Mastery</option>
+              <option value="business">💼 Professional & Workplace English</option>
+              <option value="academic">🎓 Academic Writing & TOEFL / IELTS</option>
+              <option value="vocabulary">📚 Vocabulary & Idiomatic Phrases</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:var(--sp-4);">
+            <label class="field-label">Preferred Proficiency Level</label>
+            <div class="auth-chip-row" id="persLevelChips">
+              <button class="pill" data-pers-level="beginner">Beginner</button>
+              <button class="pill active" data-pers-level="intermediate">Intermediate</button>
+              <button class="pill" data-pers-level="advanced">Advanced</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:var(--sp-4);">
+            <label class="field-label">Daily XP Practice Goal</label>
+            <div class="auth-chip-row" id="persGoalChips">
+              <button class="pill" data-daily-xp="50">Casual (50 XP / 1 quiz)</button>
+              <button class="pill active" data-daily-xp="100">Standard (100 XP / 2 quizzes)</button>
+              <button class="pill" data-daily-xp="200">Intensive (200 XP / 4+ quizzes)</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:var(--sp-4);">
+            <label class="field-label" for="persNotesInput">What You Want the Web to Do / Focus On</label>
+            <textarea class="text-input" id="persNotesInput" rows="3" placeholder="e.g. Focus on past tenses and business meeting vocabulary. Give clear grammar rules when I choose the wrong answer..."></textarea>
+          </div>
+
+          <button class="btn btn-primary btn-sm" id="savePersonalizedBtn">💾 Save Personalized Preferences</button>
+        </div>
+      </div>
+
+      <!-- TAB 3: HELP CENTER -->
+      <div class="setting-panel hidden" id="profPanelHelp">
+        <div class="help-list">
+          <div class="help-item open">
+            <div class="help-summary"><span>📘 How to Learn Effectively (The 3-Step Method)</span><span class="help-arrow">▼</span></div>
+            <div class="help-content" style="display:block;">
+              <p>EngSphere is designed around a proven solo learning loop:</p>
+              <ul>
+                <li><strong>1. Read Material:</strong> Browse tenses, "to be" conjugations, vocabulary cards, or grammar rules in the <em>Materials</em> tab.</li>
+                <li><strong>2. Practice in Quizzes:</strong> Run Quick Quizzes or generate fresh AI tests under <em>Practice</em>.</li>
+                <li><strong>3. Review Mistakes:</strong> Any wrong question is instantly catalogued in your <em>Targeted Review</em> dashboard until you master it.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="help-item">
+            <div class="help-summary"><span>🕒 English Tenses Quick Reference</span><span class="help-arrow">▼</span></div>
+            <div class="help-content">
+              <p>English verbs use 12 primary tense aspects:</p>
+              <ul>
+                <li><strong>Simple:</strong> Habits (Present), finished past events (Past), spontaneous plans (Future).</li>
+                <li><strong>Continuous:</strong> Actions in progress right now or at a specific past/future moment.</li>
+                <li><strong>Perfect:</strong> Past actions with present relevance or actions completed before another event.</li>
+                <li><strong>Perfect Continuous:</strong> Emphasizes duration up to now or up to a specific past/future milestone.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="help-item">
+            <div class="help-summary"><span>✨ How AI Adaptive Tests Work</span><span class="help-arrow">▼</span></div>
+            <div class="help-content">
+              <p>The AI Tutor writes unique questions on-demand based on your chosen topic, difficulty, and question count. It provides a real-time explanation for each option so you understand <em>why</em> a rule applies.</p>
+            </div>
+          </div>
+
+          <div class="help-item">
+            <div class="help-summary"><span>🔥 Streaks & XP System Explained</span><span class="help-arrow">▼</span></div>
+            <div class="help-content">
+              <p>Earn XP by finishing quizzes and mastering mistake reviews:</p>
+              <ul>
+                <li><strong>10-25 XP</strong> awarded per quiz completion.</li>
+                <li><strong>+1 Streak day</strong> added for your first practice session each calendar day.</li>
+                <li>Keep your streak active by practicing at least once every 24-36 hours!</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="help-item">
+            <div class="help-summary"><span>⌨️ Keyboard Shortcuts & Tips</span><span class="help-arrow">▼</span></div>
+            <div class="help-content">
+              <ul>
+                <li><strong>1, 2, 3, 4:</strong> Select quiz answer options instantly.</li>
+                <li><strong>Esc:</strong> Close any open modal window.</li>
+                <li><strong>Theme:</strong> Easily switch between crisp Light mode and dark Navy mode at any time using the toggle above!</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer with Sign Out -->
+    <div class="profile-modal-footer">
+      <button class="btn btn-ghost" id="hubSignOutBtn" style="color:var(--danger);border-color:rgba(255,122,122,.35);">
+        <span>🚪</span> Sign Out
+      </button>
+      <button class="btn btn-primary btn-sm" id="closeProfileModalBtn2">Done</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
-<script>
-/* EngSphere app logic */
-(function () {
-  'use strict';
-
-  /* Content: tenses */
-  const TENSES = [
-    { time:'Present', aspect:'Simple', name:'Present Simple', formula:'S + V1 (+ s/es)',
-      uses:['Habits and routines','General facts and truths','Fixed schedules'],
-      ex:['She works at a hospital.','Water boils at 100°C.','The train leaves at 7 a.m.'] },
-    { time:'Present', aspect:'Continuous', name:'Present Continuous', formula:'S + am/is/are + V-ing',
-      uses:['Happening right now','Temporary situations','Fixed future arrangements'],
-      ex:['I am studying for an exam.','He is staying with friends this month.','We are meeting them tomorrow.'] },
-    { time:'Present', aspect:'Perfect', name:'Present Perfect', formula:'S + have/has + V3',
-      uses:['Past action with a present result','Experience, time unspecified','Started in the past, still true'],
-      ex:['I have finished the report.','She has visited Japan twice.','They have lived here since 2019.'] },
-    { time:'Present', aspect:'Perfect Continuous', name:'Present Perfect Continuous', formula:'S + have/has been + V-ing',
-      uses:['Action that began in the past and continues','Emphasis on duration','Recent activity with visible effect'],
-      ex:['I have been waiting for an hour.','He has been working here since June.','You look tired — have you been running?'] },
-
-    { time:'Past', aspect:'Simple', name:'Past Simple', formula:'S + V2',
-      uses:['Finished action at a known past time','A sequence of past events','Past habits'],
-      ex:['We watched a film last night.','She opened the door and walked in.','He played football every Sunday.'] },
-    { time:'Past', aspect:'Continuous', name:'Past Continuous', formula:'S + was/were + V-ing',
-      uses:['In progress at a moment in the past','Background to a shorter action','Two actions happening together'],
-      ex:['At 8 p.m. I was cooking dinner.','I was reading when the phone rang.','She was talking while he was driving.'] },
-    { time:'Past', aspect:'Perfect', name:'Past Perfect', formula:'S + had + V3',
-      uses:['An action completed before another past action','Reason for a past situation','Reported speech'],
-      ex:['The train had left before we arrived.','He was tired because he had slept badly.','She said she had seen the film.'] },
-    { time:'Past', aspect:'Perfect Continuous', name:'Past Perfect Continuous', formula:'S + had been + V-ing',
-      uses:['Duration up to a point in the past','Cause of a past result'],
-      ex:['They had been driving for six hours before they stopped.','The ground was wet because it had been raining.'] },
-
-    { time:'Future', aspect:'Simple', name:'Future Simple', formula:'S + will + V1',
-      uses:['Decision made at the moment of speaking','Prediction','Promise or offer'],
-      ex:['I will call you back.','It will probably rain tonight.','We will help you move.'] },
-    { time:'Future', aspect:'Continuous', name:'Future Continuous', formula:'S + will be + V-ing',
-      uses:['In progress at a future moment','Expected or routine future action'],
-      ex:['This time tomorrow I will be flying to Bali.','She will be waiting at the gate.'] },
-    { time:'Future', aspect:'Perfect', name:'Future Perfect', formula:'S + will have + V3',
-      uses:['Completed before a future deadline'],
-      ex:['By Friday I will have finished the project.','They will have arrived by the time you wake up.'] },
-    { time:'Future', aspect:'Perfect Continuous', name:'Future Perfect Continuous', formula:'S + will have been + V-ing',
-      uses:['Duration up to a future point'],
-      ex:['In May I will have been working here for ten years.','By noon he will have been driving for five hours.'] }
-  ];
-
-  /* Content: vocabulary */
-  const VOCAB = {
-    'Daily life': [
-      { w:'commute', p:'verb', m:'to travel regularly between home and work', e:'I commute to the office by bus every morning.' },
-      { w:'errand', p:'noun', m:'a short trip to do a small job', e:'She ran a few errands after lunch.' },
-      { w:'tidy', p:'verb / adjective', m:'to put things in order; neat', e:'Please tidy your desk before you leave.' },
-      { w:'routine', p:'noun', m:'a fixed way of doing things regularly', e:'My morning routine starts at six.' },
-      { w:'chore', p:'noun', m:'a small, regular household job', e:'Washing the dishes is my least favourite chore.' },
-      { w:'spare', p:'adjective', m:'extra; not being used', e:'I read in my spare time.' },
-      { w:'grab', p:'verb', m:'to take something quickly (informal)', e:'Let me grab a coffee before we start.' },
-      { w:'nearby', p:'adjective / adverb', m:'a short distance away', e:'There is a market nearby.' }
-    ],
-    'Work & study': [
-      { w:'deadline', p:'noun', m:'the latest time something must be finished', e:'The deadline is Friday at noon.' },
-      { w:'assign', p:'verb', m:'to give someone a task or duty', e:'The manager assigned the report to me.' },
-      { w:'feedback', p:'noun', m:'comments about how well something was done', e:'Thanks for your feedback on the draft.' },
-      { w:'draft', p:'noun / verb', m:'an early version of a piece of writing', e:'I sent you the first draft yesterday.' },
-      { w:'schedule', p:'noun / verb', m:'a plan of times for events; to arrange a time', e:'Can we schedule the call for Monday?' },
-      { w:'overview', p:'noun', m:'a short general description', e:'Give me a quick overview of the results.' },
-      { w:'workload', p:'noun', m:'the amount of work a person has', e:'My workload is heavier this month.' },
-      { w:'proficiency', p:'noun', m:'a high level of skill in something', e:'The job requires proficiency in English.' }
-    ],
-    'Travel': [
-      { w:'departure', p:'noun', m:'the act of leaving, especially on a journey', e:'Departure is at 9:15 from gate 4.' },
-      { w:'itinerary', p:'noun', m:'a plan of a journey and its stops', e:'Our itinerary includes two nights in Lombok.' },
-      { w:'accommodation', p:'noun', m:'a place to stay', e:'The price includes flights and accommodation.' },
-      { w:'delay', p:'noun / verb', m:'a period of waiting; to make something late', e:'There was a two-hour delay.' },
-      { w:'fare', p:'noun', m:'the money you pay for a journey', e:'The bus fare went up last year.' },
-      { w:'book', p:'verb', m:'to reserve something in advance', e:'We booked a room near the beach.' },
-      { w:'luggage', p:'noun', m:'the bags you take when travelling', e:'Leave your luggage by the door.' },
-      { w:'landmark', p:'noun', m:'a well-known building or feature of a place', e:'The mosque is the city’s best-known landmark.' }
-    ],
-    'Feelings': [
-      { w:'grateful', p:'adjective', m:'thankful for something', e:'I am grateful for your help.' },
-      { w:'anxious', p:'adjective', m:'worried and uneasy', e:'She felt anxious before the interview.' },
-      { w:'relieved', p:'adjective', m:'glad that something bad is over', e:'I was relieved when the results came.' },
-      { w:'confident', p:'adjective', m:'sure of yourself or your ability', e:'He is confident about the presentation.' },
-      { w:'frustrated', p:'adjective', m:'annoyed because you cannot do something', e:'I get frustrated when the wifi drops.' },
-      { w:'content', p:'adjective', m:'quietly happy with what you have', e:'They seem content with the decision.' },
-      { w:'overwhelmed', p:'adjective', m:'feeling there is too much to handle', e:'I felt overwhelmed by the emails.' },
-      { w:'eager', p:'adjective', m:'very keen to do something', e:'She is eager to start the course.' }
-    ],
-    'Academic': [
-      { w:'analyse', p:'verb', m:'to examine something in detail', e:'We analysed the survey data.' },
-      { w:'evidence', p:'noun', m:'facts that support a claim', e:'There is strong evidence for this theory.' },
-      { w:'summarise', p:'verb', m:'to state the main points briefly', e:'Summarise the article in one paragraph.' },
-      { w:'significant', p:'adjective', m:'important enough to be noticed', e:'The study found a significant difference.' },
-      { w:'approach', p:'noun / verb', m:'a way of dealing with something', e:'We took a different approach this time.' },
-      { w:'conclude', p:'verb', m:'to decide after thinking; to end', e:'The authors conclude that more research is needed.' },
-      { w:'consistent', p:'adjective', m:'staying the same over time; in agreement', e:'Her results were consistent across all tests.' },
-      { w:'contrast', p:'noun / verb', m:'a clear difference between two things', e:'In contrast, the second group improved.' }
-    ],
-    'Phrasal verbs': [
-      { w:'look up', p:'phrasal verb', m:'to search for information', e:'Look up the word in a dictionary.' },
-      { w:'give up', p:'phrasal verb', m:'to stop trying', e:'Don’t give up after one mistake.' },
-      { w:'find out', p:'phrasal verb', m:'to discover a fact', e:'I found out that the office is closed.' },
-      { w:'carry on', p:'phrasal verb', m:'to continue', e:'Carry on reading from page ten.' },
-      { w:'turn down', p:'phrasal verb', m:'to refuse; to lower volume', e:'He turned down the offer.' },
-      { w:'come up with', p:'phrasal verb', m:'to think of an idea or plan', e:'She came up with a better solution.' },
-      { w:'put off', p:'phrasal verb', m:'to postpone', e:'They put off the meeting until Thursday.' },
-      { w:'get along', p:'phrasal verb', m:'to have a good relationship', e:'I get along well with my colleagues.' }
-    ]
-  };
-
-  /* Content: quiz question bank */
-  const Q = (q, o, a, x) => ({ q, options: o, answer: a, explain: x });
-
-  const BANK = {
-    tenses: {
-      beginner: [
-        Q('She ____ to school every day.', ['go','goes','going','gone'], 1, 'Present Simple with he/she/it adds -s: "She goes."'),
-        Q('Right now, they ____ football in the park.', ['play','plays','are playing','played'], 2, 'An action happening now uses Present Continuous: are + V-ing.'),
-        Q('Yesterday I ____ a new book.', ['buy','buys','bought','buying'], 2, '"Yesterday" is finished past time, so use Past Simple: bought.'),
-        Q('We ____ visit my grandmother tomorrow.', ['will','are','was','have'], 0, 'A future plan or prediction uses will + V1.'),
-        Q('He ____ TV when I arrived.', ['watch','watches','was watching','has watched'], 2, 'Past Continuous shows an action in progress when a shorter action interrupted it.'),
-        Q('I ____ already finished my homework.', ['has','have','had been','am'], 1, 'Present Perfect with "I" uses have + V3: "I have already finished."'),
-        Q('The sun ____ in the east.', ['rise','rises','is rising','rose'], 1, 'General truths take Present Simple; "sun" is third person singular, so "rises".'),
-        Q('They ____ dinner at 7 p.m. last night.', ['have','has','had','having'], 2, 'A completed past event at a stated time uses Past Simple: "had dinner".')
-      ],
-      intermediate: [
-        Q('By the time we arrived, the film ____.', ['started','has started','had started','was starting'], 2, 'Past Perfect shows the film started before the other past action (our arrival).'),
-        Q('I ____ here since 2020.', ['work','worked','have been working','will work'], 2, '"Since 2020" means it began in the past and continues — Present Perfect Continuous.'),
-        Q('This time next week, I ____ on a beach.', ['will lie','will be lying','will have lain','lie'], 1, 'Future Continuous describes an action in progress at a specific future moment.'),
-        Q('She ____ the report before the deadline on Friday.', ['will finish','will have finished','finishes','is finishing'], 1, 'Future Perfect = completed before a future point: "will have finished."'),
-        Q('He was exhausted because he ____ all night.', ['drove','was driving','had been driving','has driven'], 2, 'Past Perfect Continuous explains the duration causing a past result.'),
-        Q('Look at those clouds — it ____.', ['rains','is going to rain','rained','has rained'], 1, 'Present evidence about the near future takes "going to", not Present Simple.'),
-        Q('I ____ that film three times.', ['saw','have seen','had seen','was seeing'], 1, 'Experience with no stated time uses Present Perfect: "have seen".'),
-        Q('While she ____ , the lights went out.', ['cooked','was cooking','has cooked','had cooked'], 1, '"While" + a longer background action takes Past Continuous.')
-      ],
-      advanced: [
-        Q('Hardly ____ the door when the phone rang.', ['I had closed','had I closed','I closed','did I close'], 1, 'After a negative adverbial like "hardly", the subject and auxiliary invert: "had I closed".'),
-        Q('By next June, they ____ together for a decade.', ['will work','will be working','will have been working','have worked'], 2, 'Duration up to a future point takes Future Perfect Continuous.'),
-        Q('If I ____ about the delay, I would have left earlier.', ['knew','had known','have known','would know'], 1, 'Third conditional: if + Past Perfect, would have + V3.'),
-        Q('She said she ____ the documents the previous week.', ['sends','sent','had sent','has sent'], 2, 'Reported speech shifts Past Simple back to Past Perfect.'),
-        Q('It is the first time I ____ such a thing.', ['hear','heard','have heard','had heard'], 2, 'After "It is the first time", English uses Present Perfect.'),
-        Q('No sooner had the meeting started ____ the power failed.', ['when','than','then','that'], 1, 'The fixed pattern is "No sooner … than".'),
-        Q('The bridge ____ by the end of next year.', ['will complete','will be completed','will have completed','completes'], 1, 'Future passive: will be + past participle, because the bridge receives the action.'),
-        Q('I would rather you ____ that to anyone.', ['don’t mention','didn’t mention','haven’t mentioned','won’t mention'], 1, 'After "would rather + subject", use the past form for the preference.')
-      ]
-    },
-    tobe: {
-      beginner: [
-        Q('I ____ a student.', ['am','is','are','be'], 0, '"I" always takes "am".'),
-        Q('They ____ in the classroom.', ['am','is','are','was'], 2, 'Plural subjects (they, we, you) take "are".'),
-        Q('She ____ tired yesterday.', ['is','was','were','are'], 1, 'Past of "is" for she/he/it is "was".'),
-        Q('____ you ready?', ['Is','Am','Are','Be'], 2, 'Questions with "you" use "Are you …?"'),
-        Q('It ____ not expensive.', ['am','is','are','be'], 1, '"It" takes "is"; the negative is "is not / isn’t".'),
-        Q('We ____ at the beach last Sunday.', ['was','were','are','is'], 1, '"We" takes "were" in the past.'),
-        Q('There ____ two books on the table.', ['is','are','am','was'], 1, '"Two books" is plural, so "there are".'),
-        Q('He ____ my brother.', ['are','am','is','be'], 2, '"He" takes "is".')
-      ],
-      intermediate: [
-        Q('The letters ____ sent last Monday.', ['was','were','are','is'], 1, 'Passive in the past with a plural subject: "were sent".'),
-        Q('____ there any milk left?', ['Are','Is','Were','Am'], 1, '"Milk" is uncountable, so it takes the singular "Is there".'),
-        Q('Neither of the answers ____ correct.', ['are','were','is','be'], 2, '"Neither of" is treated as singular in formal English: "is".'),
-        Q('The news ____ surprising.', ['are','were','is','be'], 2, '"News" looks plural but is an uncountable singular noun.'),
-        Q('If I ____ you, I would apologise.', ['was','were','am','be'], 1, 'The unreal conditional uses "were" for all subjects.'),
-        Q('Everyone in the two teams ____ present.', ['are','were','was','be'], 2, '"Everyone" is singular, so it takes "was" regardless of what follows.'),
-        Q('The team ____ being interviewed at the moment.', ['is','are','was','be'], 0, 'Present continuous passive with a singular collective noun: "is being interviewed".'),
-        Q('There ____ a problem and several delays.', ['were','was','are','be'], 1, 'With "there was/were", the verb agrees with the first noun — "a problem" is singular.')
-      ],
-      advanced: [
-        Q('By the time the project was reviewed, several issues ____ already ____.', ['had','been found','were','found','have','been found','are','finding'], 0, 'Past perfect passive: had been found.'),
-        Q('No sooner ____ the statement than the room exploded into debate.', ['had they heard','they had heard','they heard','have they heard'], 0, 'The fixed pattern is "No sooner had they heard..."'),
-        Q('If it ____ for your help, I would still be trying to sort it out.', ['wasn’t','weren’t','isn’t','hadn’t been'], 0, 'Third conditional with a real past cause: if it hadn’t been for...'),
-        Q('The committee, together with its advisers, ____ expected to issue a report next week.', ['is','are','were','be'], 0, 'The subject is the singular committee.'),
-        Q('Had the documents been submitted earlier, the decision ____ different.', ['would be','would have been','will be','is'], 1, 'This is a mixed conditional with the past perfect in the if-clause.'),
-        Q('Neither the sales team nor the support team ____ happy with the outcome.', ['was','were','are','be'], 0, 'The verb agrees with the closest subject: team (singular).'),
-        Q('The reason she left so suddenly was that she ____ all day and was exhausted.', ['worked','had been working','has been working','works'], 1, 'A past cause with duration leading to a result uses Past Perfect Continuous.'),
-        Q('It is essential that everyone ____ informed before the meeting starts.', ['is','be','was','has been'], 1, 'After “essential that,” use the subjunctive “be.”')
-      ]
-    }
-  };
-
-  /* App state */
-  const STORAGE_KEY = 'engsphere-state';
-  const state = {
-    level: 1,
-    xp: 0,
-    streak: 0,
-    lastActiveDay: null,
-    history: [],
-    profiles: [
-      { name: null, initials: null, }
-    ],
-    activeProfile: 0,
-    currentView: 'dashboard',
-    selectedMaterial: 'tenses',
-    selectedPracticeTab: 'quiz',
-    selectedTopic: 'mixed',
-    selectedDifficulty: 'intermediate',
-    selectedAIQuestions: 5,
-    openTense: null,
-    quiz: null,
-    ai: null
-  };
-
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      Object.assign(state, parsed);
-      if (!Array.isArray(state.history)) state.history = [];
-      if (!Array.isArray(state.profiles)) state.profiles = [{ name: 'Guest', initials: 'G' }];
-    } catch (e) {
-      console.warn('Could not read state', e);
-    }
-  }
-
-  function saveState() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {
-      console.warn('Could not save state', e);
-    }
-  }
-
-  function applyStreak() {
-    const today = new Date();
-    const todayKey = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-    if (state.lastActiveDay && Math.abs(todayKey - state.lastActiveDay) > 86400000 * 1.5) {
-      state.streak = 0;
-    }
-    state.lastActiveDay = todayKey;
-  }
-
-  function levelForXp(xp) {
-    return Math.max(1, Math.min(9, Math.floor(xp / 100) + 1));
-  }
-
-  function syncLevelUI() {
-    const level = levelForXp(state.xp);
-    state.level = level;
-    const ring = 351.9 * (1 - ((state.xp % 100) / 100));
-    const miniPct = (state.xp % 100) / 100;
-    document.getElementById('bigRingFg').style.strokeDashoffset = String(ring);
-    document.getElementById('miniRingFg').style.strokeDashoffset = String(65.9 * (1 - miniPct));
-    document.getElementById('progRingFg').style.strokeDashoffset = String(ring);
-    document.getElementById('bigRingLevel').textContent = String(level);
-    document.getElementById('miniLevelLabel').textContent = 'Lv ' + level;
-    document.getElementById('progRingLevel').textContent = String(level);
-    document.getElementById('dashXpText').textContent = state.xp + ' / 100 XP';
-    document.getElementById('progXpText').textContent = state.xp + ' / 100 XP';
-    document.getElementById('dashStreak').textContent = String(state.streak);
-    document.getElementById('progStreak').textContent = String(state.streak);
-    document.getElementById('miniStreak').textContent = String(state.streak);
-    document.getElementById('dashLevelWord').textContent = levelLabel(level);
-    const profile = state.profiles[state.activeProfile] || state.profiles[0];
-    document.getElementById('profileNameLabel').textContent = profile.name;
-    document.getElementById('profileAvatar').textContent = profile.initials;
-  }
-
-  function levelLabel(level) {
-    if (level <= 2) return 'Beginner';
-    if (level <= 5) return 'Intermediate';
-    return 'Advanced';
-  }
-
-  function renderTenses() {
-    const grid = document.getElementById('tenseGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    TENSES.forEach((tense, index) => {
-      const card = document.createElement('div');
-      card.className = 'card tense-card' + (state.openTense === index ? ' open' : '');
-      card.innerHTML = `
-        <div class="tc-top">
-          <div>
-            <div class="tc-aspect">${tense.aspect}</div>
-            <h4>${tense.name}</h4>
-          </div>
-          <span class="chev">▼</span>
-        </div>
-        <div class="tc-formula">${tense.formula}</div>
-        <div class="tense-detail" style="max-height:${state.openTense === index ? '420px' : '0px'};">
-          <div class="tense-detail-inner">
-            <ul>
-              ${tense.uses.map(u => `<li>${u}</li>`).join('')}
-            </ul>
-            <div class="tc-examples">
-              ${tense.ex.map(e => `<div class="tc-example">${e}</div>`).join('')}
-            </div>
-          </div>
-        </div>
-      `;
-      card.addEventListener('click', () => {
-        state.openTense = state.openTense === index ? null : index;
-        renderTenses();
-      });
-      grid.appendChild(card);
-    });
-  }
-
-  function renderVocabulary() {
-    const grid = document.getElementById('vocabGrid');
-    const tabs = document.getElementById('vocabCategoryTabs');
-    if (!grid || !tabs) return;
-    const categories = Object.keys(VOCAB);
-    tabs.innerHTML = categories.map((cat, idx) => `<button class="pill ${idx === 0 ? 'active' : ''}" data-vocab-cat="${cat}">${cat}</button>`).join('');
-    const category = tabs.dataset.active || categories[0];
-    const activeWords = VOCAB[category] || VOCAB[categories[0]];
-    grid.innerHTML = activeWords.map((item, idx) => `
-      <div class="flashcard" data-flip="${idx}">
-        <div class="flashcard-inner">
-          <div class="flashcard-face flashcard-front">
-            <div class="word">${item.w}</div>
-            <div class="pos">${item.p}</div>
-          </div>
-          <div class="flashcard-face flashcard-back">
-            <div class="mean">${item.m}</div>
-            <div class="ex">${item.e}</div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-    tabs.querySelectorAll('[data-vocab-cat]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabs.dataset.active = btn.dataset.vocabCat;
-        renderVocabulary();
-      });
-    });
-    grid.querySelectorAll('.flashcard').forEach(card => {
-      card.addEventListener('click', () => card.classList.toggle('flipped'));
-    });
-  }
-
-  function setView(name) {
-    state.currentView = name;
-    document.querySelectorAll('.view').forEach(view => {
-      view.classList.toggle('hidden', view.dataset.view !== name);
-    });
-    document.querySelectorAll('[data-view]').forEach(btn => {
-      const isActive = btn.dataset.view === name;
-      btn.classList.toggle('active', isActive);
-    });
-    document.querySelectorAll('.pill[data-msub]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.msub === state.selectedMaterial);
-    });
-  }
-
-  function initNavigation() {
-    document.querySelectorAll('.topnav button[data-view]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        setView(btn.dataset.view);
-      });
-    });
-    document.querySelectorAll('[data-goto]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        setView(btn.dataset.goto);
-      });
-    });
-    document.getElementById('appHomeBtn').addEventListener('click', () => {
-      setView('dashboard');
-    });
-    document.getElementById('landingLoginBtn').addEventListener('click', () => {
-      document.getElementById('landing').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      setView('dashboard');
-    });
-    document.getElementById('getStartedBtn').addEventListener('click', () => {
-      document.getElementById('landing').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      setView('dashboard');
-    });
-    document.getElementById('getStartedBtn2').addEventListener('click', () => {
-      document.getElementById('landing').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      setView('dashboard');
-    });
-  }
-
-  function renderBadges() {
-    const shelf = document.getElementById('badgeShelf');
-    if (!shelf) return;
-    const badges = [
-      { name: 'First quiz', unlocked: state.history.length >= 1 },
-      { name: '10 XP', unlocked: state.xp >= 10 },
-      { name: 'Streak 3', unlocked: state.streak >= 3 }
-    ];
-    shelf.innerHTML = badges.map(b => `
-      <div class="badge-item ${b.unlocked ? 'unlocked' : 'locked'}">
-        <div class="b-ic">${b.unlocked ? '🏆' : '🔒'}</div>
-        <div class="b-name">${b.name}</div>
-      </div>
-    `).join('');
-  }
-
-  function renderHistory() {
-    const rows = document.getElementById('historyRows');
-    if (!rows) return;
-    if (!state.history.length) {
-      rows.innerHTML = '<div class="empty-state">No recent quiz attempts yet.</div>';
-      return;
-    }
-    rows.innerHTML = state.history.slice(0, 6).map(item => `
-      <div class="history-row">
-        <span>${item.label}</span>
-        <span class="h-score">${item.score}%</span>
-      </div>
-    `).join('');
-  }
-
-  function addXp(amount, label) {
-    state.xp = Math.max(0, Math.min(500, state.xp + amount));
-    state.history.unshift({ label, score: amount ? 100 : 0 });
-    state.history = state.history.slice(0, 8);
-    syncLevelUI();
-    renderBadges();
-    renderHistory();
-    saveState();
-  }
-
-  function startQuickQuiz() {
-    const topic = state.selectedTopic;
-    const difficulty = state.selectedDifficulty;
-    const source = topic === 'mixed' ? BANK : { [topic]: BANK[topic] };
-    let list = [];
-    if (topic === 'mixed') {
-      Object.keys(BANK).forEach(key => {
-        list = list.concat(BANK[key][difficulty]);
-      });
-    } else {
-      list = BANK[topic][difficulty].slice();
-    }
-    const questions = list.slice(0, 6).map(q => ({ ...q }));
-    state.quiz = {
-      questions,
-      current: 0,
-      score: 0,
-      answered: false,
-      finished: false
-    };
-    renderQuiz();
-  }
-
-  function renderQuiz() {
-    const playArea = document.getElementById('quizPlayArea');
-    if (!state.quiz || !playArea) return;
-    const q = state.quiz.questions[state.quiz.current];
-    if (!q) {
-      const score = Math.round((state.quiz.score / state.quiz.questions.length) * 100);
-      playArea.innerHTML = `
-        <div class="card quiz-results">
-          <div class="score">${score}%</div>
-          <div class="xp-earned">+${Math.max(5, Math.round(score / 10))} XP</div>
-          <div class="badge-toast-list">
-            <span class="pill active">${state.selectedTopic}</span>
-            <span class="pill active">${state.selectedDifficulty}</span>
-          </div>
-          <button class="btn btn-primary" id="quizAgainBtn">Try again</button>
-        </div>
-      `;
-      document.getElementById('quizAgainBtn').addEventListener('click', startQuickQuiz);
-      addXp(Math.max(5, Math.round(score / 10)), 'Quick quiz');
-      state.quiz = null;
-      return;
-    }
-    const progress = state.quiz.questions.map((_, i) => `<span class="dot ${i < state.quiz.current ? 'done' : i === state.quiz.current ? 'current' : ''}"></span>`).join('');
-    playArea.innerHTML = `
-      <div class="card quiz-stage quiz-question">
-        <div class="quiz-progress">${progress}</div>
-        <h3>${q.q}</h3>
-        <div class="quiz-options">
-          ${q.options.map((opt, idx) => `<button class="quiz-option" data-index="${idx}">${opt}</button>`).join('')}
-        </div>
-        <div class="quiz-actions">
-          <button class="btn btn-ghost btn-sm" id="skipQuizBtn">Skip</button>
-        </div>
-      </div>
-    `;
-    playArea.querySelectorAll('.quiz-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const pick = Number(btn.dataset.index);
-        const correct = pick === q.answer;
-        if (correct) state.quiz.score += 1;
-        playArea.innerHTML = `
-          <div class="card quiz-stage quiz-question">
-            <div class="quiz-progress">${progress}</div>
-            <h3>${q.q}</h3>
-            <div class="quiz-options">
-              ${q.options.map((opt, idx) => {
-                let classes = 'quiz-option';
-                if (idx === q.answer) classes += ' correct';
-                if (idx === pick && !correct) classes += ' incorrect';
-                return `<button class="${classes}" disabled>${opt}</button>`;
-              }).join('')}
-            </div>
-            <div class="quiz-feedback ${correct ? '' : 'wrong'}">${correct ? 'Correct! ' : 'Not quite. '}${q.explain}</div>
-            <div class="quiz-actions">
-              <button class="btn btn-primary btn-sm" id="nextQuizBtn">${state.quiz.current === state.quiz.questions.length - 1 ? 'Finish' : 'Next question'}</button>
-            </div>
-          </div>
-        `;
-        document.getElementById('nextQuizBtn').addEventListener('click', () => {
-          state.quiz.current += 1;
-          renderQuiz();
-        });
-      });
-    });
-    document.getElementById('skipQuizBtn').addEventListener('click', () => {
-      state.quiz.current += 1;
-      renderQuiz();
-    });
-  }
-
-  function bindChipSelectors() {
-    document.querySelectorAll('[data-topic]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const actual = btn.dataset.topic;
-        document.querySelectorAll('[data-topic]').forEach(i => {
-          i.classList.toggle('active', i === btn && i.closest('#quizTopicChips') || i === btn && i.closest('#aiTopicChips'));
-        });
-        state.selectedTopic = actual;
-      });
-    });
-    document.querySelectorAll('[data-diff]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.selectedDifficulty = btn.dataset.diff;
-        document.querySelectorAll('[data-diff]').forEach(i => i.classList.toggle('active', i === btn));
-      });
-    });
-    document.querySelectorAll('[data-count]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.selectedAIQuestions = Number(btn.dataset.count);
-        document.querySelectorAll('[data-count]').forEach(i => i.classList.toggle('active', i === btn));
-      });
-    });
-    document.querySelectorAll('[data-msub]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.selectedMaterial = btn.dataset.msub;
-        document.querySelectorAll('[data-msub]').forEach(i => i.classList.toggle('active', i === btn));
-        const hideMap = { tenses: 'msub-tenses', tobe: 'msub-tobe', vocabulary: 'msub-vocabulary', grammar: 'msub-grammar' };
-        Object.entries(hideMap).forEach(([key, id]) => {
-          const node = document.getElementById(id);
-          if (node) node.classList.toggle('hidden', key !== state.selectedMaterial);
-        });
-      });
-    });
-    document.getElementById('startQuizBtn').addEventListener('click', startQuickQuiz);
-    document.getElementById('generateAiBtn').addEventListener('click', () => {
-      // AI test hook: simulate generation with the same dataset for this static build.
-      const list = BANK[state.selectedTopic === 'mixed' ? 'tenses' : state.selectedTopic][state.selectedDifficulty].slice(0, state.selectedAIQuestions);
-      const area = document.getElementById('aiPlayArea');
-      area.innerHTML = `<div class="card quiz-question"><h3>${state.selectedTopic === 'mixed' ? 'Mixed review' : state.selectedTopic}</h3><p>AI-generated test ready for ${state.selectedAIQuestions} questions.</p><button class="btn btn-primary" id="aiStartBtn">Start test</button></div>`;
-      document.getElementById('aiStartBtn').addEventListener('click', () => {
-        const items = list.map(q => ({ ...q }));
-        area.innerHTML = `
-          <div class="card quiz-stage quiz-question">
-            <h3>${items[0].q}</h3>
-            <div class="quiz-options">
-              ${items[0].options.map((opt, idx) => `<button class="quiz-option" data-ai-index="${idx}">${opt}</button>`).join('')}
-            </div>
-          </div>
-        `;
-        area.querySelectorAll('[data-ai-index]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const correct = Number(btn.dataset.aiIndex) === items[0].answer;
-            area.innerHTML = `
-              <div class="card quiz-stage quiz-question">
-                <h3>${items[0].q}</h3>
-                ${items[0].options.map((opt, idx) => {
-                  let cls = 'quiz-option';
-                  if (idx === items[0].answer) cls += ' correct';
-                  if (idx === Number(btn.dataset.aiIndex) && !correct) cls += ' incorrect';
-                  return `<button class="${cls}" disabled>${opt}</button>`;
-                }).join('')}
-                <div class="quiz-feedback ${correct ? '' : 'wrong'}">${correct ? 'Correct! ' : 'Not quite. '}${items[0].explain}</div>
-                <div class="quiz-actions"><button class="btn btn-primary btn-sm" id="aiNextBtn">Next</button></div>
-              </div>
-            `;
-            document.getElementById('aiNextBtn').addEventListener('click', () => {
-              const next = items.slice(1);
-              if (!next.length) {
-                area.innerHTML = `<div class="card quiz-results"><div class="score">${correct ? 100 : 80}%</div><div class="xp-earned">+10 XP</div><button class="btn btn-primary" id="aiAgainBtn">Practice again</button></div>`;
-                document.getElementById('aiAgainBtn').addEventListener('click', () => document.getElementById('generateAiBtn').click());
-                addXp(10, 'AI test');
-                return;
-              }
-              const q = next[0];
-              area.innerHTML = `
-                <div class="card quiz-stage quiz-question">
-                  <h3>${q.q}</h3>
-                  <div class="quiz-options">
-                    ${q.options.map((opt, idx) => `<button class="quiz-option" data-ai-index="${idx}">${opt}</button>`).join('')}
-                  </div>
-                </div>
-              `;
-              area.querySelectorAll('[data-ai-index]').forEach(nextBtn => {
-                nextBtn.addEventListener('click', () => {
-                  const right = Number(nextBtn.dataset.aiIndex) === q.answer;
-                  area.innerHTML = `
-                    <div class="card quiz-stage quiz-question">
-                      <h3>${q.q}</h3>
-                      ${q.options.map((opt, idx) => {
-                        let cls = 'quiz-option';
-                        if (idx === q.answer) cls += ' correct';
-                        if (idx === Number(nextBtn.dataset.aiIndex) && !right) cls += ' incorrect';
-                        return `<button class="${cls}" disabled>${opt}</button>`;
-                      }).join('')}
-                      <div class="quiz-feedback ${right ? '' : 'wrong'}">${right ? 'Correct! ' : 'Not quite. '}${q.explain}</div>
-                      <div class="quiz-actions"><button class="btn btn-primary btn-sm" id="aiNextBtn2">Next</button></div>
-                    </div>
-                  `;
-                  document.getElementById('aiNextBtn2').addEventListener('click', () => {
-                    const next2 = next.slice(1);
-                    if (!next2.length) {
-                      area.innerHTML = `<div class="card quiz-results"><div class="score">90%</div><div class="xp-earned">+10 XP</div><button class="btn btn-primary" id="aiAgainBtn">Practice again</button></div>`;
-                      document.getElementById('aiAgainBtn').addEventListener('click', () => document.getElementById('generateAiBtn').click());
-                      addXp(10, 'AI test');
-                      return;
-                    }
-                    const q2 = next2[0];
-                    area.innerHTML = `
-                      <div class="card quiz-stage quiz-question">
-                        <h3>${q2.q}</h3>
-                        <div class="quiz-options">
-                          ${q2.options.map((opt, idx) => `<button class="quiz-option" data-ai-index="${idx}">${opt}</button>`).join('')}
-                        </div>
-                      </div>
-                    `;
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  }
-
-  function init() {
-    loadState();
-    applyStreak();
-    syncLevelUI();
-    renderTenses();
-    renderVocabulary();
-    renderBadges();
-    renderHistory();
-    initNavigation();
-    bindChipSelectors();
-    setView('dashboard');
-    saveState();
-  }
-
-  init();
-})();
-</script>
+<script src="/Script.js" defer></script>
 </body>
 </html>

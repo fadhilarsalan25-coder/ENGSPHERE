@@ -1,0 +1,8 @@
+{
+  "name": "EngSphere",
+  "description": "A comprehensive English learning web application featuring grammar lessons, vocabulary flashcards, adaptive quizzes, and a targeted review dashboard for mastering previously missed questions.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
