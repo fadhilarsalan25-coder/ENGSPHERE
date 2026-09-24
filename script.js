@@ -1,5 +1,5 @@
 
-/* EngSphere application logic */
+/* EngSphere app logic */
 (function () {
   'use strict';
 
