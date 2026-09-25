@@ -1,18 +1,21 @@
-# JavaScript module layout
+# EngSphere JavaScript modules
 
-The application now has an ES-module boundary under `modules/`:
+The browser entry point is `modules/app.js`, loaded as an ES module by `index.html`.
 
-- `state.js` — state shape and defaults
-- `storage.js` — localStorage persistence and normalization
-- `utils.js` — shared formatting and HTML-safety helpers
-- `theme.js` — theme state and DOM synchronization
-- `i18n.js` — language constants and language-switching helpers
-- `notifications.js` — toast notifications
-- `index.js` — public module entry point
+## Layout
 
-`script.js` is intentionally retained as the compatibility runtime in this
-commit so existing saved state and event wiring are not changed. The extracted
-modules are side-effect free (apart from explicit DOM helper calls) and provide
-the seams needed to move the remaining feature groups—materials, quizzes,
-review, authentication, navigation, and landing animations—without changing
-behavior. Import `modules/index.js` from future feature modules.
+- `app.js` — application boundary and compatibility bridge
+- `state.js`, `storage.js` — state and persistence
+- `utils.js`, `dom.js`, `notifications.js` — shared infrastructure
+- `theme.js`, `i18n.js` — cross-cutting UI preferences
+- `navigation.js` — view navigation
+- `materials.js` — materials tab behaviour
+- `practice.js` — practice tab and quiz UI helpers
+
+The legacy runtime is currently imported only from `app.js`. This is deliberate:
+it preserves localStorage data and all existing behaviour while individual feature
+areas are extracted without a risky all-at-once rewrite. New code must be added
+to a focused module and imported through `app.js`; the compatibility import can
+be removed after the remaining legacy handlers have been migrated.
+
+All modules use explicit imports/exports and browser-compatible relative paths.
