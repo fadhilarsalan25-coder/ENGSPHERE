@@ -43,17 +43,17 @@ body {
 .card {
     background-color: var(--navy-900); /* Menggunakan warna navy sekunder untuk kotak kartu */
 }    
-  /* Light Theme */
-  :root[data-theme="light"],
-  html[data-theme="light"],
-  body[data-theme="light"] {
+  /* Theme */
+  :root[data-theme="navy-blue"],
+  html[data-theme="navy-blue"],
+  body[data-theme="navy-blue"] {
     --ink:#f8fafc;
-    --navy-950:#f1f5f9;
-    --navy-900:#ffffff;
-    --navy-800:#f8fafc;
-    --navy-700:#e2e8f0;
-    --navy-600:#cbd5e1;
-    --navy-500:#94a3b8;
+    --navy-950:#060c1c;
+    --navy-900:#0a1428;
+    --navy-800:#0f1d38;
+    --navy-700:#142499;
+    --navy-600:#1b3160;
+    --navy-500:#254080;
     --line:rgba(15,23,42,0.12);
     --line-strong:rgba(15,23,42,0.22);
     --sky:#0284c7;
