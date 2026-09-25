@@ -1,3 +1,2 @@
-import { init } from './bootstrap.js';
-
-document.addEventListener('DOMContentLoaded', init);
+/* Compatibility entry point for direct /script.js references. */
+import './modules/bootstrap.js';
