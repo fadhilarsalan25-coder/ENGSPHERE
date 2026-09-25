@@ -30,6 +30,19 @@
     --shadow-2:0 8px 30px rgba(2,6,20,.55);
     --ease:cubic-bezier(.22,.9,.32,1);
   }
+body {
+    background-color: var(--navy-950); /* Mengubah latar belakang dasar menjadi Navy Gelap (#060c1c) */
+    color: var(--text);                 /* Mengubah warna teks utama menjadi biru terang (#eaf1ff) */
+    font-family: var(--font-b);         /* Mengatur font dasar menggunakan 'Inter' */
+    margin: 0;
+    padding: 0;
+#landing, .landing-body {
+    background-color: var(--navy-950);
+}
+
+.card {
+    background-color: var(--navy-900); /* Menggunakan warna navy sekunder untuk kotak kartu */
+}    
   /* Light Theme */
   :root[data-theme="light"],
   html[data-theme="light"],
