@@ -31,8 +31,8 @@
     --ease:cubic-bezier(.22,.9,.32,1);
   }
 body {
-    background-color: var(--navy-950); /* Mengubah latar belakang dasar menjadi Navy Gelap (#060c1c) */
-    color: var(--text);                 /* Mengubah warna teks utama menjadi biru terang (#eaf1ff) */
+    background-color: var(--navy-950) !important;  /* Mengubah latar belakang dasar menjadi Navy Gelap (#060c1c) */
+    color: var(--text) !important;          /* Mengubah warna teks utama menjadi biru terang (#eaf1ff) */
     font-family: var(--font-b);         /* Mengatur font dasar menggunakan 'Inter' */
     margin: 0;
     padding: 0;
