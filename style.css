@@ -184,9 +184,11 @@ body {
     position: relative !important;
     width: 180px !important;
     height: 180px !important;
-    margin: var(--sp-4) 0 var(--sp-5) !important;
+    margin: var(--sp-4) auto var(--sp-5) !important;
     border-radius: 50% !important;
-    display: block !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
 
   .hero-orb-wrap img {
