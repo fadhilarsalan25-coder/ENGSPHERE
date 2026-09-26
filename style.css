@@ -67,42 +67,42 @@ body {
     --shadow-1:0 1px 3px rgba(0,0,0,.08);
     --shadow-2:0 10px 25px rgba(15,23,42,.08);
   }
-  html[data-theme="light"] body{
+  html[data-theme="navy-blue"] body{
     background:#f1f5f9;
     color:#0f172a;
   }
-  html[data-theme="light"] .topbar{
+  html[data-theme="navy-blue"] .topbar{
     background:rgba(255,255,255,.94);
     border-bottom:1px solid var(--line);
   }
-  html[data-theme="light"] #landing,
-  html[data-theme="light"] .landing-body,
-  html[data-theme="light"] .landing-footer{
-    background:#f1f5f9;
+  html[data-theme="navy-blue"] #landing,
+  html[data-theme="navy-blue"] .landing-body,
+  html[data-theme="navy-blue"] .landing-footer{
+    background:#060c1c;
   }
-  html[data-theme="light"] .card,
-  html[data-theme="light"] .ql-item,
-  html[data-theme="light"] .tense-card,
-  html[data-theme="light"] .about-card,
-  html[data-theme="light"] .method-card,
-  html[data-theme="light"] .lf-item{
-    background:#ffffff;
+  html[data-theme="navy-blue"] .card,
+  html[data-theme="navy-blue"] .ql-item,
+  html[data-theme="navy-blue"] .tense-card,
+  html[data-theme="navy-blue"] .about-card,
+  html[data-theme="navy-blue"] .method-card,
+  html[data-theme="navy-blue"] .lf-item{
+    background:#0a1428;
     border-color:rgba(15,23,42,0.12);
     box-shadow:0 2px 10px rgba(15,23,42,0.03);
   }
-  html[data-theme="light"] .review-section{
+  html[data-theme="navy-blue"] .review-section{
     background:linear-gradient(180deg,#ffffff,#f8fafc);
   }
-  html[data-theme="light"] .modal-overlay{
+  html[data-theme="navy-blue"] .modal-overlay{
     background:rgba(15,23,42,0.5);
   }
-  html[data-theme="light"] .modal-box{
-    background:#ffffff;
+  html[data-theme="navy-blue"] .modal-box{
+    background:#0f1d38;
     box-shadow:0 20px 50px rgba(15,23,42,0.18);
   }
-  html[data-theme="light"] .text-input{
-    background:#f8fafc;
-    color:#0f172a;
+  html[data-theme="navy-blue"] .text-input{
+    background:#142449;
+    color:#ffffff;
     border-color:var(--line-strong);
   }
   *,*::before,*::after{box-sizing:border-box;}
