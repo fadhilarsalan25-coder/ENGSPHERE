@@ -181,11 +181,12 @@ body {
   .landing-hero{position:relative;z-index:2;padding:var(--sp-4) 0 var(--sp-8);text-align:center;display:flex;flex-direction:column;align-items:center;}
     
   .hero-orb-wrap {
-    position: relative;
-    width: 180px;
-    height: 180px;
-    margin: var(--sp-4) 0 var(--sp-5);
-    border-radius: 50%;
+    position: relative !important;
+    width: 180px !important;
+    height: 180px !important;
+    margin: var(--sp-4) 0 var(--sp-5) !important;
+    border-radius: 50% !important;
+    display: block !important;
   }
 
   .hero-orb-wrap img {
@@ -206,7 +207,7 @@ body {
     border-radius: 50%;
     background: radial-gradient(circle, rgba(79,195,255,.45), transparent 65%);
     filter: blur(18px);
-    z-index: 1;
+    z-index: 1 !important;
     animation: orbGlow 3.6s ease-in-out infinite;
   }
 
