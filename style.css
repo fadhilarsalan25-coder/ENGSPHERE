@@ -38,6 +38,8 @@ body {
     padding: 0;
 #landing, .landing-body {
     background-color: var(--navy-950);
+    position: relative;
+    z-index: 10 !important;
 }
 
 .card {
