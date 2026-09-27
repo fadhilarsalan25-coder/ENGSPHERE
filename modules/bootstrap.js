@@ -4,6 +4,7 @@ import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from 
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
 import { openAuthModal, openProfileModal, closeAllModals, signUpUser, loginUser, continueAsGuest, signOutUser, exportUserData, importUserData } from './auth.js';
 import { initLandingScrollAnimations } from './landing.js';
+import { bindNavigation, setView } from './navigation.js';
 
 export function syncProfileHubUI() {
   const profile = state.profiles?.[state.activeProfile] || state.profiles?.[0] || { name: 'Learner', initials: 'L', email: 'learner@engsphere.app' };
