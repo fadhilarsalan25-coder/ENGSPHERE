@@ -46,7 +46,7 @@ export function renderAuthSavedProfiles() {
   });
 }
 
-export function openAuthModal(mode = 'signup') {
+export function openAuthModal(mode = 'sign-up') {
   const modal = document.getElementById('authModalOverlay');
   if (!modal) return;
   setAuthAlert('');
@@ -57,7 +57,7 @@ export function openAuthModal(mode = 'signup') {
   const paneSignUp = document.getElementById('authPaneSignUp');
   const paneLogin = document.getElementById('authPaneLogin');
 
-  if (mode === 'signup') {
+  if (mode === 'sign-up') {
     tabSignUp?.classList.add('active');
     tabLogin?.classList.remove('active');
     paneSignUp?.classList.remove('hidden');
