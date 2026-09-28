@@ -106,7 +106,9 @@ export function initNavigation() {
 export function init() {
   window.setView = setView;
   window.loginUser = loginUser;
+  window.openAuthModal = openAuthModal;
   loadState(); applyTheme(state.theme, false); applyLanguage(state.lang, false); initLanguageSwitcher(); applyStreak(); syncLevelUI(); renderTenses(); renderVocabulary(); renderBadges(); renderHistory(); renderReviewSection(); initNavigation(); bindChipSelectors(); initLandingScrollAnimations();
+  cont isLogged = state.isLoggedIn === true;
   document.getElementById('landing')?.classList.toggle('hidden', state.isLoggedIn);
   document.getElementById('app')?.classList.toggle('hidden', !state.isLoggedIn);
   if (state.isLoggedIn) setView(state.currentView || 'dashboard');
