@@ -112,6 +112,9 @@ export function init() {
   document.getElementById('landing')?.classList.toggle('hidden', state.isLoggedIn);
   document.getElementById('app')?.classList.toggle('hidden', !state.isLoggedIn);
   if (state.isLoggedIn) setView(state.currentView || 'dashboard');
+} else {
+  setview ('landing');
+}
   saveState();
 }
 
