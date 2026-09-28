@@ -103,15 +103,167 @@ export function initNavigation() {
   document.getElementById('importBackupInput')?.addEventListener('change', e => importUserData(e.target.files?.[0]));
 }
 
+/* ==========================================================================
+   PERBAIKAN SUMBER MASALAH PADA FUNGSI INIT() DI BOOTSTRAP.JS
+   ========================================================================== */
 export function init() {
+  // 1. Rekatkan fungsi ke objek window agar bisa diakses silang antar modul tanpa tertimpa
   window.setView = setView;
   window.loginUser = loginUser;
-  loadState(); applyTheme(state.theme, false); applyLanguage(state.lang, false); initLanguageSwitcher(); applyStreak(); syncLevelUI(); renderTenses(); renderVocabulary(); renderBadges(); renderHistory(); renderReviewSection(); initNavigation(); bindChipSelectors(); initLandingScrollAnimations();
-  document.getElementById('landing')?.classList.toggle('hidden', state.isLoggedIn);
-  document.getElementById('app')?.classList.toggle('hidden', !state.isLoggedIn);
-  if (state.isLoggedIn) setView(state.currentView || 'dashboard');
+  window.openAuthModal = openAuthModal; // Kunci pemicu modal secara global
+
+  loadState(); 
+  applyTheme(state.theme, false); 
+  applyLanguage(state.lang, false); 
+  initLanguageSwitcher(); 
+  applyStreak(); 
+  syncLevelUI(); 
+  renderTenses(); 
+  renderVocabulary(); 
+  renderBadges(); 
+  renderHistory(); 
+  renderReviewSection(); 
+  
+  // 2. Jalankan pengikat navigasi agar addEventListener pada tombol landing resmi aktif
+  initNavigation(); 
+  bindChipSelectors(); 
+  initLandingScrollAnimations();
+  
+  // 3. Kontrol visibilitas halaman landing vs aplikasi utama secara tegas
+  const isLogged = state.isLoggedIn === true;
+  document.getElementById('landing')?.classList.toggle('hidden', isLogged);
+  document.getElementById('app')?.classList.toggle('hidden', !isLogged);
+  
+  // Jika sudah login masuk ke dashboard, jika belum kunci tampilan aktif di landing
+  if (isLogged) {
+    setView(state.currentView || 'dashboard');
+  } else {
+    // Memaksa browser memastikan kelas .hidden lepas dari seksi landing page Anda
+    document.getElementById('landing')?.classList.remove('hidden');
+  }
+  
   saveState();
 }
+/* ==========================================================================
+   PERBAIKAN SUMBER MASALAH PADA FUNGSI INIT() DI BOOTSTRAP.JS
+   ========================================================================== */
+export function init() {
+  // 1. Rekatkan fungsi ke objek window agar bisa diakses silang antar modul tanpa tertimpa
+  window.setView = setView;
+  window.loginUser = loginUser;
+  window.openAuthModal = openAuthModal; // Kunci pemicu modal secara global
+
+  loadState(); 
+  applyTheme(state.theme, false); 
+  applyLanguage(state.lang, false); 
+  initLanguageSwitcher(); 
+  applyStreak(); 
+  syncLevelUI(); 
+  renderTenses(); 
+  renderVocabulary(); 
+  renderBadges(); 
+  renderHistory(); 
+  renderReviewSection(); 
+  
+  // 2. Jalankan pengikat navigasi agar addEventListener pada tombol landing resmi aktif
+  initNavigation(); 
+  bindChipSelectors(); 
+  initLandingScrollAnimations();
+  
+  // 3. Kontrol visibilitas halaman landing vs aplikasi utama secara tegas
+  const isLogged = state.isLoggedIn === true;
+  document.getElementById('landing')?.classList.toggle('hidden', isLogged);
+  document.getElementById('app')?.classList.toggle('hidden', !isLogged);
+  
+  // Jika sudah login masuk ke dashboard, jika belum kunci tampilan aktif di landing
+  if (isLogged) {
+    setView(state.currentView || 'dashboard');
+  } else {
+    // Memaksa browser memastikan kelas .hidden lepas dari seksi landing page Anda
+    document.getElementById('landing')?.classList.remove('hidden');
+  }
+  
+  saveState();
+}
+
+export function init() {
+
+  window.setView = setView;
+  window.loginUser = loginUser;
+  window.openAuthModal = openAuthModal; // Kunci pemicu modal secara global
+
+  loadState(); 
+  applyTheme(state.theme, false); 
+  applyLanguage(state.lang, false); 
+  initLanguageSwitcher(); 
+  applyStreak(); 
+  syncLevelUI(); 
+  renderTenses(); 
+  renderVocabulary(); 
+  renderBadges(); 
+  renderHistory(); 
+  renderReviewSection(); 
+  
+
+  initNavigation(); 
+  bindChipSelectors(); 
+  initLandingScrollAnimations();
+  
+
+  const isLogged = state.isLoggedIn === true;
+  document.getElementById('landing')?.classList.toggle('hidden', isLogged);
+  document.getElementById('app')?.classList.toggle('hidden', !isLogged);
+  
+
+  if (isLogged) {
+    setView(state.currentView || 'dashboard');
+  } else {
+
+    document.getElementById('landing')?.classList.remove('hidden');
+  }
+  
+  saveState();
+}
+
+export function init() {
+  // 1. Rekatkan fungsi ke objek window agar bisa diakses silang antar modul tanpa tertimpa
+  window.setView = setView;
+  window.loginUser = loginUser;
+  window.openAuthModal = openAuthModal; // Kunci pemicu modal secara global
+
+  loadState(); 
+  applyTheme(state.theme, false); 
+  applyLanguage(state.lang, false); 
+  initLanguageSwitcher(); 
+  applyStreak(); 
+  syncLevelUI(); 
+  renderTenses(); 
+  renderVocabulary(); 
+  renderBadges(); 
+  renderHistory(); 
+  renderReviewSection(); 
+  
+  // 2. Jalankan pengikat navigasi agar addEventListener pada tombol landing resmi aktif
+  initNavigation(); 
+  bindChipSelectors(); 
+  initLandingScrollAnimations();
+  
+  // 3. Kontrol visibilitas halaman landing vs aplikasi utama secara tegas
+  const isLogged = state.isLoggedIn === true;
+  document.getElementById('landing')?.classList.toggle('hidden', isLogged);
+  document.getElementById('app')?.classList.toggle('hidden', !isLogged);
+  
+  // Jika sudah login masuk ke dashboard, jika belum kunci tampilan aktif di landing
+  if (isLogged) {
+    setView(state.currentView || 'dashboard');
+  } else {
+    // Memaksa browser memastikan kelas .hidden lepas dari seksi landing page Anda
+    document.getElementById('landing')?.classList.remove('hidden');
+  }
+  
+  saveState();
+}
+
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
