@@ -113,7 +113,7 @@ export function init() {
   document.getElementById('app')?.classList.toggle('hidden', !state.isLoggedIn);
   if (state.isLoggedIn) setView(state.currentView || 'dashboard');
 } else {
-  setview ('landing');
+  setview('landing');
 }
   saveState();
 }
