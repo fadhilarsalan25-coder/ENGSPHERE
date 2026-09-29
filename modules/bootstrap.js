@@ -85,9 +85,23 @@ export function initNavigation() {
   document.getElementById('closeAuthModalBtn')?.addEventListener('click', closeAllModals);
   document.getElementById('closeProfileModalBtn')?.addEventListener('click', closeAllModals);
   document.getElementById('closeProfileModalBtn2')?.addEventListener('click', closeAllModals);
-  document.getElementById('landingLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
-  document.getElementById('landingSignUpBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
-  document.getElementById('getStartedBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
+  document.getElementById('landingLoginBtn')?.addEventListener('click', () => {
+   const overlay = document.getElementById('authModalOverlay');
+    if (overlay) overlay.style.setProperty('display', 'flex', 'important'); // Paksa tampil
+    openAuthModal('login');
+  });
+document.getElementById('landingSignUpBtn')?.addEventListener('click', () => {
+     const overlay = document.getElementById('authModalOverlay');
+    if (overlay) overlay.style.setProperty('display', 'flex', 'important'); // Paksa tampil
+    openAuthModal('sign-up');
+  });
+  document.getElementById('getStartedBtn')?.addEventListener('click', () => {
+  const overlay = document.getElementById('authModalOverlay');
+    if (overlay) overlay.style.setProperty('display', 'flex', 'important'); // Paksa tampil
+    openAuthModal('sign-up');
+  });
+  
+  
   document.getElementById('authQuickGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('authLoginGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('profilePillBtn')?.addEventListener('click', openProfileModal);
