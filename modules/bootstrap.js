@@ -86,21 +86,26 @@ export function initNavigation() {
   document.getElementById('closeProfileModalBtn')?.addEventListener('click', closeAllModals);
   document.getElementById('closeProfileModalBtn2')?.addEventListener('click', closeAllModals);
   document.getElementById('landingLoginBtn')?.addEventListener('click', () => {
-   const overlay = document.getElementById('authModalOverlay');
-    if (overlay) overlay.style.setProperty('display', 'flex', 'important'); // Paksa tampil
-    openAuthModal('login');
+  // ADDED: Backdrop click dismissal for both modals
+  document.getElementById('authModalOverlay')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeAllModals();
   });
-document.getElementById('landingSignUpBtn')?.addEventListener('click', () => {
-     const overlay = document.getElementById('authModalOverlay');
-    if (overlay) overlay.style.setProperty('display', 'flex', 'important'); // Paksa tampil
-    openAuthModal('sign-up');
+  document.getElementById('profileModalOverlay')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeAllModals();
   });
-  document.getElementById('getStartedBtn')?.addEventListener('click', () => {
-  const overlay = document.getElementById('authModalOverlay');
-    if (overlay) overlay.style.setProperty('display', 'flex', 'important'); // Paksa tampil
-    openAuthModal('sign-up');
+
+  // ADDED: Escape key listener
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAllModals();
   });
-  
+
+  // ADDED: Explicit bindings for all landing and hero CTA variants
+  document.getElementById('landingLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
+  document.getElementById('landingSignUpBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
+  document.getElementById('getStartedBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
+  document.getElementById('getStartedBtn2')?.addEventListener('click', () => openAuthModal('sign-up'));
+  document.getElementById('landingHeroLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
+  document.getElementById('landingBottomLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
   
   document.getElementById('authQuickGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('authLoginGuestBtn')?.addEventListener('click', continueAsGuest);
