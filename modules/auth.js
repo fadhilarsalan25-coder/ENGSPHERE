@@ -51,13 +51,14 @@ export function openAuthModal(mode = 'sign-up') {
   if (!modal) return;
   setAuthAlert('');
   modal.classList.remove('hidden');
+  modal.style.setProperty('display', 'flex', 'important');
 
   const tabSignUp = document.getElementById('authTabSignUp');
   const tabLogin = document.getElementById('authTabLogin');
   const paneSignUp = document.getElementById('authPaneSignUp');
   const paneLogin = document.getElementById('authPaneLogin');
 
-  if (mode === 'sign-up') {
+  if (mode === 'sign-up' || mode === 'signup') {
     tabSignUp?.classList.add('active');
     tabLogin?.classList.remove('active');
     paneSignUp?.classList.remove('hidden');
@@ -77,11 +78,20 @@ export function openProfileModal() {
   const modal = document.getElementById('profileModalOverlay');
   if (!modal) return;
   modal.classList.remove('hidden');
+  modal.style.setProperty('display', 'flex', 'important');
 }
 
 export function closeAllModals() {
-  document.getElementById('authModalOverlay')?.classList.add('hidden');
-  document.getElementById('profileModalOverlay')?.classList.add('hidden');
+  const authModal = document.getElementById('authModalOverlay');
+  if (authModal) {
+    authModal.classList.add('hidden');
+    authModal.style.removeProperty('display');
+  }
+  const profModal = document.getElementById('profileModalOverlay');
+  if (profModal) {
+    profModal.classList.add('hidden');
+    profModal.style.removeProperty('display');
+  }
   document.getElementById('hubNameEditForm')?.classList.add('hidden');
   setAuthAlert('');
 }

@@ -1,3 +1,4 @@
+export { STORAGE_KEY } from './data.js';
 import { STORAGE_KEY } from './data.js';
 
 export const createDefaultState = () => ({
@@ -85,3 +86,4 @@ export function levelLabel(level) {
   if (level <= 5) return 'Intermediate';
   return 'Advanced';
 }
+
