@@ -1,4 +1,4 @@
-export const I18N = {
+export const I18N = { 
   en: {
     langCode: 'EN',
     langTitle: 'English (EN)',
