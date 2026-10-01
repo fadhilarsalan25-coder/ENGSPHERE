@@ -5,6 +5,7 @@ import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } fro
 import { openAuthModal, openProfileModal, closeAllModals, signUpUser, loginUser, continueAsGuest, signOutUser, exportUserData, importUserData } from './auth.js';
 import { initLandingScrollAnimations } from './landing.js';
 import { bindNavigation, setView as navSetView } from './navigation.js';
+import { I18N, translateUI, closeAllLangDropdowns } from './i18n.js';
 
 export function setView(name) {
   navSetView(name, (currentView) => {
@@ -93,7 +94,14 @@ export function syncLevelUI() {
   });
 
   const word = document.getElementById('dashLevelWord');
-  if (word) word.textContent = levelLabel(state.level);
+  if (word) {
+    const rawLabel = levelLabel(state.level);
+    if (state.lang === 'id') {
+      word.textContent = rawLabel === 'Beginner' ? 'Pemula' : rawLabel === 'Advanced' ? 'Mahir' : 'Menengah';
+    } else {
+      word.textContent = rawLabel;
+    }
+  }
 
   syncProfileHubUI();
 }
@@ -144,25 +152,19 @@ export function toggleTheme() {
   showToast(`Switched to ${state.theme === 'light' ? 'Light' : 'Dark'} mode`);
 }
 
-export function applyLanguage(lang, persist = true) {
+export function applyLanguage(lang, persist = true, notify = false) {
   state.lang = lang === 'id' ? 'id' : 'en';
-  document.documentElement.lang = state.lang;
-  document.querySelectorAll('.lang-opt').forEach(opt => {
-    opt.classList.toggle('active', opt.dataset.setLang === state.lang);
-  });
-  const labelEn = state.lang === 'id' ? 'ID' : 'EN';
-  ['landingLangLabel', 'appLangLabel', 'modalLangLabel'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = labelEn;
-  });
+  translateUI(state.lang, state);
+  closeAllLangDropdowns();
   if (persist) saveState();
+  if (notify) showToast(I18N[state.lang]?.switchMsg || 'Language updated');
 }
 
 export function initLanguageSwitcher() {
   document.querySelectorAll('.lang-opt[data-set-lang]').forEach(opt => {
-    opt.addEventListener('click', () => {
-      applyLanguage(opt.dataset.setLang);
-      document.querySelectorAll('.lang-dropdown').forEach(dropdown => dropdown.classList.add('hidden'));
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyLanguage(opt.dataset.setLang, true, true);
     });
   });
 
@@ -171,12 +173,18 @@ export function initLanguageSwitcher() {
     const dropdown = wrap.querySelector('.lang-dropdown');
     button?.addEventListener('click', e => {
       e.stopPropagation();
-      dropdown?.classList.toggle('hidden');
+      const isHidden = dropdown?.classList.contains('hidden');
+      closeAllLangDropdowns();
+      if (isHidden) {
+        dropdown?.classList.remove('hidden');
+        wrap.classList.add('open');
+        button.setAttribute('aria-expanded', 'true');
+      }
     });
   });
 
   document.addEventListener('click', () => {
-    document.querySelectorAll('.lang-dropdown').forEach(dropdown => dropdown.classList.add('hidden'));
+    closeAllLangDropdowns();
   });
 }
 
@@ -354,7 +362,7 @@ export function bindChipSelectors() {
     renderBadges();
     showToast('Quiz history cleared');
   });
-  document.getElementById('hubResetAllBtn')?.addEventListener('click', () => {
+  const handleResetAll = () => {
     state.xp = 0;
     state.level = 1;
     state.streak = 0;
@@ -366,7 +374,9 @@ export function bindChipSelectors() {
     renderHistory();
     renderReviewSection();
     showToast('All learning data has been reset');
-  });
+  };
+  document.getElementById('hubResetAllBtn')?.addEventListener('click', handleResetAll);
+  document.getElementById('resetProgressBtn')?.addEventListener('click', handleResetAll);
 
   // Personalized Learning Save
   document.getElementById('savePersonalizedBtn')?.addEventListener('click', () => {
