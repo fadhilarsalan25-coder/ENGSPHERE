@@ -1,6 +1,20 @@
 import { $, $$, on } from './dom.js';
 
 export function setView(name, onViewChange = () => {}) {
+  if (name === 'landing') {
+    const landing = $('#landing');
+    const app = $('#app');
+    if (landing) landing.classList.remove('hidden');
+    if (app) app.classList.add('hidden');
+    if (typeof onViewChange === 'function') onViewChange(name);
+    return;
+  }
+
+  const landing = $('#landing');
+  const app = $('#app');
+  if (landing) landing.classList.add('hidden');
+  if (app) app.classList.remove('hidden');
+
   $$('.view').forEach(view => {
     const active = view.dataset.view === name;
     view.classList.toggle('hidden', !active);
@@ -10,13 +24,21 @@ export function setView(name, onViewChange = () => {}) {
       view.classList.add('view-enter');
     }
   });
-  $$('[data-view]').forEach(button => {
+
+  $$('.topnav button[data-view]').forEach(button => {
     button.classList.toggle('active', button.dataset.view === name);
   });
-  onViewChange(name);
+
+  if (window.scrollY > 40) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (typeof onViewChange === 'function') {
+    onViewChange(name);
+  }
 }
 
 export function bindNavigation(onNavigate = () => {}) {
-  $$('[data-view]').forEach(button => on(button, 'click', () => onNavigate(button.dataset.view)));
+  $$('.topnav button[data-view]').forEach(button => on(button, 'click', () => onNavigate(button.dataset.view)));
   $$('[data-goto]').forEach(button => on(button, 'click', () => onNavigate(button.dataset.goto)));
 }
