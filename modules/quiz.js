@@ -222,6 +222,7 @@ export function renderQuiz() {
         recordIncorrectQuestion(q, pick, q.topic, q.difficulty);
       }
 
+      const explainText = isId ? (q.explain_id || q.explain) : (q.explain || q.explain_id);
       playArea.innerHTML = `
         <div class="card quiz-stage quiz-question">
           <div class="quiz-progress">${progress}</div>
@@ -238,7 +239,7 @@ export function renderQuiz() {
             `).join('')}
           </div>
           <div class="quiz-feedback ${correct ? '' : 'wrong'}">
-            ${correct ? (isId ? '<strong>✓ Benar!</strong>' : '<strong>✓ Correct!</strong>') : (isId ? '<strong>✕ Kurang tepat.</strong>' : '<strong>✕ Incorrect.</strong>')} ${escapeHtml(q.explain)}
+            ${correct ? (isId ? '<strong>✓ Benar!</strong>' : '<strong>✓ Correct!</strong>') : (isId ? '<strong>✕ Kurang tepat.</strong>' : '<strong>✕ Incorrect.</strong>')} ${escapeHtml(explainText)}
           </div>
           <div style="margin-top:var(--sp-3);">
             <button class="btn btn-primary btn-sm" id="nextQuizBtn">
@@ -260,3 +261,4 @@ export function renderQuiz() {
     renderQuiz();
   });
 }
+
