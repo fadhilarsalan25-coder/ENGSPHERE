@@ -133,18 +133,19 @@ export function renderQuiz() {
     const score = total ? Math.round((state.quiz.score / total) * 100) : 100;
     const xp = Math.max(5, Math.round(score / 10));
 
+    const isId = state.lang === 'id';
     playArea.innerHTML = `
       <div class="card quiz-results">
         <div class="score">${score}%</div>
         <div class="xp-earned">+${xp} XP</div>
         <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;">
-          ${score >= 80 ? '🎉 Excellent mastery! Keep up the momentum.' : 'Good practice session! Review incorrect items to strengthen your grammar.'}
+          ${score >= 80 ? (isId ? '🎉 Luar biasa! Pemahaman materi Anda sangat baik.' : '🎉 Excellent mastery! Keep up the momentum.') : (isId ? 'Latihan yang bagus! Tinjau soal yang salah untuk memperkuat tata bahasa Anda.' : 'Good practice session! Review incorrect items to strengthen your grammar.')}
         </p>
         <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:var(--sp-4);">
           <button class="btn btn-primary" id="quizAgainBtn">
-            ${state.quiz.isReviewMode ? 'Back to Dashboard Review' : (isAi ? '⚡ Generate Another Test' : 'Try Another Quiz')}
+            ${state.quiz.isReviewMode ? (isId ? 'Kembali ke Review Dashboard' : 'Back to Dashboard Review') : (isAi ? (isId ? '⚡ Buat Tes Lainnya' : '⚡ Generate Another Test') : (isId ? 'Coba Kuis Lainnya' : 'Try Another Quiz'))}
           </button>
-          <button class="btn btn-ghost" id="quizDashboardBtn">Go to Dashboard</button>
+          <button class="btn btn-ghost" id="quizDashboardBtn">${isId ? 'Kembali ke Beranda' : 'Go to Dashboard'}</button>
         </div>
       </div>
     `;
@@ -191,12 +192,13 @@ export function renderQuiz() {
     <span class="dot ${index < currentIdx ? 'done' : (index === currentIdx ? 'current' : '')}"></span>
   `).join('');
 
+  const isId = state.lang === 'id';
   playArea.innerHTML = `
     <div class="card quiz-stage quiz-question">
       <div class="quiz-progress">${progress}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2);">
         <span class="review-topic-tag">${escapeHtml(formatTopic(q.topic || state.selectedTopic))}</span>
-        <span style="font-size:.76rem;color:var(--muted);">Question ${currentIdx + 1} of ${state.quiz.questions.length}</span>
+        <span style="font-size:.76rem;color:var(--muted);">${isId ? `Pertanyaan ${currentIdx + 1} dari ${state.quiz.questions.length}` : `Question ${currentIdx + 1} of ${state.quiz.questions.length}`}</span>
       </div>
       <h3>${escapeHtml(q.q)}</h3>
       <div class="quiz-options">
@@ -205,7 +207,7 @@ export function renderQuiz() {
         `).join('')}
       </div>
       <div style="margin-top:var(--sp-3);display:flex;justify-content:space-between;align-items:center;">
-        <button class="btn btn-ghost btn-sm" id="skipQuizBtn">Skip Question</button>
+        <button class="btn btn-ghost btn-sm" id="skipQuizBtn">${isId ? 'Lewati Pertanyaan' : 'Skip Question'}</button>
       </div>
     </div>
   `;
@@ -225,7 +227,7 @@ export function renderQuiz() {
           <div class="quiz-progress">${progress}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2);">
             <span class="review-topic-tag">${escapeHtml(formatTopic(q.topic || state.selectedTopic))}</span>
-            <span style="font-size:.76rem;color:var(--muted);">Question ${currentIdx + 1} of ${state.quiz.questions.length}</span>
+            <span style="font-size:.76rem;color:var(--muted);">${isId ? `Pertanyaan ${currentIdx + 1} dari ${state.quiz.questions.length}` : `Question ${currentIdx + 1} of ${state.quiz.questions.length}`}</span>
           </div>
           <h3>${escapeHtml(q.q)}</h3>
           <div class="quiz-options">
@@ -236,11 +238,11 @@ export function renderQuiz() {
             `).join('')}
           </div>
           <div class="quiz-feedback ${correct ? '' : 'wrong'}">
-            ${correct ? '<strong>✓ Correct!</strong>' : '<strong>✕ Incorrect.</strong>'} ${escapeHtml(q.explain)}
+            ${correct ? (isId ? '<strong>✓ Benar!</strong>' : '<strong>✓ Correct!</strong>') : (isId ? '<strong>✕ Kurang tepat.</strong>' : '<strong>✕ Incorrect.</strong>')} ${escapeHtml(q.explain)}
           </div>
           <div style="margin-top:var(--sp-3);">
             <button class="btn btn-primary btn-sm" id="nextQuizBtn">
-              ${currentIdx === state.quiz.questions.length - 1 ? 'Finish & View Score' : 'Next Question →'}
+              ${currentIdx === state.quiz.questions.length - 1 ? (isId ? 'Selesai & Lihat Skor' : 'Finish & View Score') : (isId ? 'Pertanyaan Berikutnya →' : 'Next Question →')}
             </button>
           </div>
         </div>
@@ -258,4 +260,3 @@ export function renderQuiz() {
     renderQuiz();
   });
 }
-
