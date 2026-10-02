@@ -23,6 +23,11 @@ export const TENSES = [
       'She works at a city hospital every weekday.',
       'Water boils at 100°C under normal atmospheric pressure.',
       'The morning train leaves promptly at 07:15.'
+    ],
+    ex_id: [
+      'Dia bekerja di rumah sakit kota setiap hari kerja.',
+      'Air mendidih pada suhu 100°C di bawah tekanan atmosfer normal.',
+      'Kereta pagi berangkat tepat waktu pada pukul 07.15.'
     ]
   },
   {
@@ -49,6 +54,11 @@ export const TENSES = [
       'I am currently preparing for an English presentation.',
       'He is staying with his cousins in Jakarta this week.',
       'We are meeting the design team tomorrow afternoon.'
+    ],
+    ex_id: [
+      'Saya saat ini sedang bersiap untuk presentasi bahasa Inggris.',
+      'Dia tinggal sementara bersama sepupunya di Jakarta pekan ini.',
+      'Kami sudah menjadwalkan pertemuan dengan tim desain besok siang.'
     ]
   },
   {
@@ -75,6 +85,11 @@ export const TENSES = [
       'I have already submitted the project report to my supervisor.',
       'She has visited Japan three times and loves the cuisine.',
       'They have lived in Jakarta since 2019.'
+    ],
+    ex_id: [
+      'Saya sudah mengumpulkan laporan proyek kepada atasan saya.',
+      'Dia sudah mengunjungi Jepang tiga kali dan menyukai kulinernya.',
+      'Mereka telah tinggal di Jakarta sejak tahun 2019 (dan masih tinggal hingga kini).'
     ]
   },
   {
@@ -99,6 +114,11 @@ export const TENSES = [
       'I have been studying grammar rules for three hours without a break.',
       'It has been raining all morning, so the roads are still slippery.',
       'She is exhausted because she has been working non-stop.'
+    ],
+    ex_id: [
+      'Saya telah belajar aturan tata bahasa selama tiga jam tanpa istirahat.',
+      'Hujan turun terus sepanjang pagi, jadi jalanan masih licin.',
+      'Dia kelelahan karena telah bekerja tanpa henti.'
     ]
   },
   {
@@ -123,6 +143,11 @@ export const TENSES = [
       'We visited the national museum yesterday afternoon.',
       'He closed the laptop, grabbed his keys, and left the office.',
       'I played badminton every weekend when I was in school.'
+    ],
+    ex_id: [
+      'Kami mengunjungi museum nasional kemarin sore.',
+      'Dia menutup laptopnya, mengambil kuncinya, lalu keluar kantor.',
+      'Saya bermain bulu tangkis setiap akhir pekan saat masih bersekolah.'
     ]
   },
   {
@@ -147,6 +172,11 @@ export const TENSES = [
       'At 8 p.m. yesterday, I was reviewing my vocabulary flashcards.',
       'While I was cooking dinner, someone knocked on the door.',
       'She was reading a novel while her brother was studying.'
+    ],
+    ex_id: [
+      'Pada pukul 8 malam kemarin, saya sedang mengulang kartu flashcard kosakata saya.',
+      'Ketika saya sedang memasak makan malam, seseorang mengetuk pintu.',
+      'Dia sedang membaca novel sementara saudara laki-lakinya sedang belajar.'
     ]
   },
   {
@@ -171,6 +201,11 @@ export const TENSES = [
       'By the time the manager arrived, the team had already solved the issue.',
       'She felt confident during the interview because she had prepared thoroughly.',
       'The train had already left before we reached the platform.'
+    ],
+    ex_id: [
+      'Saat manajer tiba, tim sudah lebih dahulu menyelesaikan masalah tersebut.',
+      'Dia merasa percaya diri saat wawancara karena telah mempersiapkan diri dengan matang sebelumnya.',
+      'Kereta telah berangkat sebelum kami sampai di peron stasiun.'
     ]
   },
   {
@@ -193,6 +228,11 @@ export const TENSES = [
       'They had been negotiating for two hours before reaching an agreement.',
       'His eyes were tired because he had been reading in dim light.',
       'She had been waiting for forty minutes before the bus arrived.'
+    ],
+    ex_id: [
+      'Mereka telah bernegosiasi selama dua jam sebelum mencapai kata sepakat.',
+      'Matanya lelah karena telah membaca di tempat yang redup sepanjang waktu sebelumnya.',
+      'Dia telah menunggu selama empat puluh menit sebelum bus akhirnya tiba.'
     ]
   },
   {
@@ -219,6 +259,11 @@ export const TENSES = [
       'The phone is ringing; I will answer it right away.',
       'I believe the weather will be pleasant this weekend.',
       'I will help you review your grammar exercises after lunch.'
+    ],
+    ex_id: [
+      'Teleponnya berdering; saya akan langsung mengangkatnya.',
+      'Saya yakin cuaca akan menyenangkan akhir pekan ini.',
+      'Saya akan membantumu memeriksa latihan tata bahasamu setelah makan siang.'
     ]
   },
   {
@@ -243,6 +288,11 @@ export const TENSES = [
       'This time tomorrow, I will be flying across the country.',
       'At 9 a.m. tomorrow, we will be attending the orientation workshop.',
       'Don’t call at noon; he will be having lunch with clients.'
+    ],
+    ex_id: [
+      'Jam segini besok, saya akan sedang dalam penerbangan melintasi negeri.',
+      'Pukul 9 pagi besok, kami dipastikan sedang menghadiri lokakarya orientasi.',
+      'Jangan menelepon pada tengah hari; dia akan sedang makan siang bersama klien.'
     ]
   },
   {
@@ -265,6 +315,11 @@ export const TENSES = [
       'By next December, she will have completed her university degree.',
       'We will have mastered all 12 tenses by the end of this month.',
       'By 5 p.m., the technicians will have finished the system maintenance.'
+    ],
+    ex_id: [
+      'Menjelang Desember tahun depan, dia akan sudah menyelesaikan gelar sarjananya.',
+      'Kita akan sudah menguasai seluruh 12 tenses sebelum akhir bulan ini.',
+      'Sebelum pukul 5 sore, para teknisi akan sudah merampungkan pemeliharaan sistem.'
     ]
   },
   {
@@ -287,6 +342,11 @@ export const TENSES = [
       'By next June, they will have been working together for a full decade.',
       'Next month, I will have been studying with EngSphere for one full year.',
       'By midnight, the driver will have been driving for eight consecutive hours.'
+    ],
+    ex_id: [
+      'Menjelang Juni tahun depan, mereka akan sudah genap bekerja sama selama satu dekade penuh.',
+      'Bulan depan, saya akan sudah genap belajar bersama EngSphere selama satu tahun penuh.',
+      'Menjelang tengah malam, pengemudi tersebut akan sudah berkendara selama delapan jam berturut-turut.'
     ]
   }
 ];
