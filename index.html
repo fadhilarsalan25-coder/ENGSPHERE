@@ -316,33 +316,34 @@
         <p data-i18n="materials_sub">Short, practical lessons — read the rule, then check the examples. Everything here also feeds the Practice quizzes.</p>
       </div>
       <div class="subtabs" id="materialsSubtabs">
-        <button class="pill active" data-msub="tenses">Tenses</button>
-        <button class="pill" data-msub="tobe">To Be</button>
-        <button class="pill" data-msub="vocabulary">Vocabulary</button>
-        <button class="pill" data-msub="grammar">Grammar</button>
+        <button class="pill active" data-msub="tenses" data-i18n="sub_tenses">Tenses</button>
+        <button class="pill" data-msub="tobe" data-i18n="sub_tobe">To Be</button>
+        <button class="pill" data-msub="vocabulary" data-i18n="sub_vocabulary">Vocabulary</button>
+        <button class="pill" data-msub="grammar" data-i18n="sub_grammar">Grammar</button>
       </div>
 
       <div id="msub-tenses">
-        <p style="max-width:60ch;">English tenses are organised by <strong>time</strong> (present, past, future) and <strong>aspect</strong> (simple, continuous, perfect, perfect continuous). Tap a card to expand it.</p>
+        <p style="max-width:60ch;" data-i18n="mat_tenses_desc">English tenses are organised by <strong>time</strong> (present, past, future) and <strong>aspect</strong> (simple, continuous, perfect, perfect continuous). Tap a card to expand it.</p>
+        <div class="subtabs" id="tenseCategoryTabs" style="border-bottom:none;padding-bottom:0;margin-bottom:var(--sp-4);"></div>
         <div class="tense-matrix" id="tenseGrid"></div>
       </div>
 
       <div id="msub-tobe" class="hidden">
-        <p style="max-width:60ch;">The verb <strong>to be</strong> (am / is / are / was / were) is the most common verb in English. It shows identity, description and location, and it also builds continuous and passive sentences.</p>
+        <p style="max-width:60ch;" data-i18n="tobe_intro">The verb <strong>to be</strong> (am / is / are / was / were) is the most common verb in English. It shows identity, description and location, and it also builds continuous and passive sentences.</p>
         <div class="tobe-grid">
           <div class="card" style="padding:var(--sp-5);">
-            <h4 style="font-family:var(--font-d);margin-bottom:var(--sp-3);">Present: am / is / are</h4>
+            <h4 style="font-family:var(--font-d);margin-bottom:var(--sp-3);" data-i18n="tobe_pres_title">Present: am / is / are</h4>
             <table class="conj-table">
-              <tr><th>Subject</th><th>Form</th><th>Example</th></tr>
+              <tr><th data-i18n="th_subject">Subject</th><th data-i18n="th_form">Form</th><th data-i18n="th_example">Example</th></tr>
               <tr><td>I</td><td class="form">am</td><td>I am a student.</td></tr>
               <tr><td>You / We / They</td><td class="form">are</td><td>They are ready.</td></tr>
               <tr><td>He / She / It</td><td class="form">is</td><td>She is at work.</td></tr>
             </table>
           </div>
           <div class="card" style="padding:var(--sp-5);">
-            <h4 style="font-family:var(--font-d);margin-bottom:var(--sp-3);">Past: was / were</h4>
+            <h4 style="font-family:var(--font-d);margin-bottom:var(--sp-3);" data-i18n="tobe_past_title">Past: was / were</h4>
             <table class="conj-table">
-              <tr><th>Subject</th><th>Form</th><th>Example</th></tr>
+              <tr><th data-i18n="th_subject">Subject</th><th data-i18n="th_form">Form</th><th data-i18n="th_example">Example</th></tr>
               <tr><td>I / He / She / It</td><td class="form">was</td><td>He was tired.</td></tr>
               <tr><td>You / We / They</td><td class="form">were</td><td>We were at home.</td></tr>
             </table>
@@ -350,63 +351,64 @@
         </div>
 
         <div class="rule-card card">
-          <h4>Negative forms</h4>
+          <h4 data-i18n="tobe_neg_h4">Negative forms</h4>
           <span class="tc-formula">Subject + be + not</span>
-          <p style="margin:0;font-size:.9rem;">Contract naturally in speech: <em>isn't, aren't, wasn't, weren't</em>. "It is not far" → "It isn't far."</p>
+          <p style="margin:0;font-size:.9rem;" data-i18n="tobe_neg_desc">Contract naturally in speech: <em>isn't, aren't, wasn't, weren't</em>. "It is not far" → "It isn't far."</p>
         </div>
         <div class="rule-card card">
-          <h4>Question forms</h4>
+          <h4 data-i18n="tobe_q_h4">Question forms</h4>
           <span class="tc-formula">Be + subject + …?</span>
-          <p style="margin:0;font-size:.9rem;">Move the be-verb before the subject: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"</p>
+          <p style="margin:0;font-size:.9rem;" data-i18n="tobe_q_desc">Move the be-verb before the subject: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"</p>
         </div>
         <div class="rule-card card">
-          <h4>Four everyday jobs of "to be"</h4>
+          <h4 data-i18n="tobe_jobs_h4">Four everyday jobs of "to be"</h4>
           <ul style="margin:0;padding-left:1.2rem;font-size:.9rem;color:var(--muted);">
-            <li><strong style="color:var(--text);">Identity</strong> — "I am Maria."</li>
-            <li><strong style="color:var(--text);">Description</strong> — "The soup is hot."</li>
-            <li><strong style="color:var(--text);">Location</strong> — "They are in Jakarta."</li>
-            <li><strong style="color:var(--text);">Existence</strong> — "There is a problem." / "There are two options."</li>
+            <li data-i18n="tobe_job1"><strong style="color:var(--text);">Identity</strong> — "I am Maria."</li>
+            <li data-i18n="tobe_job2"><strong style="color:var(--text);">Description</strong> — "The soup is hot."</li>
+            <li data-i18n="tobe_job3"><strong style="color:var(--text);">Location</strong> — "They are in Jakarta."</li>
+            <li data-i18n="tobe_job4"><strong style="color:var(--text);">Existence</strong> — "There is a problem." / "There are two options."</li>
           </ul>
         </div>
         <div class="rule-card card">
-          <h4>Building block for other grammar</h4>
-          <p style="margin:0;font-size:.9rem;"><strong style="color:var(--text);">Continuous tenses:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Passive voice:</strong> be + past participle → "The door was opened."</p>
+          <h4 data-i18n="tobe_build_h4">Building block for other grammar</h4>
+          <p style="margin:0;font-size:.9rem;" data-i18n="tobe_build_desc"><strong style="color:var(--text);">Continuous tenses:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Passive voice:</strong> be + past participle → "The door was opened."</p>
         </div>
       </div>
       <div id="msub-vocabulary" class="hidden">
+        <p style="max-width:60ch;margin-bottom:var(--sp-4);" data-i18n="vocab_intro">Tap any flashcard to flip between the word and its meaning with an example sentence. Browse everyday categories below.</p>
         <div class="subtabs" id="vocabCategoryTabs" style="border-bottom:none;padding-bottom:0;margin-bottom:var(--sp-5);"></div>
         <div class="vocab-grid" id="vocabGrid"></div>
       </div>
       <div id="msub-grammar" class="hidden">
-        <p style="max-width:60ch;">Grammar is just the set of patterns that hold a sentence together. Start with the building blocks (parts of speech), then the order they go in.</p>
-        <h4 style="font-size:.95rem;margin-bottom:var(--sp-3);">Parts of speech</h4>
+        <p style="max-width:60ch;" data-i18n="grammar_intro">Grammar is just the set of patterns that hold a sentence together. Start with the building blocks (parts of speech), then the order they go in.</p>
+        <h4 style="font-size:.95rem;margin-bottom:var(--sp-3);" data-i18n="pos_heading">Parts of speech</h4>
         <div class="pos-grid">
-          <div class="card pos-card"><h4>Noun</h4><p>A person, place, thing or idea.</p><div class="ex">teacher, Jakarta, freedom</div></div>
-          <div class="card pos-card"><h4>Verb</h4><p>An action or state.</p><div class="ex">run, is, believe</div></div>
-          <div class="card pos-card"><h4>Adjective</h4><p>Describes a noun.</p><div class="ex">a <em>quiet</em> street</div></div>
-          <div class="card pos-card"><h4>Adverb</h4><p>Describes a verb, adjective, or another adverb.</p><div class="ex">she runs <em>quickly</em></div></div>
-          <div class="card pos-card"><h4>Pronoun</h4><p>Replaces a noun.</p><div class="ex">he, they, it, this</div></div>
-          <div class="card pos-card"><h4>Preposition</h4><p>Shows relation (place, time, direction).</p><div class="ex">on, at, since, between</div></div>
-          <div class="card pos-card"><h4>Conjunction</h4><p>Joins words or clauses.</p><div class="ex">and, but, because</div></div>
-          <div class="card pos-card"><h4>Article</h4><p>Marks a noun as specific or general.</p><div class="ex">a, an, the</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_noun_h4">Noun</h4><p data-i18n="pos_noun_p">A person, place, thing or idea.</p><div class="ex">teacher, Jakarta, freedom</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_verb_h4">Verb</h4><p data-i18n="pos_verb_p">An action or state.</p><div class="ex">run, is, believe</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_adj_h4">Adjective</h4><p data-i18n="pos_adj_p">Describes a noun.</p><div class="ex">a <em>quiet</em> street</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_adv_h4">Adverb</h4><p data-i18n="pos_adv_p">Describes a verb, adjective, or another adverb.</p><div class="ex">she runs <em>quickly</em></div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_pron_h4">Pronoun</h4><p data-i18n="pos_pron_p">Replaces a noun.</p><div class="ex">he, they, it, this</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_prep_h4">Preposition</h4><p data-i18n="pos_prep_p">Shows relation (place, time, direction).</p><div class="ex">on, at, since, between</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_conj_h4">Conjunction</h4><p data-i18n="pos_conj_p">Joins words or clauses.</p><div class="ex">and, but, because</div></div>
+          <div class="card pos-card"><h4 data-i18n="pos_art_h4">Article</h4><p data-i18n="pos_art_p">Marks a noun as specific or general.</p><div class="ex">a, an, the</div></div>
         </div>
 
         <div class="rule-card card">
-          <h4>Basic sentence structure — SVO</h4>
+          <h4 data-i18n="grm_svo_h4">Basic sentence structure — SVO</h4>
           <span class="tc-formula">Subject + Verb + Object</span>
-          <p style="margin:0;font-size:.9rem;">English word order is fixed: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Move the order and the meaning changes or the sentence becomes ungrammatical.</p>
+          <p style="margin:0;font-size:.9rem;" data-i18n="grm_svo_p">English word order is fixed: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Move the order and the meaning changes or the sentence becomes ungrammatical.</p>
         </div>
         <div class="rule-card card">
-          <h4>Subject–verb agreement</h4>
-          <p style="margin:0;font-size:.9rem;">A singular subject takes a singular verb, and a plural subject takes a plural verb: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."</p>
+          <h4 data-i18n="grm_sva_h4">Subject–verb agreement</h4>
+          <p style="margin:0;font-size:.9rem;" data-i18n="grm_sva_p">A singular subject takes a singular verb, and a plural subject takes a plural verb: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."</p>
         </div>
         <div class="rule-card card">
-          <h4>A, an, or the?</h4>
-          <p style="margin:0;font-size:.9rem;"><strong style="color:var(--text);">a / an</strong> introduce something not yet specific ("a dog", "an apple" — use <em>an</em> before a vowel sound). <strong style="color:var(--text);">the</strong> points to a particular one: "the dog", "the apple".</p>
+          <h4 data-i18n="grm_art_h4">A, an, or the?</h4>
+          <p style="margin:0;font-size:.9rem;" data-i18n="grm_art_p"><strong style="color:var(--text);">a / an</strong> introduce something not yet specific ("a dog", "an apple" — use <em>an</em> before a vowel sound). <strong style="color:var(--text);">the</strong> points to a particular one: "the dog", "the apple".</p>
         </div>
         <div class="rule-card card">
-          <h4>Making a sentence negative or a question</h4>
-          <p style="margin:0;font-size:.9rem;">Most verbs need a helper: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don't</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"</p>
+          <h4 data-i18n="grm_negq_h4">Making a sentence negative or a question</h4>
+          <p style="margin:0;font-size:.9rem;" data-i18n="grm_negq_p">Most verbs need a helper: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don't</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"</p>
         </div>
       </div>
     </section>
@@ -862,5 +864,3 @@
 <script src="modules/app.js" type="module"></script>
 </body>
 </html>
-
-
