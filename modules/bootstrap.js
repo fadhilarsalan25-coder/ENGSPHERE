@@ -133,7 +133,57 @@ export const I18N = {
     // Final CTA & Footer
     final_cta_h2: 'Pick a level and start a round.',
     final_cta_p: 'It takes about three minutes. Your progress saves on this device.',
-    landing_footer: 'EngSphere — built for focused, self-paced English practice.'
+    landing_footer: 'EngSphere — built for focused, self-paced English practice.',
+
+    // Materials intros
+    mat_tenses_desc: 'English tenses are organised by <strong>time</strong> (present, past, future) and <strong>aspect</strong> (simple, continuous, perfect, perfect continuous). Tap a card to expand formulas, usage rules, key signals, and examples.',
+    tobe_intro: 'The verb <strong>to be</strong> (am / is / are / was / were) is the most common verb in English. It shows identity, description and location, and it also builds continuous and passive sentences.',
+    tobe_pres_title: 'Present: am / is / are',
+    th_subject: 'Subject',
+    th_form: 'Form',
+    th_example: 'Example',
+    tobe_past_title: 'Past: was / were',
+    tobe_neg_h4: 'Negative forms',
+    tobe_neg_desc: "Contract naturally in speech: <em>isn't, aren't, wasn't, weren't</em>. \"It is not far\" → \"It isn't far.\"",
+    tobe_q_h4: 'Question forms',
+    tobe_q_desc: 'Move the be-verb before the subject: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"',
+    tobe_jobs_h4: 'Four everyday jobs of "to be"',
+    tobe_job1: '<strong style="color:var(--text);">Identity</strong> — "I am Maria."',
+    tobe_job2: '<strong style="color:var(--text);">Description</strong> — "The soup is hot."',
+    tobe_job3: '<strong style="color:var(--text);">Location</strong> — "They are in Jakarta."',
+    tobe_job4: '<strong style="color:var(--text);">Existence</strong> — "There is a problem." / "There are two options."',
+    tobe_build_h4: 'Building block for other grammar',
+    tobe_build_desc: '<strong style="color:var(--text);">Continuous tenses:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Passive voice:</strong> be + past participle → "The door was opened."',
+
+    vocab_intro: 'Tap any flashcard to flip between the word and its meaning with an example sentence. Browse everyday categories below.',
+
+    grammar_intro: 'Grammar is just the set of patterns that hold a sentence together. Start with the building blocks (parts of speech), then the order they go in.',
+    pos_heading: 'Parts of speech',
+    pos_noun_h4: 'Noun',
+    pos_noun_p: 'A person, place, thing or idea.',
+    pos_verb_h4: 'Verb',
+    pos_verb_p: 'An action or state.',
+    pos_adj_h4: 'Adjective',
+    pos_adj_p: 'Describes a noun.',
+    pos_adv_h4: 'Adverb',
+    pos_adv_p: 'Describes a verb, adjective, or another adverb.',
+    pos_pron_h4: 'Pronoun',
+    pos_pron_p: 'Replaces a noun.',
+    pos_prep_h4: 'Preposition',
+    pos_prep_p: 'Shows relation (place, time, direction).',
+    pos_conj_h4: 'Conjunction',
+    pos_conj_p: 'Joins words or clauses.',
+    pos_art_h4: 'Article',
+    pos_art_p: 'Marks a noun as specific or general.',
+
+    grm_svo_h4: 'Basic sentence structure — SVO',
+    grm_svo_p: 'English word order is fixed: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Move the order and the meaning changes or the sentence becomes ungrammatical.',
+    grm_sva_h4: 'Subject–verb agreement',
+    grm_sva_p: 'A singular subject takes a singular verb, and a plural subject takes a plural verb: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."',
+    grm_art_h4: 'A, an, or the?',
+    grm_art_p: '<strong style="color:var(--text);">a / an</strong> introduce something not yet specific ("a dog", "an apple" — use <em>an</em> before a vowel sound). <strong style="color:var(--text);">the</strong> points to a particular one: "the dog", "the apple".',
+    grm_negq_h4: 'Making a sentence negative or a question',
+    grm_negq_p: 'Most verbs need a helper: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don\'t</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"'
   },
   id: {
     langCode: 'ID',
@@ -261,7 +311,57 @@ export const I18N = {
     // Final CTA & Footer
     final_cta_h2: 'Pilih tingkat kemampuan Anda dan mulai latihan.',
     final_cta_p: 'Hanya butuh sekitar 3 menit. Kemajuan belajar Anda tersimpan di perangkat ini.',
-    landing_footer: 'EngSphere — dirancang untuk latihan bahasa Inggris mandiri yang terfokus dan efektif.'
+    landing_footer: 'EngSphere — dirancang untuk latihan bahasa Inggris mandiri yang terfokus dan efektif.',
+
+    // Materials intros
+    mat_tenses_desc: '12 tenses bahasa Inggris disusun sistematis berdasarkan <strong>waktu</strong> (present, past, future) dan <strong>aspek</strong> (simple, continuous, perfect, perfect continuous). Klik kartu untuk melihat rumus, fungsi, sinyal waktu, dan contoh kalimat.',
+    tobe_intro: 'Kata kerja <strong>to be</strong> (am / is / are / was / were) adalah kata kerja paling mendasar dalam bahasa Inggris. Digunakan untuk identitas, deskripsi sifat/keadaan, lokasi, serta membentuk kalimat continuous dan pasif.',
+    tobe_pres_title: 'Present: am / is / are',
+    th_subject: 'Subjek',
+    th_form: 'Bentuk',
+    th_example: 'Contoh',
+    tobe_past_title: 'Past: was / were',
+    tobe_neg_h4: 'Bentuk Kalimat Negatif',
+    tobe_neg_desc: 'Bentuk singkatan umum dalam percakapan: <em>isn\'t, aren\'t, wasn\'t, weren\'t</em>. "It is not far" → "It isn\'t far."',
+    tobe_q_h4: 'Bentuk Kalimat Tanya',
+    tobe_q_desc: 'Pindahkan to be ke depan subjek: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"',
+    tobe_jobs_h4: '4 Fungsi Utama "to be" Sehari-hari',
+    tobe_job1: '<strong style="color:var(--text);">Identitas</strong> — "I am Maria."',
+    tobe_job2: '<strong style="color:var(--text);">Deskripsi Sifat/Keadaan</strong> — "The soup is hot."',
+    tobe_job3: '<strong style="color:var(--text);">Lokasi / Keberadaan</strong> — "They are in Jakarta."',
+    tobe_job4: '<strong style="color:var(--text);">Keberadaan Objek</strong> — "There is a problem." / "There are two options."',
+    tobe_build_h4: 'Fondasi Pembentuk Pola Tata Bahasa Lain',
+    tobe_build_desc: '<strong style="color:var(--text);">Bentuk Continuous:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Kalimat Pasif:</strong> be + past participle (V3) → "The door was opened."',
+
+    vocab_intro: 'Klik kartu flashcard untuk membalik antara kosakata dan artinya beserta contoh kalimat. Pilih kategori tema di bawah.',
+
+    grammar_intro: 'Tata bahasa (grammar) adalah pola baku penyusun kalimat agar terstruktur. Mulai dari jenis kata (Parts of Speech), lalu pelajari urutan susunannya.',
+    pos_heading: 'Kelas Kata (Parts of Speech)',
+    pos_noun_h4: 'Noun (Kata Benda)',
+    pos_noun_p: 'Menamai orang, tempat, benda, atau konsep abstrak.',
+    pos_verb_h4: 'Verb (Kata Kerja)',
+    pos_verb_p: 'Menyatakan tindakan, proses, atau keadaan.',
+    pos_adj_h4: 'Adjective (Kata Sifat)',
+    pos_adj_p: 'Menjelaskan atau memberi sifat pada kata benda.',
+    pos_adv_h4: 'Adverb (Kata Keterangan)',
+    pos_adv_p: 'Menerangkan kata kerja, kata sifat, atau keterangan lain.',
+    pos_pron_h4: 'Pronoun (Kata Ganti)',
+    pos_pron_p: 'Menggantikan kata benda agar tidak berulang.',
+    pos_prep_h4: 'Preposition (Kata Depan)',
+    pos_prep_p: 'Menunjukkan hubungan ruang, waktu, atau arah.',
+    pos_conj_h4: 'Conjunction (Kata Sambung)',
+    pos_conj_p: 'Menghubungkan kata, frasa, atau antarklausa.',
+    pos_art_h4: 'Article (Kata Sandang)',
+    pos_art_p: 'Menandai kata benda bersifat spesifik atau umum.',
+
+    grm_svo_h4: 'Struktur Kalimat Dasar — SVO',
+    grm_svo_p: 'Urutan kata bahasa Inggris bersifat baku: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Mengubah urutan akan mengubah arti kalimat atau menjadikannya tidak baku.',
+    grm_sva_h4: 'Kesesuaian Subjek & Kata Kerja (Subject–Verb Agreement)',
+    grm_sva_p: 'Subjek tunggal memerlukan kata kerja bentuk tunggal, dan subjek jamak menggunakan kata kerja jamak: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."',
+    grm_art_h4: 'Penggunaan Artikel: a, an, atau the?',
+    grm_art_p: '<strong style="color:var(--text);">a / an</strong> digunakan untuk kata benda umum yang belum spesifik ("a dog", "an apple" — gunakan <em>an</em> sebelum bunyi vokal). <strong style="color:var(--text);">the</strong> merujuk pada benda tertentu yang sudah jelas spesifik: "the dog", "the apple".',
+    grm_negq_h4: 'Membentuk Kalimat Negatif atau Kalimat Tanya',
+    grm_negq_p: 'Sebagian besar kata kerja membutuhkan kata kerja bantu: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don\'t</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"'
   }
 };
 
@@ -525,6 +625,8 @@ export function applyLanguage(lang, persist = true, notify = false) {
   closeAllLangDropdowns();
   try {
     renderReviewSection();
+    renderTenses();
+    renderVocabulary();
   } catch (e) {}
   if (persist) saveState();
   if (notify) showToast(I18N[state.lang]?.switchMsg || 'Language updated');
@@ -901,4 +1003,3 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-
