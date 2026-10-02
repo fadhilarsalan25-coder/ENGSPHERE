@@ -51,7 +51,134 @@ export const I18N = {
     ql_vocab_desc: 'Flip cards across 6 everyday topics.',
     ql_grammar_desc: 'Parts of speech and sentence structure.',
     ql_quiz_desc: 'Gamified multiple-choice practice.',
-    ql_ai_desc: 'Fresh questions matched to your level.'
+    ql_ai_desc: 'Fresh questions matched to your level.',
+
+    // Landing strip
+    ls_label1: 'tenses, each with formula, usage and examples',
+    ls_label2: 'levels — Beginner, Intermediate, Advanced',
+    ls_label3: 'AI-generated questions, never the same test twice',
+
+    // What EngSphere is
+    wi_title: 'What EngSphere is',
+    wi_lede: 'A self-paced English tutor that fits in one browser tab. It takes the structure of a proper language course — a syllabus, graded practice, feedback on every answer — and puts it in front of you without the usual fluff.',
+    wi_stuck_h3: "Built for the learner who's stuck in the middle",
+    wi_stuck_p1: "Most people learning English aren't complete beginners and aren't fluent either. They know some words, half-remember the tenses, and freeze when it's time to actually produce a sentence.",
+    wi_stuck_p2: 'EngSphere sits between the two. Read a short rule, see it used in a real sentence, then answer questions about it — and get told exactly why your answer was right or wrong before moving on.',
+    wi_loop_h4: 'The three-step loop',
+    wi_loop_li1: '<span>Read</span> a rule written in plain language, with its formula and examples.',
+    wi_loop_li2: '<span>Practise</span> it in a quiz set to your level.',
+    wi_loop_li3: '<span>Review</span> the explanation for every answer, then earn XP and keep your streak.',
+    wi_loop_note: "Repeat on a topic until it stops feeling like guessing. That's the whole method.",
+
+    // Main features
+    mf_title: 'Main features',
+    mf_lede: 'Four parts, each one feeding the next.',
+    mf_tag_materials: 'Materials',
+    mf_mat_h3: 'Grammar explained plainly',
+    mf_mat_p: 'All 12 tenses in a time-by-aspect grid, the full <em>to be</em> conjugation, eight parts of speech, sentence structure and article rules — each with formula, usage notes and worked examples.',
+    mf_tag_vocab: 'Vocabulary',
+    mf_voc_h3: 'Flip cards by theme',
+    mf_voc_p: 'Everyday sets — daily life, work, travel, feelings, academic and phrasal verbs — with meaning, part of speech and a sentence showing the word in use.',
+    mf_tag_quiz: 'Quick quiz',
+    mf_quiz_h3: 'Gamified practice on demand',
+    mf_quiz_p: 'Choose a topic and difficulty and get an instant multiple-choice round. Every answer is explained the moment you pick it, and every round pays out XP.',
+    mf_tag_ai: 'AI tutor',
+    mf_ai_h3: 'Tests written for you, live',
+    mf_ai_p: 'Set the topic, level and length, and an AI tutor writes a brand-new test on the spot — with a written explanation for each answer, pitched at the level you picked.',
+    mf_tag_progress: 'Progress',
+    mf_prog_h3: 'XP, streaks and badges',
+    mf_prog_p: 'Every test adds XP and pushes your level ring forward. Miss a day and the streak resets — the one bit of pressure that actually helps.',
+    mf_tag_levels: 'Levels',
+    mf_levels_h3: 'The same topic, three depths',
+    mf_levels_p: 'Beginner, Intermediate and Advanced change the questions, the vocabulary and how much the explanations assume you already know.',
+
+    // Why this one
+    why_title: 'Why this one, and not another app',
+    why_lede: "Four things most English apps ask you to give up. EngSphere doesn't.",
+    why_vs_label: 'Elsewhere',
+    why_vs1_old: 'A fixed question bank you eventually memorise.',
+    why_vs1_new_h4: 'Questions written fresh each time',
+    why_vs1_new_p: "The AI tutor generates a new test for your chosen topic and level on every run, so you're tested on the rule — not on a memorised answer key.",
+    why_vs2_old: '"Wrong." Next question.',
+    why_vs2_new_h4: 'An explanation on every single answer',
+    why_vs2_new_p: "Right or wrong, you're told which rule applies and why the other options fail. Getting it wrong is where the lesson actually happens.",
+    why_vs3_old: 'Lessons in one app, practice in another.',
+    why_vs3_new_h4: 'Material and practice in one loop',
+    why_vs3_new_p: 'Every quiz topic maps to a lesson you can open in two taps, so you never have to leave to look something up mid-round.',
+    why_vs4_old: 'Sign-up walls, subscriptions, ten-minute onboarding quizzes.',
+    why_vs4_new_h4: 'Open it and start',
+    why_vs4_new_p: 'No account, no email, no placement test. Pick a level, change it whenever it feels wrong, and your progress stays on your own device.',
+
+    // Method
+    meth_title: 'The course method behind it',
+    meth_lede: 'EngSphere follows how well-run language courses actually teach, adapted for solo study.',
+    meth_c1_h4: 'Present, practise, produce',
+    meth_c1_p: 'The standard classroom sequence: meet the rule in context, drill it under guidance, then use it yourself. Materials presented in short chunks match how language sticks.',
+    meth_c2_h4: 'Graded difficulty',
+    meth_c2_p: 'Courses level learners so material sits just past what they can already do. Three difficulty settings do that here, and you can move up or down without losing progress.',
+    meth_c3_h4: 'Feedback before the next question',
+    meth_c3_p: 'Correction is most useful while the sentence is still in your head, which is why the explanation appears the moment you answer.',
+    meth_c4_h4: 'Spaced, short sessions',
+    meth_c4_p: 'Short rounds and a daily streak encourage returning tomorrow rather than cramming once — how vocabulary and grammar actually stick.',
+    meth_c5_h4: 'Vocabulary in context',
+    meth_c5_p: 'Words are taught with a part of speech and a full example sentence, not as isolated translations, so you learn how each word behaves in real use.',
+    meth_c6_h4: 'All four skills in view',
+    meth_c6_p: 'Reading and writing are covered directly; speaking and listening are supported by example sentences written the way people actually speak.',
+
+    // Final CTA & Footer
+    final_cta_h2: 'Pick a level and start a round.',
+    final_cta_p: 'It takes about three minutes. Your progress saves on this device.',
+    landing_footer: 'EngSphere — built for focused, self-paced English practice.',
+
+    // Materials intros
+    mat_tenses_desc: 'English tenses are organised by <strong>time</strong> (present, past, future) and <strong>aspect</strong> (simple, continuous, perfect, perfect continuous). Tap a card to expand formulas, usage rules, key signals, and examples.',
+    tobe_intro: 'The verb <strong>to be</strong> (am / is / are / was / were) is the most common verb in English. It shows identity, description and location, and it also builds continuous and passive sentences.',
+    tobe_pres_title: 'Present: am / is / are',
+    th_subject: 'Subject',
+    th_form: 'Form',
+    th_example: 'Example',
+    tobe_past_title: 'Past: was / were',
+    tobe_neg_h4: 'Negative forms',
+    tobe_neg_desc: "Contract naturally in speech: <em>isn't, aren't, wasn't, weren't</em>. \"It is not far\" → \"It isn't far.\"",
+    tobe_q_h4: 'Question forms',
+    tobe_q_desc: 'Move the be-verb before the subject: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"',
+    tobe_jobs_h4: 'Four everyday jobs of "to be"',
+    tobe_job1: '<strong style="color:var(--text);">Identity</strong> — "I am Maria."',
+    tobe_job2: '<strong style="color:var(--text);">Description</strong> — "The soup is hot."',
+    tobe_job3: '<strong style="color:var(--text);">Location</strong> — "They are in Jakarta."',
+    tobe_job4: '<strong style="color:var(--text);">Existence</strong> — "There is a problem." / "There are two options."',
+    tobe_build_h4: 'Building block for other grammar',
+    tobe_build_desc: '<strong style="color:var(--text);">Continuous tenses:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Passive voice:</strong> be + past participle → "The door was opened."',
+
+    vocab_intro: 'Tap any flashcard to flip between the word and its meaning with an example sentence. Browse everyday categories below.',
+
+    grammar_intro: 'Grammar is just the set of patterns that hold a sentence together. Start with the building blocks (parts of speech), then the order they go in.',
+    pos_heading: 'Parts of speech',
+    pos_noun_h4: 'Noun',
+    pos_noun_p: 'A person, place, thing or idea.',
+    pos_verb_h4: 'Verb',
+    pos_verb_p: 'An action or state.',
+    pos_adj_h4: 'Adjective',
+    pos_adj_p: 'Describes a noun.',
+    pos_adv_h4: 'Adverb',
+    pos_adv_p: 'Describes a verb, adjective, or another adverb.',
+    pos_pron_h4: 'Pronoun',
+    pos_pron_p: 'Replaces a noun.',
+    pos_prep_h4: 'Preposition',
+    pos_prep_p: 'Shows relation (place, time, direction).',
+    pos_conj_h4: 'Conjunction',
+    pos_conj_p: 'Joins words or clauses.',
+    pos_art_h4: 'Article',
+    pos_art_p: 'Marks a noun as specific or general.',
+
+    grm_svo_h4: 'Basic sentence structure — SVO',
+    grm_svo_p: 'English word order is fixed: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Move the order and the meaning changes or the sentence becomes ungrammatical.',
+    grm_sva_h4: 'Subject–verb agreement',
+    grm_sva_p: 'A singular subject takes a singular verb, and a plural subject takes a plural verb: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."',
+    grm_art_h4: 'A, an, or the?',
+    grm_art_p: '<strong style="color:var(--text);">a / an</strong> introduce something not yet specific ("a dog", "an apple" — use <em>an</em> before a vowel sound). <strong style="color:var(--text);">the</strong> points to a particular one: "the dog", "the apple".',
+    grm_negq_h4: 'Making a sentence negative or a question',
+    grm_negq_p: 'Most verbs need a helper: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don\'t</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"'
   },
   id: {
     langCode: 'ID',
@@ -105,7 +232,134 @@ export const I18N = {
     ql_vocab_desc: 'Kartu kosakata flip interaktif dalam 6 tema sehari-hari.',
     ql_grammar_desc: 'Bagian kalimat (Parts of Speech) dan aturan tata bahasa.',
     ql_quiz_desc: 'Latihan pilihan ganda cepat dengan sistem XP.',
-    ql_ai_desc: 'Soal latihan yang disesuaikan dengan tingkat kemampuan Anda.'
+    ql_ai_desc: 'Soal latihan yang disesuaikan dengan tingkat kemampuan Anda.',
+
+    // Landing strip
+    ls_label1: 'macam tenses, lengkap dengan rumus, fungsi, dan contoh kalimat',
+    ls_label2: 'tingkatan — Pemula, Menengah, Mahir',
+    ls_label3: 'soal adaptif AI, latihan bervariasi tanpa rasa bosan',
+
+    // What EngSphere is
+    wi_title: 'Mengenal EngSphere',
+    wi_lede: 'Tutor bahasa Inggris mandiri dalam satu tab browser. Mengadopsi struktur kursus bahasa yang terarah — silabus terstruktur, latihan bertingkat, umpan balik di setiap jawaban — tanpa kerumitan yang tidak perlu.',
+    wi_stuck_h3: 'Dirancang untuk pembelajar yang merasa mandek di tengah jalan',
+    wi_stuck_p1: 'Banyak orang yang belajar bahasa Inggris bukan pemula total, tetapi juga belum fasih. Mengenal banyak kosakata, ingat sebagian tenses, namun sering bingung saat harus menyusun kalimat utuh.',
+    wi_stuck_p2: 'EngSphere menjembatani keduanya. Pelajari aturan ringkas, lihat contoh penggunaannya dalam kalimat nyata, lalu jawab latihan soal — dan langsung ketahui alasan tepat mengapa jawaban Anda benar atau salah.',
+    wi_loop_h4: 'Siklus 3 Langkah Belajar',
+    wi_loop_li1: '<span>Baca</span> aturan tata bahasa yang ringkas, lengkap dengan rumus dan contohnya.',
+    wi_loop_li2: '<span>Latihan</span> melalui kuis yang disesuaikan dengan tingkat kemampuan Anda.',
+    wi_loop_li3: '<span>Tinjau</span> penjelasan di setiap jawaban, dapatkan XP, dan pertahankan streak belajar Anda.',
+    wi_loop_note: 'Ulangi latihan pada topik tersebut hingga Anda benar-benar yakin tanpa menebak-nebak.',
+
+    // Main features
+    mf_title: 'Fitur Utama',
+    mf_lede: 'Empat bagian pembelajaran yang saling melengkapi.',
+    mf_tag_materials: 'Materi Belajar',
+    mf_mat_h3: 'Tata Bahasa Dijelaskan dengan Ringkas',
+    mf_mat_p: 'Semua 12 macam tenses dalam bagan waktu & aspek, konjugasi lengkap <em>to be</em>, 8 bagian kata, struktur kalimat, dan aturan artikel — lengkap dengan rumus, fungsi, dan contoh nyata.',
+    mf_tag_vocab: 'Kosakata',
+    mf_voc_h3: 'Kartu Kosakata Flip Interaktif',
+    mf_voc_p: 'Koleksi tema sehari-hari — rutinitas, pekerjaan, liburan, perasaan, akademik, dan phrasal verbs — dilengkapi arti, kelas kata, dan contoh kalimat penggunaannya.',
+    mf_tag_quiz: 'Kuis Cepat',
+    mf_quiz_h3: 'Latihan Interaktif Berhadiah XP',
+    mf_quiz_p: 'Pilih topik dan tingkat kesulitan untuk langsung memulai kuis pilihan ganda. Setiap jawaban langsung disertai pembahasan, dan setiap sesi memberikan bonus XP.',
+    mf_tag_ai: 'Tutor AI',
+    mf_ai_h3: 'Tes Dibuat Khusus Secara Dinamis',
+    mf_ai_p: 'Tentukan topik, tingkat, dan jumlah soal, lalu tutor AI akan meracik tes baru seketika — lengkap dengan penjelasan detail yang sesuai dengan tingkat belajar Anda.',
+    mf_tag_progress: 'Kemajuan',
+    mf_prog_h3: 'Sistem XP, Streak Harian, dan Lencana',
+    mf_prog_p: 'Setiap latihan kuis menambah perolehan XP dan meningkatkan level Anda. Jaga konsistensi belajar setiap hari untuk mempertahankan streak Anda.',
+    mf_tag_levels: 'Tingkatan',
+    mf_levels_h3: 'Satu Topik, Tiga Tingkat Kedalaman',
+    mf_levels_p: 'Pilihan Pemula, Menengah, dan Mahir menyesuaikan bobot pertanyaan, perbendaharaan kata, dan detail penjelasan konsep sesuai kemampuan Anda.',
+
+    // Why this one
+    why_title: 'Mengapa Memilih EngSphere?',
+    why_lede: 'Empat hal penting yang sering diabaikan aplikasi belajar lain, tapi EngSphere sediakan untuk Anda.',
+    why_vs_label: 'Di Tempat Lain',
+    why_vs1_old: 'Bank soal yang kaku sehingga Anda hanya menghafal kunci jawaban.',
+    why_vs1_new_h4: 'Soal Segar yang Bervariasi Setiap Saat',
+    why_vs1_new_p: 'Tutor AI menghasilkan soal baru untuk topik dan level pilihan Anda, sehingga Anda benar-benar menguji pemahaman aturan, bukan sekadar menghafal kunci.',
+    why_vs2_old: '"Salah." Lalu lanjut ke pertanyaan berikutnya tanpa alasan.',
+    why_vs2_new_h4: 'Penjelasan Tuntas di Setiap Jawaban',
+    why_vs2_new_p: 'Benar ataupun salah, Anda diberitahu aturan grammar yang berlaku dan alasan mengapa opsi lain kurang tepat. Dari kesalahan itulah pemahaman sejati terbentuk.',
+    why_vs3_old: 'Materi pelajaran di satu aplikasi, latihan soal di aplikasi lain.',
+    why_vs3_new_h4: 'Materi dan Latihan Terintegrasi Rapi',
+    why_vs3_new_p: 'Setiap topik kuis terhubung langsung ke modul materi yang bisa dibuka dengan dua ketukan, tanpa harus keluar aplikasi untuk mencari referensi.',
+    why_vs4_old: 'Batas pendaftaran wajib, langganan berbayar, tes penempatan panjang.',
+    why_vs4_new_h4: 'Buka dan Langsung Berlatih',
+    why_vs4_new_p: 'Bisa langsung dicoba tanpa hambatan. Pilih tingkat belajar Anda, ubah kapan saja sesuai kebutuhan, dan kemajuan Anda tersimpan aman di perangkat Anda.',
+
+    // Method
+    meth_title: 'Metode Pengajaran di Balik EngSphere',
+    meth_lede: 'EngSphere menerapkan kurikulum dan metode kursus bahasa Inggris berkualitas yang diadaptasi khusus untuk belajar mandiri.',
+    meth_c1_h4: 'Presentasi, Latihan, Penerapan',
+    meth_c1_p: 'Urutan belajar standar di kelas: kenali aturan dalam konteks, latih secara bertahap, lalu terapkan secara mandiri. Materi ringkas membuat tata bahasa lebih mudah melekat.',
+    meth_c2_h4: 'Tingkat Kesulitan Bertahap',
+    meth_c2_p: 'Menyesuaikan materi tepat di atas apa yang sudah Anda kuasai. Tersedia 3 tingkat kesulitan yang dapat Anda sesuaikan kapan saja tanpa kehilangan progres.',
+    meth_c3_h4: 'Umpan Balik Sebelum Soal Berikutnya',
+    meth_c3_p: 'Koreksi paling efektif ketika kalimat masih teringat jelas di ingatan Anda. Karena itulah pembahasan langsung muncul saat jawaban dipilih.',
+    meth_c4_h4: 'Sesi Singkat Berkala',
+    meth_c4_p: 'Latihan berdurasi singkat dengan streak harian mendorong kebiasaan belajar rutin setiap hari dibanding sistem kebut semalam.',
+    meth_c5_h4: 'Kosakata Dalam Kalimat Nyata',
+    meth_c5_p: 'Kosakata dipelajari bersama kelas kata dan contoh kalimat lengkap, bukan terjemahan kata tunggal, sehingga Anda paham cara memakainya dalam percakapan.',
+    meth_c6_h4: 'Menunjang Kemampuan Berbahasa Lengkap',
+    meth_c6_p: 'Membaca dan menulis dilatih secara langsung; percakapan dan pemahaman didukung kalimat contoh alami sebagaimana penutur asli berbicara.',
+
+    // Final CTA & Footer
+    final_cta_h2: 'Pilih tingkat kemampuan Anda dan mulai latihan.',
+    final_cta_p: 'Hanya butuh sekitar 3 menit. Kemajuan belajar Anda tersimpan di perangkat ini.',
+    landing_footer: 'EngSphere — dirancang untuk latihan bahasa Inggris mandiri yang terfokus dan efektif.',
+
+    // Materials intros
+    mat_tenses_desc: '12 tenses bahasa Inggris disusun sistematis berdasarkan <strong>waktu</strong> (present, past, future) dan <strong>aspek</strong> (simple, continuous, perfect, perfect continuous). Klik kartu untuk melihat rumus, fungsi, sinyal waktu, dan contoh kalimat.',
+    tobe_intro: 'Kata kerja <strong>to be</strong> (am / is / are / was / were) adalah kata kerja paling mendasar dalam bahasa Inggris. Digunakan untuk identitas, deskripsi sifat/keadaan, lokasi, serta membentuk kalimat continuous dan pasif.',
+    tobe_pres_title: 'Present: am / is / are',
+    th_subject: 'Subjek',
+    th_form: 'Bentuk',
+    th_example: 'Contoh',
+    tobe_past_title: 'Past: was / were',
+    tobe_neg_h4: 'Bentuk Kalimat Negatif',
+    tobe_neg_desc: 'Bentuk singkatan umum dalam percakapan: <em>isn\'t, aren\'t, wasn\'t, weren\'t</em>. "It is not far" → "It isn\'t far."',
+    tobe_q_h4: 'Bentuk Kalimat Tanya',
+    tobe_q_desc: 'Pindahkan to be ke depan subjek: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"',
+    tobe_jobs_h4: '4 Fungsi Utama "to be" Sehari-hari',
+    tobe_job1: '<strong style="color:var(--text);">Identitas</strong> — "I am Maria."',
+    tobe_job2: '<strong style="color:var(--text);">Deskripsi Sifat/Keadaan</strong> — "The soup is hot."',
+    tobe_job3: '<strong style="color:var(--text);">Lokasi / Keberadaan</strong> — "They are in Jakarta."',
+    tobe_job4: '<strong style="color:var(--text);">Keberadaan Objek</strong> — "There is a problem." / "There are two options."',
+    tobe_build_h4: 'Fondasi Pembentuk Pola Tata Bahasa Lain',
+    tobe_build_desc: '<strong style="color:var(--text);">Bentuk Continuous:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Kalimat Pasif:</strong> be + past participle (V3) → "The door was opened."',
+
+    vocab_intro: 'Klik kartu flashcard untuk membalik antara kosakata dan artinya beserta contoh kalimat. Pilih kategori tema di bawah.',
+
+    grammar_intro: 'Tata bahasa (grammar) adalah pola baku penyusun kalimat agar terstruktur. Mulai dari jenis kata (Parts of Speech), lalu pelajari urutan susunannya.',
+    pos_heading: 'Kelas Kata (Parts of Speech)',
+    pos_noun_h4: 'Noun (Kata Benda)',
+    pos_noun_p: 'Menamai orang, tempat, benda, atau konsep abstrak.',
+    pos_verb_h4: 'Verb (Kata Kerja)',
+    pos_verb_p: 'Menyatakan tindakan, proses, atau keadaan.',
+    pos_adj_h4: 'Adjective (Kata Sifat)',
+    pos_adj_p: 'Menjelaskan atau memberi sifat pada kata benda.',
+    pos_adv_h4: 'Adverb (Kata Keterangan)',
+    pos_adv_p: 'Menerangkan kata kerja, kata sifat, atau keterangan lain.',
+    pos_pron_h4: 'Pronoun (Kata Ganti)',
+    pos_pron_p: 'Menggantikan kata benda agar tidak berulang.',
+    pos_prep_h4: 'Preposition (Kata Depan)',
+    pos_prep_p: 'Menunjukkan hubungan ruang, waktu, atau arah.',
+    pos_conj_h4: 'Conjunction (Kata Sambung)',
+    pos_conj_p: 'Menghubungkan kata, frasa, atau antarklausa.',
+    pos_art_h4: 'Article (Kata Sandang)',
+    pos_art_p: 'Menandai kata benda bersifat spesifik atau umum.',
+
+    grm_svo_h4: 'Struktur Kalimat Dasar — SVO',
+    grm_svo_p: 'Urutan kata bahasa Inggris bersifat baku: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Mengubah urutan akan mengubah arti kalimat atau menjadikannya tidak baku.',
+    grm_sva_h4: 'Kesesuaian Subjek & Kata Kerja (Subject–Verb Agreement)',
+    grm_sva_p: 'Subjek tunggal memerlukan kata kerja bentuk tunggal, dan subjek jamak menggunakan kata kerja jamak: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."',
+    grm_art_h4: 'Penggunaan Artikel: a, an, atau the?',
+    grm_art_p: '<strong style="color:var(--text);">a / an</strong> digunakan untuk kata benda umum yang belum spesifik ("a dog", "an apple" — gunakan <em>an</em> sebelum bunyi vokal). <strong style="color:var(--text);">the</strong> merujuk pada benda tertentu yang sudah jelas spesifik: "the dog", "the apple".',
+    grm_negq_h4: 'Membentuk Kalimat Negatif atau Kalimat Tanya',
+    grm_negq_p: 'Sebagian besar kata kerja membutuhkan kata kerja bantu: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don\'t</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"'
   }
 };
 
@@ -126,7 +380,11 @@ export function translateUI(lang, state) {
   document.querySelectorAll('[data-i18n]').forEach(element => {
     const key = element.dataset.i18n;
     if (t[key]) {
-      element.textContent = t[key];
+      if (t[key].includes('<')) {
+        element.innerHTML = t[key];
+      } else {
+        element.textContent = t[key];
+      }
     }
   });
 
@@ -141,13 +399,12 @@ export function translateUI(lang, state) {
   document.querySelectorAll('.lang-opt').forEach(opt => {
     const isActive = opt.dataset.setLang === selected;
     opt.classList.toggle('active', isActive);
+    const check = opt.querySelector('.lang-check');
+    if (check) {
+      check.classList.toggle('hidden', !isActive);
+      check.style.display = isActive ? 'inline-block' : 'none';
+    }
   });
-  document.getElementById('checkLandingEn')?.classList.toggle('hidden', selected !== 'en');
-  document.getElementById('checkLandingId')?.classList.toggle('hidden', selected !== 'id');
-  document.getElementById('checkAppEn')?.classList.toggle('hidden', selected !== 'en');
-  document.getElementById('checkAppId')?.classList.toggle('hidden', selected !== 'id');
-  document.getElementById('checkModalEn')?.classList.toggle('hidden', selected !== 'en');
-  document.getElementById('checkModalId')?.classList.toggle('hidden', selected !== 'id');
 
   // 4. Subtabs pills
   const tensesTab = document.querySelector('[data-msub="tenses"]');
