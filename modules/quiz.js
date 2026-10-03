@@ -123,6 +123,8 @@ export function renderTenses() {
 export function renderVocabulary() {
   const grid = document.getElementById('vocabGrid');
   const tabs = document.getElementById('vocabCategoryTabs');
+  const searchInput = document.getElementById('vocabSearchInput');
+  const countBadge = document.getElementById('vocabWordCountBadge');
   if (!grid || !tabs) return;
 
   const isId = state.lang === 'id';
@@ -130,42 +132,103 @@ export function renderVocabulary() {
   const category = tabs.dataset.active || categories[0];
 
   const catLabels = {
-    'Daily life': isId ? 'Aktivitas Harian' : 'Daily life',
-    'Work & study': isId ? 'Pekerjaan & Studi' : 'Work & study',
-    'Travel': isId ? 'Perjalanan & Wisata' : 'Travel'
+    'Daily life': isId ? 'Aktivitas Harian (A1-B1)' : 'Daily Life (A1-B1)',
+    'Work & study': isId ? 'Karier & Bisnis (B1-C1)' : 'Work & Business (B1-C1)',
+    'Travel': isId ? 'Perjalanan & Wisata (A2-B2)' : 'Travel & Transport (A2-B2)',
+    'Academic': isId ? 'Akademik & Riset (B2-C2)' : 'Academic & Research (B2-C2)',
+    'Feelings': isId ? 'Emosi & Karakter (B1-C1)' : 'Feelings & Personality (B1-C1)',
+    'Technology': isId ? 'Teknologi & Media (B1-C1)' : 'Technology & Media (B1-C1)',
+    'Environment': isId ? 'Lingkungan & Sosial (B2-C1)' : 'Environment & Society (B2-C1)',
+    'Health & Medicine': isId ? 'Kesehatan & Medis (A2-C1)' : 'Health & Medicine (A2-C1)',
+    'Arts & Culture': isId ? 'Seni & Kebudayaan (B1-C1)' : 'Arts & Culture (B1-C1)',
+    'Law & Society': isId ? 'Hukum & Pemerintahan (B2-C2)' : 'Law & Society (B2-C2)',
+    'Food & Dining': isId ? 'Kuliner & Pangan (A1-B2)' : 'Food & Dining (A1-B2)',
+    'Phrasal verbs': isId ? 'Phrasal Verbs & Idioms (B1-B2)' : 'Phrasal Verbs & Idioms (B1-B2)'
   };
 
   const posLabels = {
     'noun': isId ? 'kata benda (noun)' : 'noun',
     'verb': isId ? 'kata kerja (verb)' : 'verb',
     'noun / verb': isId ? 'kata benda / kerja (noun / verb)' : 'noun / verb',
+    'verb / noun': isId ? 'kata kerja / benda (verb / noun)' : 'verb / noun',
     'adjective': isId ? 'kata sifat (adjective)' : 'adjective',
-    'adverb': isId ? 'kata keterangan (adverb)' : 'adverb'
+    'adjective / noun': isId ? 'kata sifat / benda (adjective / noun)' : 'adjective / noun',
+    'adverb': isId ? 'kata keterangan (adverb)' : 'adverb',
+    'phrasal verb': isId ? 'frasa kata kerja (phrasal verb)' : 'phrasal verb'
   };
 
-  tabs.innerHTML = categories.map(cat => `
-    <button class="pill ${cat === category ? 'active' : ''}" data-vocab-cat="${escapeHtml(cat)}">${escapeHtml(catLabels[cat] || cat)}</button>
-  `).join('');
+  const searchQuery = (searchInput?.value || '').trim().toLowerCase();
 
-  grid.innerHTML = (VOCAB[category] || []).map((item, index) => {
+  tabs.innerHTML = categories.map(cat => {
+    const totalInCat = (VOCAB[cat] || []).length;
+    return `
+      <button class="pill ${cat === category && !searchQuery ? 'active' : ''}" data-vocab-cat="${escapeHtml(cat)}">
+        ${escapeHtml(catLabels[cat] || cat)} <span style="opacity:.7;font-size:.7rem;">(${totalInCat})</span>
+      </button>
+    `;
+  }).join('');
+
+  let displayedItems = [];
+  if (searchQuery) {
+    // Search across all categories
+    categories.forEach(cat => {
+      (VOCAB[cat] || []).forEach(item => {
+        const matchesWord = item.w.toLowerCase().includes(searchQuery);
+        const matchesMeaning = item.m.toLowerCase().includes(searchQuery);
+        const matchesId = item.m_id && item.m_id.toLowerCase().includes(searchQuery);
+        const matchesEx = item.e && item.e.toLowerCase().includes(searchQuery);
+        if (matchesWord || matchesMeaning || matchesId || matchesEx) {
+          displayedItems.push({ ...item, category: cat });
+        }
+      });
+    });
+  } else {
+    displayedItems = (VOCAB[category] || []).map(item => ({ ...item, category }));
+  }
+
+  // Update count badge
+  if (countBadge) {
+    const totalAll = Object.values(VOCAB).reduce((acc, curr) => acc + curr.length, 0);
+    countBadge.textContent = searchQuery
+      ? (isId ? `${displayedItems.length} Ditemukan` : `${displayedItems.length} Found`)
+      : (isId ? `${displayedItems.length} dari ${totalAll} Kata` : `${displayedItems.length} of ${totalAll} Words`);
+  }
+
+  if (displayedItems.length === 0) {
+    grid.innerHTML = `
+      <div class="card" style="grid-column: 1 / -1; text-align: center; padding: var(--sp-6);">
+        <div style="font-size: 2rem; margin-bottom: .5rem;">🔍</div>
+        <div style="font-weight: 700; font-size: 1.05rem;">${isId ? 'Tidak ada kosakata yang cocok' : 'No vocabulary words matched'}</div>
+        <p style="color: var(--muted); font-size: .85rem; margin-top: .3rem;">${isId ? `Tidak ditemukan kata dengan pencarian "${escapeHtml(searchQuery)}". Coba kata kunci lain.` : `No items found matching "${escapeHtml(searchQuery)}". Try another keyword.`}</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = displayedItems.map((item, index) => {
     const posText = posLabels[item.p] || item.p;
     return `
       <div class="flashcard" data-flip="${index}">
         <div class="flashcard-inner">
           <div class="flashcard-face flashcard-front">
             <div class="word">${escapeHtml(item.w)}</div>
+            ${item.ipa ? `<div class="ipa">${escapeHtml(item.ipa)}</div>` : ''}
             <div class="pos">${escapeHtml(posText)}</div>
-            <div style="font-size:.74rem;color:var(--sky-bright);margin-top:.45rem;opacity:.9;">
-              ${isId ? '↻ Klik untuk membalik kartu' : '↻ Tap to flip card'}
+            ${item.cefr ? `<span class="cefr-pill">CEFR ${escapeHtml(item.cefr)}</span>` : ''}
+            <div style="font-size:.72rem;color:var(--sky-bright);margin-top:.45rem;opacity:.9;">
+              ${isId ? '↻ Klik untuk membalik' : '↻ Tap to flip card'}
             </div>
           </div>
           <div class="flashcard-face flashcard-back">
-            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-bottom:.2rem;">
-              ${isId ? 'Arti:' : 'Meaning:'}
+            <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-bottom:.2rem;">
+              ${isId ? 'Definisi Oxford:' : 'Oxford Definition:'}
             </div>
             <div class="mean">${escapeHtml(item.m)}</div>
-            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-top:.5rem;margin-bottom:.2rem;">
-              ${isId ? 'Contoh Kalimat:' : 'Example Sentence:'}
+            ${item.m_id ? `
+              <div class="mean-id">${escapeHtml(item.m_id)}</div>
+            ` : ''}
+            <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-top:.4rem;margin-bottom:.15rem;">
+              ${isId ? 'Contoh Penggunaan:' : 'Example Sentence:'}
             </div>
             <div class="ex">${escapeHtml(item.e)}</div>
           </div>
@@ -176,10 +239,19 @@ export function renderVocabulary() {
 
   tabs.querySelectorAll('[data-vocab-cat]').forEach(btn => btn.addEventListener('click', () => {
     tabs.dataset.active = btn.dataset.vocabCat;
+    if (searchInput) searchInput.value = '';
     renderVocabulary();
   }));
 
   grid.querySelectorAll('.flashcard').forEach(card => card.addEventListener('click', () => card.classList.toggle('flipped')));
+
+  // Bind search input only once or reuse
+  if (searchInput && !searchInput.dataset.bound) {
+    searchInput.dataset.bound = 'true';
+    searchInput.addEventListener('input', () => {
+      renderVocabulary();
+    });
+  }
 }
 
 function prepareQuestion(orig) {
