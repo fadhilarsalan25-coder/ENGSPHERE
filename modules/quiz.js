@@ -182,42 +182,165 @@ export function renderVocabulary() {
   grid.querySelectorAll('.flashcard').forEach(card => card.addEventListener('click', () => card.classList.toggle('flipped')));
 }
 
-function poolForCurrentSelection(topic = state.selectedTopic, difficulty = state.selectedDifficulty) {
+function prepareQuestion(orig) {
+  const q = { ...orig };
+  // Clone options and shuffle them so answer position is randomized
+  const indexedOptions = q.options.map((opt, idx) => ({ opt, isCorrect: idx === q.answer }));
+  indexedOptions.sort(() => Math.random() - 0.5);
+  q.options = indexedOptions.map(o => o.opt);
+  q.answer = indexedOptions.findIndex(o => o.isCorrect);
+  return q;
+}
+
+function getPoolForCategoryAndDifficulty(topic, difficulty) {
   if (topic === 'mixed') {
     return Object.keys(BANK).flatMap(key =>
       (BANK[key][difficulty] || BANK[key].intermediate || []).map(q => ({ ...q, topic: key, difficulty }))
-    ).sort(() => Math.random() - 0.5);
+    );
   }
   const topicBank = BANK[topic] || BANK.tenses;
   const list = topicBank[difficulty] || topicBank.intermediate || [];
-  return list.map(q => ({ ...q, topic, difficulty })).sort(() => Math.random() - 0.5);
+  return list.map(q => ({ ...q, topic, difficulty }));
 }
 
-export function startQuiz() {
+export function syncDifficultyChipsUI(difficulty) {
+  document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.diff === difficulty);
+  });
+}
+
+function formatDiffName(diff, lang = state.lang) {
+  if (lang === 'id') {
+    return diff === 'beginner' ? 'Pemula' : diff === 'advanced' ? 'Mahir' : 'Menengah';
+  }
+  return capitalize(diff);
+}
+
+export function getAdaptiveQuestionSet(topic = 'mixed', difficulty = 'intermediate', count = 5, recentIds = []) {
+  // 1. Get base pool for requested topic and difficulty
+  const basePool = getPoolForCategoryAndDifficulty(topic, difficulty);
+
+  // 2. Filter out questions seen recently to avoid repetition
+  let freshPool = basePool.filter(q => !recentIds.includes(q.id));
+
+  // 3. If freshPool is smaller than requested count, pull fresh questions from adjacent difficulty levels
+  if (freshPool.length < count) {
+    const diffHierarchy = ['beginner', 'intermediate', 'advanced'];
+    const currentDiffIdx = diffHierarchy.indexOf(difficulty);
+    const adjacentDiffs = diffHierarchy.filter((_, idx) => Math.abs(idx - currentDiffIdx) === 1);
+
+    for (const adjDiff of adjacentDiffs) {
+      const adjPool = getPoolForCategoryAndDifficulty(topic, adjDiff)
+        .filter(q => !recentIds.includes(q.id) && !freshPool.some(fq => fq.id === q.id));
+      freshPool = [...freshPool, ...adjPool];
+      if (freshPool.length >= count) break;
+    }
+  }
+
+  // 4. If still not enough, take the least-recently used questions from basePool
+  if (freshPool.length < count) {
+    const fallback = basePool.filter(q => !freshPool.some(fq => fq.id === q.id));
+    fallback.sort(() => Math.random() - 0.5);
+    freshPool = [...freshPool, ...fallback];
+  }
+
+  // 5. Integrate a targeted reinforcement question if the user has an unmastered mistake
+  let reinforcementQ = null;
+  if (state.reviewQuestions && state.reviewQuestions.length > 0) {
+    const unmastered = state.reviewQuestions.filter(rq =>
+      !rq.mastered &&
+      !recentIds.includes(rq.id) &&
+      (topic === 'mixed' || rq.topic === topic)
+    );
+    if (unmastered.length > 0) {
+      reinforcementQ = unmastered[Math.floor(Math.random() * unmastered.length)];
+    }
+  }
+
+  // Shuffle candidate pool
+  freshPool.sort(() => Math.random() - 0.5);
+
+  const selected = freshPool.slice(0, count);
+
+  // If we have a reinforcement question, replace the last item
+  if (reinforcementQ && !selected.some(q => q.id === reinforcementQ.id) && selected.length > 0) {
+    selected[selected.length - 1] = { ...reinforcementQ, isReinforcement: true };
+  }
+
+  return selected.map(prepareQuestion);
+}
+
+export function startQuiz(adaptiveOptions = {}) {
+  // Check if this round was triggered by "Try Another Quiz" with adaptive performance feedback
+  if (adaptiveOptions.isAdaptiveNext && adaptiveOptions.previousScore !== undefined) {
+    const prevScore = adaptiveOptions.previousScore;
+    const currentDiff = state.selectedDifficulty || 'intermediate';
+    let nextDiff = currentDiff;
+
+    if (prevScore >= 80) {
+      if (currentDiff === 'beginner') nextDiff = 'intermediate';
+      else if (currentDiff === 'intermediate') nextDiff = 'advanced';
+
+      state.selectedDifficulty = nextDiff;
+      state.adaptiveNotice = {
+        type: 'levelup',
+        msg_en: `🎯 Level Up! You scored ${prevScore}%! Difficulty auto-adapted to ${capitalize(nextDiff)}.`,
+        msg_id: `🎯 Naik Tingkat! Anda meraih ${prevScore}%! Kesulitan otomatis disesuaikan ke ${formatDiffName(nextDiff, 'id')}.`
+      };
+    } else if (prevScore < 50) {
+      if (currentDiff === 'advanced') nextDiff = 'intermediate';
+      else if (currentDiff === 'intermediate') nextDiff = 'beginner';
+
+      state.selectedDifficulty = nextDiff;
+      state.adaptiveNotice = {
+        type: 'support',
+        msg_en: `💡 Adaptive Support: Reinforcing core concepts at ${capitalize(nextDiff)} level.`,
+        msg_id: `💡 Dukungan Adaptif: Memperkuat pemahaman konsep dasar di tingkat ${formatDiffName(nextDiff, 'id')}.`
+      };
+    } else {
+      state.adaptiveNotice = {
+        type: 'fresh',
+        msg_en: `✨ Adaptive Round: Fresh question set selected at ${capitalize(currentDiff)} level.`,
+        msg_id: `✨ Putaran Adaptif: Rangkaian soal baru disiapkan di tingkat ${formatDiffName(currentDiff, 'id')}.`
+      };
+    }
+
+    syncDifficultyChipsUI(state.selectedDifficulty);
+  }
+
   const count = state.selectedCount || state.selectedAIQuestions || 5;
   const topic = state.selectedTopic || 'mixed';
   const difficulty = state.selectedDifficulty || 'intermediate';
-  let questions = poolForCurrentSelection(topic, difficulty);
 
-  // If pool has fewer than requested, cycle or fallback from other difficulties
-  if (questions.length < count) {
-    const fallback = Object.keys(BANK).flatMap(k =>
-      Object.keys(BANK[k]).flatMap(d => (BANK[k][d] || []).map(q => ({ ...q, topic: k, difficulty: d })))
-    ).sort(() => Math.random() - 0.5);
-    questions = [...questions, ...fallback];
+  state.recentQuestionIds = state.recentQuestionIds || [];
+  const questions = getAdaptiveQuestionSet(topic, difficulty, count, state.recentQuestionIds);
+
+  // Record newly selected question IDs into recent memory to guarantee non-repetition
+  questions.forEach(q => {
+    if (q.id && !state.recentQuestionIds.includes(q.id)) {
+      state.recentQuestionIds.push(q.id);
+    }
+  });
+  if (state.recentQuestionIds.length > 60) {
+    state.recentQuestionIds = state.recentQuestionIds.slice(-60);
   }
+  saveState();
 
   state.quiz = {
-    questions: questions.slice(0, count),
+    questions,
     current: 0,
     score: 0,
     isReviewMode: false,
-    isAiMode: false
+    isAiMode: false,
+    adaptiveNotice: state.adaptiveNotice || null
   };
+  state.adaptiveNotice = null;
+
   const setupBox = document.getElementById('quizSetupBox');
   if (setupBox) setupBox.classList.add('hidden');
   const aiSetupBox = document.getElementById('aiSetupBox');
   if (aiSetupBox) aiSetupBox.classList.add('hidden');
+
   renderQuiz();
 }
 
@@ -238,25 +361,58 @@ export function renderQuiz() {
     const xp = Math.max(5, Math.round(score / 10));
 
     const isId = state.lang === 'id';
+
+    // Performance assessment & next adaptive step
+    let adaptiveNextText = '';
+    let adaptiveBadge = '';
+    if (score >= 80) {
+      adaptiveBadge = isId ? '🔥 Performa Unggul · Siap Naik Level' : '🔥 Mastery Achieved · Ready for Next Level';
+      adaptiveNextText = isId
+        ? `Luar biasa! Skor ${score}% membuktikan pemahaman yang sangat kuat. Menekan tombol di bawah akan otomatis menyiapkan kuis baru adaptif dengan soal yang belum pernah Anda temui sebelumnya.`
+        : `Outstanding! A score of ${score}% demonstrates strong mastery. The next adaptive quiz will automatically present fresh, challenging questions you haven't seen before.`;
+    } else if (score < 50) {
+      adaptiveBadge = isId ? '💡 Mode Penguatan Konsep Dasar' : '💡 Foundational Reinforcement Mode';
+      adaptiveNextText = isId
+        ? `Latihan yang bagus! Sistem adaptif akan menyesuaikan kuis berikutnya dengan soal-soal baru untuk memperkuat konsep tata bahasa yang sempat keliru.`
+        : `Valuable practice session! The adaptive engine will adjust your next round with fresh questions reinforcing the rules you missed.`;
+    } else {
+      adaptiveBadge = isId ? '⚡ Kemajuan Stabil · Soal Baru' : '⚡ Steady Progress · Fresh Set';
+      adaptiveNextText = isId
+        ? `Bagus! Pemahaman Anda semakin konsisten. Menekan tombol di bawah akan menghasilkan kuis baru dengan rangkaian soal yang benar-benar berbeda.`
+        : `Good job! Your consistency is building. Click below to generate a brand new set of non-repeating questions.`;
+    }
+
     playArea.innerHTML = `
       <div class="card quiz-results">
         <div class="score">${score}%</div>
         <div class="xp-earned">+${xp} XP</div>
-        <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;">
-          ${score >= 80 ? (isId ? '🎉 Luar biasa! Pemahaman materi Anda sangat baik.' : '🎉 Excellent mastery! Keep up the momentum.') : (isId ? 'Latihan yang bagus! Tinjau soal yang salah untuk memperkuat tata bahasa Anda.' : 'Good practice session! Review incorrect items to strengthen your grammar.')}
-        </p>
+        
+        <div class="adaptive-eval-box" style="margin:1rem auto;padding:.75rem 1rem;background:rgba(79,195,255,.08);border:1px solid rgba(79,195,255,.25);border-radius:var(--r-md);max-width:520px;text-align:center;">
+          <div style="font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--sky-bright);margin-bottom:.3rem;">
+            ${adaptiveBadge}
+          </div>
+          <p style="font-size:.85rem;color:var(--text);margin:0;line-height:1.45;">
+            ${adaptiveNextText}
+          </p>
+        </div>
+
         <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:var(--sp-4);">
           <button class="btn btn-primary" id="quizAgainBtn">
-            ${state.quiz.isReviewMode ? (isId ? 'Kembali ke Review Dashboard' : 'Back to Dashboard Review') : (isId ? 'Coba Kuis Lainnya' : 'Try Another Quiz')}
+            ${isId ? '⚡ Coba Kuis Baru (Adaptif)' : '⚡ Try Another Quiz (Fresh Adaptive)'}
           </button>
-          <button class="btn btn-ghost" id="quizDashboardBtn">${isId ? 'Kembali ke Beranda' : 'Go to Dashboard'}</button>
+          <button class="btn btn-ghost" id="quizChangeSetupBtn">
+            ${isId ? '⚙️ Ubah Topik / Level' : '⚙️ Change Topic / Level'}
+          </button>
+          <button class="btn btn-ghost" id="quizDashboardBtn">
+            ${isId ? '🏠 Kembali ke Beranda' : '🏠 Back to Dashboard'}
+          </button>
         </div>
       </div>
     `;
 
     state.xp += xp;
     state.history.unshift({
-      label: state.quiz.isReviewMode ? 'Review quiz' : `Quiz (${capitalize(q?.topic || state.selectedTopic)})`,
+      label: state.quiz.isReviewMode ? 'Review quiz' : `Quiz (${capitalize(state.selectedTopic)})`,
       score,
       timestamp: Date.now()
     });
@@ -267,24 +423,44 @@ export function renderQuiz() {
     if (typeof window.renderBadges === 'function') window.renderBadges();
     if (typeof window.renderHistory === 'function') window.renderHistory();
 
+    const lastFinishedScore = score;
+    const lastFinishedTopic = state.selectedTopic;
+    const lastFinishedDiff = state.selectedDifficulty;
+
     document.getElementById('quizAgainBtn')?.addEventListener('click', () => {
       if (state.quiz?.isReviewMode) {
         window.setView?.('dashboard');
       } else {
-        const setupBox = document.getElementById('quizSetupBox');
-        if (setupBox) setupBox.classList.remove('hidden');
-        const aiSetupBox = document.getElementById('aiSetupBox');
-        if (aiSetupBox) aiSetupBox.classList.remove('hidden');
-        playArea.innerHTML = '';
-        startQuiz();
+        playArea.innerHTML = `
+          <div class="card" style="text-align:center;padding:2.2rem 1.5rem;">
+            <div style="font-size:2rem;margin-bottom:.5rem;">✨</div>
+            <div style="font-weight:700;font-size:1.05rem;">${isId ? 'Menyiapkan Kuis Baru yang Adaptif...' : 'Generating Fresh Adaptive Quiz...'}</div>
+            <p style="color:var(--muted);font-size:.85rem;margin-top:.35rem;margin-bottom:0;">
+              ${isId ? 'Memilih soal baru yang berbeda dari putaran sebelumnya...' : 'Selecting questions not seen in your previous rounds...'}
+            </p>
+          </div>
+        `;
+        setTimeout(() => {
+          startQuiz({
+            isAdaptiveNext: true,
+            previousScore: lastFinishedScore,
+            previousTopic: lastFinishedTopic,
+            previousDifficulty: lastFinishedDiff
+          });
+        }, 320);
       }
+    });
+
+    document.getElementById('quizChangeSetupBtn')?.addEventListener('click', () => {
+      const setupBox = document.getElementById('quizSetupBox');
+      if (setupBox) setupBox.classList.remove('hidden');
+      playArea.innerHTML = '';
+      setupBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     document.getElementById('quizDashboardBtn')?.addEventListener('click', () => {
       const setupBox = document.getElementById('quizSetupBox');
       if (setupBox) setupBox.classList.remove('hidden');
-      const aiSetupBox = document.getElementById('aiSetupBox');
-      if (aiSetupBox) aiSetupBox.classList.remove('hidden');
       playArea.innerHTML = '';
       window.setView?.('dashboard');
     });
@@ -298,9 +474,20 @@ export function renderQuiz() {
   `).join('');
 
   const isId = state.lang === 'id';
+  const adaptiveBanner = state.quiz.adaptiveNotice ? `
+    <div class="adaptive-pill-banner" style="margin-bottom:.75rem;padding:.35rem .75rem;background:rgba(79,195,255,.12);border:1px solid rgba(79,195,255,.3);border-radius:var(--r-pill);font-size:.78rem;color:var(--sky-bright);font-weight:600;display:inline-flex;align-items:center;gap:.4rem;">
+      <span>✨</span> ${escapeHtml(isId ? state.quiz.adaptiveNotice.msg_id : state.quiz.adaptiveNotice.msg_en)}
+    </div>
+  ` : (q.isReinforcement ? `
+    <div class="adaptive-pill-banner" style="margin-bottom:.75rem;padding:.35rem .75rem;background:rgba(255,183,77,.14);border:1px solid rgba(255,183,77,.35);border-radius:var(--r-pill);font-size:.78rem;color:#ffb74d;font-weight:600;display:inline-flex;align-items:center;gap:.4rem;">
+      <span>🎯</span> ${isId ? 'Soal Penguatan Adaptif (Dari Catatan Review Anda)' : 'Adaptive Reinforcement (From Your Review Queue)'}
+    </div>
+  ` : '');
+
   playArea.innerHTML = `
     <div class="card quiz-stage quiz-question">
       <div class="quiz-progress">${progress}</div>
+      ${adaptiveBanner}
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2);">
         <span class="review-topic-tag">${escapeHtml(formatTopic(q.topic || state.selectedTopic))}</span>
         <span style="font-size:.76rem;color:var(--muted);">${isId ? `Pertanyaan ${currentIdx + 1} dari ${state.quiz.questions.length}` : `Question ${currentIdx + 1} of ${state.quiz.questions.length}`}</span>
