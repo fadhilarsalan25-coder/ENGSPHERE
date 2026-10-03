@@ -29,13 +29,21 @@ export const I18N = {
     materials_title: 'Materials',
     materials_sub: 'Short, practical lessons — read the rule, then check the examples. Everything here also feeds the Practice quizzes.',
     practice_title: 'Practice',
-    practice_sub: 'Run the quick static quiz for instant gamified practice, or let the AI tutor build a fresh test around exactly what you want to work on.',
-    tab_quick_quiz: 'Quick Quiz',
-    tab_ai_test: 'AI Adaptive Test',
-    start_quiz_btn: 'Start quiz',
-    generate_ai_btn: '✨ Generate my test',
+    practice_sub: 'Pick a topic, difficulty, and question count to test your English skills with instant feedback.',
+    tab_quick_quiz: 'Quiz',
+    tab_ai_test: 'Quiz',
+    tab_quiz: 'Quiz',
+    start_quiz_btn: '🚀 Start Quiz',
+    generate_ai_btn: '🚀 Start Quiz',
+    ql_quiz_title: 'Quiz',
+    ql_quiz_desc: 'Adaptive interactive practice with instant explanations.',
+    quiz_adaptive_note: 'Questions adapt dynamically to your selected topic and difficulty level, with instant explanations on every answer.',
+    topic_mixed: 'Mixed review',
+    diff_beginner: 'Beginner',
+    diff_intermediate: 'Intermediate',
+    diff_advanced: 'Advanced',
     progress_title: 'Your progress',
-    progress_sub: 'Every quiz — quick or AI-generated — adds to your XP and streak.',
+    progress_sub: 'Every quiz round adds to your XP and streak.',
     recent_tests: 'Recent tests',
     reset_progress: 'Reset all progress',
     level_beginner: 'Beginner',
@@ -210,13 +218,21 @@ export const I18N = {
     materials_title: 'Materi Belajar',
     materials_sub: 'Pelajaran ringkas & praktis — pelajari aturannya, lalu periksa contoh kalimatnya. Semua materi ini terhubung ke kuis latihan.',
     practice_title: 'Latihan Soal',
-    practice_sub: 'Jalankan kuis cepat untuk latihan interaktif, atau biarkan tutor AI membuatkan tes baru sesuai fokus yang ingin Anda latih.',
-    tab_quick_quiz: 'Kuis Cepat',
-    tab_ai_test: 'Tes Adaptif AI',
-    start_quiz_btn: 'Mulai kuis',
-    generate_ai_btn: '✨ Buat tes saya',
+    practice_sub: 'Pilih topik, tingkat kesulitan, dan jumlah soal untuk menguji kemampuan bahasa Inggris Anda dengan umpan balik langsung.',
+    tab_quick_quiz: 'Kuis',
+    tab_ai_test: 'Kuis',
+    tab_quiz: 'Kuis',
+    start_quiz_btn: '🚀 Mulai Kuis',
+    generate_ai_btn: '🚀 Mulai Kuis',
+    ql_quiz_title: 'Kuis',
+    ql_quiz_desc: 'Latihan interaktif adaptif dengan penjelasan langsung di setiap jawaban.',
+    quiz_adaptive_note: 'Soal disesuaikan secara adaptif dengan topik dan tingkat kesulitan pilihan Anda, lengkap dengan penjelasan langsung di setiap jawaban.',
+    topic_mixed: 'Campuran',
+    diff_beginner: 'Pemula',
+    diff_intermediate: 'Menengah',
+    diff_advanced: 'Mahir',
     progress_title: 'Kemajuan Belajar Anda',
-    progress_sub: 'Setiap kuis — baik kuis cepat maupun AI — menambah XP dan streak belajar Anda.',
+    progress_sub: 'Setiap putaran kuis menambah XP dan streak belajar Anda.',
     recent_tests: 'Tes Terakhir',
     reset_progress: 'Reset semua kemajuan',
     level_beginner: 'Pemula',
@@ -463,12 +479,9 @@ export function translateUI(lang, state) {
     } else if (item.dataset.gotoMaterial === 'grammar') {
       item.querySelector('h3').textContent = t.sub_grammar;
       item.querySelector('p').textContent = t.ql_grammar_desc;
-    } else if (item.dataset.gotoPractice === 'quiz') {
-      item.querySelector('h3').textContent = t.tab_quick_quiz;
+    } else if (item.dataset.gotoPractice === 'quiz' || item.dataset.gotoPractice === 'ai') {
+      item.querySelector('h3').textContent = t.ql_quiz_title || 'Quiz';
       item.querySelector('p').textContent = t.ql_quiz_desc;
-    } else if (item.dataset.gotoPractice === 'ai') {
-      item.querySelector('h3').textContent = t.tab_ai_test;
-      item.querySelector('p').textContent = t.ql_ai_desc;
     }
   });
 }
