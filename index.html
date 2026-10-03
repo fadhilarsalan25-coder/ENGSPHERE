@@ -304,8 +304,7 @@
         <div class="card ql-item" data-goto-material="tobe"><span class="ic">🔤</span><h3>To Be</h3><p>Am, is, are — and how they're used.</p></div>
         <div class="card ql-item" data-goto-material="vocabulary"><span class="ic">🗂️</span><h3>Vocabulary</h3><p>Flip cards across 6 everyday topics.</p></div>
         <div class="card ql-item" data-goto-material="grammar"><span class="ic">🧩</span><h3>Grammar</h3><p>Parts of speech and sentence structure.</p></div>
-        <div class="card ql-item" data-goto-practice="quiz"><span class="ic">⚡</span><h3>Quick Quiz</h3><p>Gamified multiple-choice practice.</p></div>
-        <div class="card ql-item" data-goto-practice="ai"><span class="ic">✨</span><h3>AI Adaptive Test</h3><p>Fresh questions matched to your level.</p></div>
+        <div class="card ql-item" data-goto-practice="quiz"><span class="ic">🎯</span><h3 data-i18n="ql_quiz_title">Quiz</h3><p data-i18n="ql_quiz_desc">Adaptive interactive practice with instant explanations.</p></div>
       </div>
     </section>
 
@@ -417,11 +416,7 @@
     <section class="view hidden" id="view-practice" data-view="practice">
       <div class="view-head">
         <h2 data-i18n="practice_title">Practice</h2>
-        <p data-i18n="practice_sub">Run the quick static quiz for instant gamified practice, or let the AI tutor build a fresh test around exactly what you want to work on.</p>
-      </div>
-      <div class="subtabs" id="practiceSubtabs">
-        <button class="pill active" data-psub="quiz" data-i18n="tab_quick_quiz">Quick Quiz</button>
-        <button class="pill" data-psub="ai" data-i18n="tab_ai_test">AI Adaptive Test</button>
+        <p data-i18n="practice_sub">Pick a topic, difficulty, and question count to test your English skills with instant feedback.</p>
       </div>
 
       <div id="psub-quiz">
@@ -429,58 +424,34 @@
           <div class="setup-row">
             <label data-i18n="topic_label">Topic</label>
             <div class="chip-row" id="quizTopicChips">
-              <button class="pill active" data-topic="mixed">Mixed</button>
-              <button class="pill" data-topic="tenses">Tenses</button>
-              <button class="pill" data-topic="tobe">To Be</button>
-              <button class="pill" data-topic="vocabulary">Vocabulary</button>
-              <button class="pill" data-topic="grammar">Grammar</button>
+              <button class="pill active" data-topic="mixed" data-i18n="topic_mixed">Mixed review</button>
+              <button class="pill" data-topic="tenses" data-i18n="sub_tenses">Tenses</button>
+              <button class="pill" data-topic="tobe" data-i18n="sub_tobe">To Be</button>
+              <button class="pill" data-topic="vocabulary" data-i18n="sub_vocabulary">Vocabulary</button>
+              <button class="pill" data-topic="grammar" data-i18n="sub_grammar">Grammar</button>
             </div>
           </div>
           <div class="setup-row">
             <label data-i18n="diff_label">Difficulty</label>
             <div class="chip-row" id="quizDifficultyChips">
-              <button class="pill" data-diff="beginner">Beginner</button>
-              <button class="pill active" data-diff="intermediate">Intermediate</button>
-              <button class="pill" data-diff="advanced">Advanced</button>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-block" id="startQuizBtn" data-i18n="start_quiz_btn">Start quiz</button>
-        </div>
-        <div id="quizPlayArea"></div>
-      </div>
-
-      <div id="psub-ai" class="hidden">
-        <div class="card ai-panel" id="aiSetupBox">
-          <div class="setup-row">
-            <label data-i18n="topic_label">Topic</label>
-            <div class="chip-row" id="aiTopicChips">
-              <button class="pill active" data-topic="mixed">Mixed review</button>
-              <button class="pill" data-topic="tenses">Tenses</button>
-              <button class="pill" data-topic="tobe">To Be</button>
-              <button class="pill" data-topic="vocabulary">Vocabulary</button>
-              <button class="pill" data-topic="grammar">Grammar</button>
-            </div>
-          </div>
-          <div class="setup-row">
-            <label data-i18n="diff_label">Difficulty</label>
-            <div class="chip-row" id="aiDifficultyChips">
-              <button class="pill" data-diff="beginner">Beginner</button>
-              <button class="pill active" data-diff="intermediate">Intermediate</button>
-              <button class="pill" data-diff="advanced">Advanced</button>
+              <button class="pill" data-diff="beginner" data-i18n="diff_beginner">Beginner</button>
+              <button class="pill active" data-diff="intermediate" data-i18n="diff_intermediate">Intermediate</button>
+              <button class="pill" data-diff="advanced" data-i18n="diff_advanced">Advanced</button>
             </div>
           </div>
           <div class="setup-row">
             <label data-i18n="count_label">Number of questions</label>
-            <div class="chip-row" id="aiCountChips">
+            <div class="chip-row" id="quizCountChips">
               <button class="pill" data-count="3">3</button>
               <button class="pill active" data-count="5">5</button>
               <button class="pill" data-count="7">7</button>
+              <button class="pill" data-count="10">10</button>
             </div>
           </div>
-          <button class="btn btn-primary btn-block" id="generateAiBtn" data-i18n="generate_ai_btn">✨ Generate my test</button>
-          <p style="font-size:.78rem;margin-top:var(--sp-3);margin-bottom:0;">Questions are generated live by an AI tutor for this topic and level, so no two tests are quite the same.</p>
+          <button class="btn btn-primary btn-block" id="startQuizBtn" data-i18n="start_quiz_btn">🚀 Start Quiz</button>
+          <p style="font-size:.78rem;margin-top:var(--sp-3);margin-bottom:0;color:var(--muted);" data-i18n="quiz_adaptive_note">Questions adapt dynamically to your selected topic and difficulty level, with instant explanations on every answer.</p>
         </div>
-        <div id="aiPlayArea"></div>
+        <div id="quizPlayArea"></div>
       </div>
     </section>
 
@@ -864,4 +835,3 @@
 <script src="modules/app.js" type="module"></script>
 </body>
 </html>
-
