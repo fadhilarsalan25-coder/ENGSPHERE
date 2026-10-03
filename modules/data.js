@@ -351,23 +351,7 @@ export const TENSES = [
   }
 ];
 
-export const VOCAB = {
-  'Daily life': [
-    { w: 'chore', p: 'noun', m: 'a routine task, especially a household one', e: 'Doing the laundry is my least favorite chore.' },
-    { w: 'errand', p: 'noun', m: 'a short trip to do a job or buy something', e: 'I have to run a few errands before dinner.' },
-    { w: 'commute', p: 'noun / verb', m: 'the journey between home and work', e: 'Her morning commute takes about forty minutes.' }
-  ],
-  'Work & study': [
-    { w: 'deadline', p: 'noun', m: 'the latest time by which something must be done', e: 'The deadline for the report is 5 p.m. tomorrow.' },
-    { w: 'workload', p: 'noun', m: 'the amount of work to be done by a person', e: 'Her workload has increased significantly this quarter.' },
-    { w: 'overview', p: 'noun', m: 'a short description that gives the main ideas', e: 'He gave a brief overview of the project scope.' }
-  ],
-  Travel: [
-    { w: 'itinerary', p: 'noun', m: 'a planned route or journey', e: 'Our itinerary includes three days in Tokyo and two in Kyoto.' },
-    { w: 'departure', p: 'noun', m: 'the act of leaving a place', e: 'The flight departure has been delayed by twenty minutes.' },
-    { w: 'luggage', p: 'noun', m: 'bags and suitcases containing belongings', e: 'Passengers are allowed one piece of carry-on luggage.' }
-  ]
-};
+export { VOCAB } from './vocab-data.js';
 
 export const Q = (q, o, a, x, id, x_id) => ({
   id: id || (q.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 36)),
@@ -445,7 +429,13 @@ export const BANK = {
       Q('She always ____ her bed right after waking up.', ['does', 'makes', 'fixes', 'puts'], 1, 'The standard English collocation is "make the bed".', 'voc-b-3', 'Kolokasi baku dalam bahasa Inggris untuk merapikan tempat tidur adalah "make the bed".'),
       Q('Could you please ____ me a favor and carry this parcel?', ['make', 'do', 'give', 'take'], 1, 'The idiomatic English phrase is "do someone a favor".', 'voc-b-4', 'Frasa idiomatis yang benar untuk meminta bantuan adalah "do me a favor".'),
       Q('We usually ____ a taxi when it rains heavily.', ['catch', 'hold', 'drive', 'pick'], 0, 'Natural collocations include "catch a taxi" or "take a taxi".', 'voc-b-5', 'Kolokasi yang tepat untuk naik taksi atau transportasi umum adalah "catch a taxi" atau "take a taxi".'),
-      Q('He was so ____ about the test that he could hardly sleep.', ['anxious', 'delighted', 'confident', 'fluent'], 0, '"Anxious" means feeling worried, nervous, or uneasy.', 'voc-b-6', '"Anxious" berarti merasa cemas, gelisah, atau khawatir terhadap sesuatu.')
+      Q('He was so ____ about the test that he could hardly sleep.', ['anxious', 'delighted', 'confident', 'fluent'], 0, '"Anxious" means feeling worried, nervous, or uneasy.', 'voc-b-6', '"Anxious" berarti merasa cemas, gelisah, atau khawatir terhadap sesuatu.'),
+      Q('He decided to ____ a new non-profit foundation to support youth education.', ['set up', 'take after', 'break down', 'give in'], 0, 'To "set up" means to establish or create an organization.', 'voc-b-7', '"Set up" berarti mendirikan, membangun, atau membentuk suatu organisasi/usaha.'),
+      Q('Please make sure you have all pieces of your ____ before leaving the terminal.', ['luggage', 'customs', 'itinerary', 'fare'], 0, '"Luggage" refers to suitcases and bags for travel.', 'voc-b-8', '"Luggage" adalah barang bawaan koper atau tas penumpang selama perjalanan.'),
+      Q('Rice is the essential dietary ____ for millions of people across Asia.', ['staple', 'appetizer', 'recipe', 'flavor'], 0, 'A "staple" is a basic, principal food consumed regularly.', 'voc-b-9', '"Staple" adalah makanan pokok yang dikonsumsi secara rutin oleh masyarakat.'),
+      Q('She felt noticeably ____ before delivering her speech in front of hundreds.', ['anxious', 'punctual', 'frugal', 'tidy'], 0, '"Anxious" describes feeling nervous or uneasy about an upcoming challenge.', 'voc-b-10', '"Anxious" menyatakan rasa cemas atau gugup menghadapi tantangan di depan umum.'),
+      Q('The train was running late, so we had to ____ for twenty minutes on the platform.', ['hold on', 'run out', 'figure out', 'get along'], 0, '"Hold on" or wait briefly.', 'voc-b-11', '"Hold on" berarti menunggu sejenak.'),
+      Q('His new sports shoes are very ____ for long-distance morning runs.', ['comfortable', 'unforeseen', 'hostile', 'obsolete'], 0, '"Comfortable" provides physical ease and relaxation.', 'voc-b-12', '"Comfortable" berarti nyaman dan memberikan keleluasaan gerak.')
     ],
     intermediate: [
       Q('The manager ____ the new marketing project to Sarah.', ['assigned', 'analysed', 'concluded', 'delayed'], 0, '"To assign" means to give someone a particular task, duty, or project.', 'voc-i-1', '"Assign" berarti menugaskan atau mempercayakan suatu proyek/tugas kepada seseorang.'),
@@ -453,14 +443,25 @@ export const BANK = {
       Q('Due to unforeseen circumstances, we had to ____ our scheduled workshop.', ['postpone', 'allocate', 'scrutinize', 'mitigate'], 0, '"Postpone" means to arrange for an event to take place at a later date.', 'voc-i-3', '"Postpone" berarti menunda suatu acara atau kegiatan ke waktu yang lebih lambat.'),
       Q('She managed to ____ all the obstacles and graduate with highest honors.', ['overcome', 'overlook', 'overtake', 'overhear'], 0, '"Overcome" means to successfully deal with or defeat a problem or difficulty.', 'voc-i-4', '"Overcome" berarti berhasil mengatasi rintangan atau kesulitan yang menghadang.'),
       Q('Finding a sustainable work-life ____ is vital for long-term health.', ['balance', 'itinerary', 'luggage', 'schedule'], 0, '"Work-life balance" is the standard collocation for dividing time between job and personal life.', 'voc-i-5', '"Work-life balance" adalah istilah baku untuk keseimbangan antara karier dan kehidupan pribadi.'),
-      Q('The company launched an initiative to ____ plastic waste across all branches.', ['diminish', 'curtail', 'eliminate', 'deteriorate'], 2, '"Eliminate" means to completely remove or get rid of something undesirable.', 'voc-i-6', '"Eliminate" berarti meniadakan atau menyingkirkan sesuatu hingga tuntas.')
+      Q('The company launched an initiative to ____ plastic waste across all branches.', ['diminish', 'curtail', 'eliminate', 'deteriorate'], 2, '"Eliminate" means to completely remove or get rid of something undesirable.', 'voc-i-6', '"Eliminate" berarti meniadakan atau menyingkirkan sesuatu hingga tuntas.'),
+      Q('The company agreed to ____ thirty percent of its annual profits to green research.', ['allocate', 'scrutinize', 'postpone', 'corroborate'], 0, 'To "allocate" means to designate or set aside funds for a specific purpose.', 'voc-i-7', '"Allocate" berarti mengalokasikan atau mencadangkan dana untuk tujuan khusus.'),
+      Q('They had to ____ the outdoor football tournament due to severe torrential rain.', ['call off', 'look into', 'put up with', 'bring about'], 0, '"Call off" means to cancel an event.', 'voc-i-8', '"Call off" berarti membatalkan suatu agenda atau acara yang telah dijadwalkan.'),
+      Q('Solar and wind power are leading sources of ____ energy.', ['renewable', 'vulnerable', 'tedious', 'obsolete'], 0, '"Renewable" refers to natural energy sources that replenish over time.', 'voc-i-9', '"Renewable" berarti energi terbarukan yang tidak akan habis seperti matahari dan angin.'),
+      Q('The doctor wrote a medical ____ for antibiotics to clear the infection.', ['prescription', 'diagnosis', 'symptom', 'remedy'], 0, 'A "prescription" is an authorized written order for medicine.', 'voc-i-10', '"Prescription" adalah resep obat resmi yang ditulis oleh dokter berlisensi.'),
+      Q('Her detailed master’s thesis provides ____ evidence supporting bilingual education.', ['empirical', 'cynical', 'frugal', 'fragile'], 0, '"Empirical" means based on observed facts and scientific evidence.', 'voc-i-11', '"Empirical" berarti didasarkan pada data pengamatan dan bukti nyata di lapangan.'),
+      Q('It took weeks for the arbitration team to ____ the complicated boundary dispute.', ['sort out', 'turn down', 'take after', 'give up'], 0, '"Sort out" means to resolve or find a solution to a problem.', 'voc-i-12', '"Sort out" berarti mengurai, menyelesaikan, atau mencari jalan keluar sengketa.')
     ],
     advanced: [
       Q('The research team must ____ the survey data before publishing conclusions.', ['analyse', 'summarise', 'commute', 'contrast'], 0, '"Analyse" means examining data or information in careful detail.', 'voc-a-1', '"Analyse" berarti menganalisis data atau informasi survei secara mendalam sebelum menarik kesimpulan.'),
       Q('The government implemented urgent measures to ____ the economic crisis.', ['mitigate', 'exacerbate', 'proliferate', 'allocate'], 0, '"Mitigate" means to make something bad less severe, serious, or painful.', 'voc-a-2', '"Mitigate" berarti mengurangi tingkat keparahan, meredakan, atau memperkecil dampak negatif.'),
       Q('Her inflammatory remarks served only to ____ the existing dispute.', ['exacerbate', 'ameliorate', 'placate', 'attenuate'], 0, '"Exacerbate" means to make a problem, bad situation, or negative feeling worse.', 'voc-a-3', '"Exacerbate" berarti memperburuk atau memperkeruh situasi/masalah yang sudah ada.'),
       Q('The architect was praised for her ____ and practical approach to urban design.', ['pragmatic', 'dogmatic', 'ephemeral', 'capricious'], 0, '"Pragmatic" means dealing with things sensibly and realistically based on practical conditions.', 'voc-a-4', '"Pragmatic" berarti praktis, realistis, dan berorientasi pada hasil nyata.'),
-      Q('Investigators were asked to ____ every financial transaction made by the firm.', ['scrutinize', 'obfuscate', 'improvise', 'condone'], 0, '"Scrutinize" means to examine or inspect closely and thoroughly.', 'voc-a-5', '"Scrutinize" berarti memeriksa atau menyelidiki dengan sangat teliti dan mendalam.')
+      Q('Investigators were asked to ____ every financial transaction made by the firm.', ['scrutinize', 'obfuscate', 'improvise', 'condone'], 0, '"Scrutinize" means to examine or inspect closely and thoroughly.', 'voc-a-5', '"Scrutinize" berarti memeriksa atau menyelidiki dengan sangat teliti dan mendalam.'),
+      Q('The defense attorney presented newly discovered documents to ____ the witness statement.', ['corroborate', 'exacerbate', 'obfuscate', 'plagiarize'], 0, 'To "corroborate" means to confirm or give support with evidence.', 'voc-a-6', '"Corroborate" berarti memperkuat atau memvalidasi kesaksian dengan bukti otentik.'),
+      Q('Rising inflation threatens to ____ the living conditions of lower-income families.', ['exacerbate', 'mitigate', 'ameliorate', 'synthesize'], 0, 'To "exacerbate" means to make a bad situation even worse.', 'voc-a-7', '"Exacerbate" berarti memperburuk atau memperparah keadaan yang sudah sulit.'),
+      Q('The auditor conducted a ____ review of all international transactions.', ['meticulous', 'gullible', 'superficial', 'capricious'], 0, '"Meticulous" means showing great attention to detail and precision.', 'voc-a-8', '"Meticulous" berarti sangat teliti, cermat, dan saksama dalam memeriksa tiap detail.'),
+      Q('The landmark Supreme Court ruling established an enduring legal ____ for future trials.', ['precedent', 'verdict', 'acquittal', 'felony'], 0, 'A "precedent" is an earlier judicial decision that serves as a guide.', 'voc-a-9', '"Precedent" adalah yurisprudensi putusan terdahulu yang dijadikan acuan hukum baku.'),
+      Q('Overfishing in unregulated waters continues to ____ deep-sea marine stocks.', ['deplete', 'allocate', 'rehabilitate', 'commence'], 0, 'To "deplete" means to severely reduce or exhaust resources.', 'voc-a-10', '"Deplete" berarti menguras atau menghabiskan cadangan sumber daya hingga kritis.')
     ]
   },
   grammar: {
@@ -491,4 +492,3 @@ export const BANK = {
 };
 
 export const STORAGE_KEY = 'engsphere-state';
-
