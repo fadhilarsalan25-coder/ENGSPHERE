@@ -37,13 +37,21 @@ export const I18N = {
     materials_title: 'Materials',
     materials_sub: 'Short, practical lessons — read the rule, then check the examples. Everything here also feeds the Practice quizzes.',
     practice_title: 'Practice',
-    practice_sub: 'Run the quick static quiz for instant gamified practice, or let the AI tutor build a fresh test around exactly what you want to work on.',
-    tab_quick_quiz: 'Quick Quiz',
-    tab_ai_test: 'AI Adaptive Test',
-    start_quiz_btn: 'Start quiz',
-    generate_ai_btn: '✨ Generate my test',
+    practice_sub: 'Pick a topic, difficulty, and question count to test your English skills with instant feedback.',
+    tab_quick_quiz: 'Quiz',
+    tab_ai_test: 'Quiz',
+    tab_quiz: 'Quiz',
+    start_quiz_btn: '🚀 Start Quiz',
+    generate_ai_btn: '🚀 Start Quiz',
+    ql_quiz_title: 'Quiz',
+    ql_quiz_desc: 'Adaptive interactive practice with instant explanations.',
+    quiz_adaptive_note: 'Questions adapt dynamically to your selected topic and difficulty level, with instant explanations on every answer.',
+    topic_mixed: 'Mixed review',
+    diff_beginner: 'Beginner',
+    diff_intermediate: 'Intermediate',
+    diff_advanced: 'Advanced',
     progress_title: 'Your progress',
-    progress_sub: 'Every quiz — quick or AI-generated — adds to your XP and streak.',
+    progress_sub: 'Every quiz round adds to your XP and streak.',
     recent_tests: 'Recent tests',
     reset_progress: 'Reset all progress',
     sub_tenses: 'Tenses',
@@ -55,8 +63,7 @@ export const I18N = {
     ql_tobe_desc: "Am, is, are — and how they're used.",
     ql_vocab_desc: 'Flip cards across 6 everyday topics.',
     ql_grammar_desc: 'Parts of speech and sentence structure.',
-    ql_quiz_desc: 'Gamified multiple-choice practice.',
-    ql_ai_desc: 'Fresh questions matched to your level.',
+    ql_ai_desc: 'Adaptive questions matched to your level.',
 
     // Landing strip
     ls_label1: 'tenses, each with formula, usage and examples',
@@ -215,13 +222,21 @@ export const I18N = {
     materials_title: 'Materi Belajar',
     materials_sub: 'Pelajaran ringkas & praktis — pelajari aturannya, lalu periksa contoh kalimatnya. Semua materi ini terhubung ke kuis latihan.',
     practice_title: 'Latihan Soal',
-    practice_sub: 'Jalankan kuis cepat untuk latihan interaktif, atau biarkan tutor AI membuatkan tes baru sesuai fokus yang ingin Anda latih.',
-    tab_quick_quiz: 'Kuis Cepat',
-    tab_ai_test: 'Tes Adaptif AI',
-    start_quiz_btn: 'Mulai kuis',
-    generate_ai_btn: '✨ Buat tes saya',
+    practice_sub: 'Pilih topik, tingkat kesulitan, dan jumlah soal untuk menguji kemampuan bahasa Inggris Anda dengan umpan balik langsung.',
+    tab_quick_quiz: 'Kuis',
+    tab_ai_test: 'Kuis',
+    tab_quiz: 'Kuis',
+    start_quiz_btn: '🚀 Mulai Kuis',
+    generate_ai_btn: '🚀 Mulai Kuis',
+    ql_quiz_title: 'Kuis',
+    ql_quiz_desc: 'Latihan interaktif adaptif dengan penjelasan langsung di setiap jawaban.',
+    quiz_adaptive_note: 'Soal disesuaikan secara adaptif dengan topik dan tingkat kesulitan pilihan Anda, lengkap dengan penjelasan langsung di setiap jawaban.',
+    topic_mixed: 'Campuran',
+    diff_beginner: 'Pemula',
+    diff_intermediate: 'Menengah',
+    diff_advanced: 'Mahir',
     progress_title: 'Kemajuan Belajar Anda',
-    progress_sub: 'Setiap kuis — baik kuis cepat maupun AI — menambah XP dan streak belajar Anda.',
+    progress_sub: 'Setiap putaran kuis menambah XP dan streak belajar Anda.',
     recent_tests: 'Tes Terakhir',
     reset_progress: 'Reset semua kemajuan',
     sub_tenses: 'Bentuk Waktu (Tenses)',
@@ -233,7 +248,6 @@ export const I18N = {
     ql_tobe_desc: 'Am, is, are, was, were — fungsi dan cara penggunaannya.',
     ql_vocab_desc: 'Kartu kosakata flip interaktif dalam 6 tema sehari-hari.',
     ql_grammar_desc: 'Bagian kalimat (Parts of Speech) dan aturan tata bahasa.',
-    ql_quiz_desc: 'Latihan pilihan ganda cepat dengan sistem XP.',
     ql_ai_desc: 'Soal latihan yang disesuaikan dengan tingkat kemampuan Anda.',
 
     // Landing strip
@@ -418,11 +432,11 @@ export function translateUI(lang, state) {
   const grammarTab = document.querySelector('[data-msub="grammar"]');
   if (grammarTab) grammarTab.textContent = t.sub_grammar;
 
-  // 5. Practice subtabs
+  // 5. Practice subtabs (if present)
   const quizTab = document.querySelector('[data-psub="quiz"]');
-  if (quizTab) quizTab.textContent = t.tab_quick_quiz;
+  if (quizTab) quizTab.textContent = t.tab_quiz || 'Quiz';
   const aiTab = document.querySelector('[data-psub="ai"]');
-  if (aiTab) aiTab.textContent = t.tab_ai_test;
+  if (aiTab) aiTab.textContent = t.tab_quiz || 'Quiz';
 
   // 6. Level ring text
   document.querySelectorAll('.ring-label .l').forEach(el => {
@@ -442,7 +456,7 @@ export function translateUI(lang, state) {
     const diffWord = selected === 'id' ? (currentDiff === 'beginner' ? 'Pemula' : currentDiff === 'advanced' ? 'Mahir' : 'Menengah') : currentDiff;
     dashDesc.innerHTML = selected === 'id'
       ? `Tingkat belajar Anda: <strong id="dashLevelWord">${diffWord}</strong>. Buka materi pelajaran atau mulai kuis untuk menjaga streak Anda.`
-      : `You're set to <strong id="dashLevelWord">${diffWord}</strong> level. Jump back into a lesson or run a quick quiz to keep your streak alive.`;
+      : `You're set to <strong id="dashLevelWord">${diffWord}</strong> level. Jump back into a lesson or start a quiz to keep your streak alive.`;
   }
 
   // 9. Quicklink card descriptions
@@ -464,12 +478,9 @@ export function translateUI(lang, state) {
     } else if (item.dataset.gotoMaterial === 'grammar') {
       if (h3) h3.textContent = t.sub_grammar;
       if (p) p.textContent = t.ql_grammar_desc;
-    } else if (item.dataset.gotoPractice === 'quiz') {
-      if (h3) h3.textContent = t.tab_quick_quiz;
+    } else if (item.dataset.gotoPractice === 'quiz' || item.dataset.gotoPractice === 'ai') {
+      if (h3) h3.textContent = t.ql_quiz_title || 'Quiz';
       if (p) p.textContent = t.ql_quiz_desc;
-    } else if (item.dataset.gotoPractice === 'ai') {
-      if (h3) h3.textContent = t.tab_ai_test;
-      if (p) p.textContent = t.ql_ai_desc;
     }
   });
 }
@@ -689,11 +700,12 @@ export function bindChipSelectors() {
     });
   });
 
-  // AI question count chips
-  document.querySelectorAll('#aiCountChips [data-count]').forEach(btn => {
+  // Question count chips (Quiz)
+  document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(btn => {
     btn.addEventListener('click', () => {
+      state.selectedCount = Number(btn.dataset.count);
       state.selectedAIQuestions = Number(btn.dataset.count);
-      document.querySelectorAll('#aiCountChips [data-count]').forEach(item => item.classList.toggle('active', item === btn));
+      document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(item => item.classList.toggle('active', item === btn));
     });
   });
 
