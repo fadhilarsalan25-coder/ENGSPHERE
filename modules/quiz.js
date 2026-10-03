@@ -193,22 +193,8 @@ function poolForCurrentSelection(topic = state.selectedTopic, difficulty = state
   return list.map(q => ({ ...q, topic, difficulty })).sort(() => Math.random() - 0.5);
 }
 
-export function startQuickQuiz() {
-  const questions = poolForCurrentSelection().slice(0, 6);
-  state.quiz = {
-    questions,
-    current: 0,
-    score: 0,
-    isReviewMode: false,
-    isAiMode: false
-  };
-  const setupBox = document.getElementById('quizSetupBox');
-  if (setupBox) setupBox.classList.add('hidden');
-  renderQuiz();
-}
-
-export function runAiAdaptiveTest() {
-  const count = state.selectedAIQuestions || 5;
+export function startQuiz() {
+  const count = state.selectedCount || state.selectedAIQuestions || 5;
   const topic = state.selectedTopic || 'mixed';
   const difficulty = state.selectedDifficulty || 'intermediate';
   let questions = poolForCurrentSelection(topic, difficulty);
@@ -226,19 +212,21 @@ export function runAiAdaptiveTest() {
     current: 0,
     score: 0,
     isReviewMode: false,
-    isAiMode: true
+    isAiMode: false
   };
+  const setupBox = document.getElementById('quizSetupBox');
+  if (setupBox) setupBox.classList.add('hidden');
   const aiSetupBox = document.getElementById('aiSetupBox');
   if (aiSetupBox) aiSetupBox.classList.add('hidden');
   renderQuiz();
 }
 
+export const startQuickQuiz = startQuiz;
+export const runAiAdaptiveTest = startQuiz;
+
 export function renderQuiz() {
   if (!state.quiz) return;
-  const isAi = Boolean(state.quiz.isAiMode);
-  const playArea = isAi
-    ? document.getElementById('aiPlayArea')
-    : document.getElementById('quizPlayArea');
+  const playArea = document.getElementById('quizPlayArea') || document.getElementById('aiPlayArea');
   if (!playArea) return;
 
   const currentIdx = state.quiz.current;
@@ -259,7 +247,7 @@ export function renderQuiz() {
         </p>
         <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:var(--sp-4);">
           <button class="btn btn-primary" id="quizAgainBtn">
-            ${state.quiz.isReviewMode ? (isId ? 'Kembali ke Review Dashboard' : 'Back to Dashboard Review') : (isAi ? (isId ? '⚡ Buat Tes Lainnya' : '⚡ Generate Another Test') : (isId ? 'Coba Kuis Lainnya' : 'Try Another Quiz'))}
+            ${state.quiz.isReviewMode ? (isId ? 'Kembali ke Review Dashboard' : 'Back to Dashboard Review') : (isId ? 'Coba Kuis Lainnya' : 'Try Another Quiz')}
           </button>
           <button class="btn btn-ghost" id="quizDashboardBtn">${isId ? 'Kembali ke Beranda' : 'Go to Dashboard'}</button>
         </div>
@@ -268,7 +256,7 @@ export function renderQuiz() {
 
     state.xp += xp;
     state.history.unshift({
-      label: state.quiz.isReviewMode ? 'Review quiz' : (isAi ? `AI Test (${capitalize(q?.topic || state.selectedTopic)})` : `Quick quiz (${capitalize(state.selectedTopic)})`),
+      label: state.quiz.isReviewMode ? 'Review quiz' : `Quiz (${capitalize(q?.topic || state.selectedTopic)})`,
       score,
       timestamp: Date.now()
     });
@@ -282,20 +270,21 @@ export function renderQuiz() {
     document.getElementById('quizAgainBtn')?.addEventListener('click', () => {
       if (state.quiz?.isReviewMode) {
         window.setView?.('dashboard');
-      } else if (isAi) {
-        document.getElementById('aiSetupBox')?.classList.remove('hidden');
-        playArea.innerHTML = '';
-        runAiAdaptiveTest();
       } else {
-        document.getElementById('quizSetupBox')?.classList.remove('hidden');
+        const setupBox = document.getElementById('quizSetupBox');
+        if (setupBox) setupBox.classList.remove('hidden');
+        const aiSetupBox = document.getElementById('aiSetupBox');
+        if (aiSetupBox) aiSetupBox.classList.remove('hidden');
         playArea.innerHTML = '';
-        startQuickQuiz();
+        startQuiz();
       }
     });
 
     document.getElementById('quizDashboardBtn')?.addEventListener('click', () => {
-      document.getElementById('quizSetupBox')?.classList.remove('hidden');
-      document.getElementById('aiSetupBox')?.classList.remove('hidden');
+      const setupBox = document.getElementById('quizSetupBox');
+      if (setupBox) setupBox.classList.remove('hidden');
+      const aiSetupBox = document.getElementById('aiSetupBox');
+      if (aiSetupBox) aiSetupBox.classList.remove('hidden');
       playArea.innerHTML = '';
       window.setView?.('dashboard');
     });
