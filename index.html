@@ -201,6 +201,16 @@
         <button data-view="progress" data-i18n="nav_progress">📈 Progress</button>
       </nav>
       <div class="stats-chip">
+        <div class="level-badge-mini">
+          <div class="level-ring-mini">
+            <svg width="26" height="26" viewBox="0 0 26 26">
+              <circle class="bg" cx="13" cy="13" r="10.5" fill="none" stroke-width="3"/>
+              <circle class="fg" id="miniRingFg" cx="13" cy="13" r="10.5" fill="none" stroke-width="3" stroke-dasharray="65.9" stroke-dashoffset="65.9"/>
+            </svg>
+          </div>
+          <span id="miniLevelLabel" style="font-size:.8rem;font-weight:700;">Lv 1</span>
+        </div>
+        <div class="stat-mini" title="Day streak">🔥<span id="miniStreak">0</span></div>
         <div class="lang-switcher-wrap" id="appLangWrap">
           <button class="lang-btn" id="appLangBtn" aria-label="Select Language" aria-expanded="false" title="Pilihan Bahasa / Select Language">
             <span class="lang-icon">🌐</span>
@@ -220,16 +230,6 @@
             </button>
           </div>
         </div>
-        <div class="level-badge-mini">
-          <div class="level-ring-mini">
-            <svg width="26" height="26" viewBox="0 0 26 26">
-              <circle class="bg" cx="13" cy="13" r="10.5" fill="none" stroke-width="3"/>
-              <circle class="fg" id="miniRingFg" cx="13" cy="13" r="10.5" fill="none" stroke-width="3" stroke-dasharray="65.9" stroke-dashoffset="65.9"/>
-            </svg>
-          </div>
-          <span id="miniLevelLabel" style="font-size:.8rem;font-weight:700;">Lv 1</span>
-        </div>
-        <div class="stat-mini" title="Day streak">🔥<span id="miniStreak">0</span></div>
         <button class="profile-pill" id="profilePillBtn" aria-label="Open profile, streak, XP and settings" title="Learner Profile & Settings">
           <span class="avatar sm" id="profileAvatar">L</span>
           <span id="profileNameLabel">Learner</span>
@@ -864,3 +864,4 @@
 <script src="modules/app.js" type="module"></script>
 </body>
 </html>
+
