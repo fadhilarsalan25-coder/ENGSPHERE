@@ -19,8 +19,8 @@
 <section id="landing">
   <div class="container">
     <div class="landing-nav">
-      <div class="brand"><img src="assets/logo.png" alt="EngSphere Logo"> EngSphere</div>
-      <div style="display:flex;gap:.5rem;align-items:center;">
+      <div class="brand"><img src="assets/logo.png" alt="EngSphere Logo" width="28" height="28" style="width:28px;height:28px;object-fit:contain;border-radius:50%;flex-shrink:0;"> EngSphere</div>
+      <div class="landing-nav-actions" id="landingNavActions">
         <div class="lang-switcher-wrap" id="landingLangWrap">
           <button class="lang-btn" id="landingLangBtn" aria-label="Select Language" aria-expanded="false" title="Pilihan Bahasa / Select Language">
             <span class="lang-icon">🌐</span>
@@ -41,7 +41,10 @@
           </div>
         </div>
         <button class="btn btn-ghost btn-sm" id="landingLoginBtn" data-i18n="landing_login">Log in</button>
-        <button class="btn btn-primary btn-sm" id="landingSignUpBtn" data-i18n="landing_signup">Sign up / Get Started</button>
+        <button class="btn btn-primary btn-sm" id="landingSignUpBtn">
+          <span class="signup-full" data-i18n="landing_signup">Sign up / Get Started</span>
+          <span class="signup-short" data-i18n="landing_signup_short">Sign up</span>
+        </button>
       </div>
     </div>
     <div class="landing-hero">
