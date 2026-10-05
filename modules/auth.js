@@ -139,6 +139,9 @@ export function signUpUser(name, email, password, level, goal) {
   document.getElementById('landing')?.classList.add('hidden');
   document.getElementById('app')?.classList.remove('hidden');
   closeAllModals();
+  window.scrollTo(0, 0);
+  if (document.documentElement) document.documentElement.scrollTop = 0;
+  if (document.body) document.body.scrollTop = 0;
   if (typeof window.setView === 'function') window.setView('dashboard');
 }
 
@@ -189,6 +192,9 @@ export function loginUser(identifier, password) {
   closeAllModals();
   document.getElementById('landing')?.classList.add('hidden');
   document.getElementById('app')?.classList.remove('hidden');
+  window.scrollTo(0, 0);
+  if (document.documentElement) document.documentElement.scrollTop = 0;
+  if (document.body) document.body.scrollTop = 0;
   if (typeof window.setView === 'function') window.setView('dashboard');
 }
 
