@@ -1,5 +1,13 @@
-import { state } from './state.js';
+import { state, saveState } from './state.js';
 import { escapeHtml } from './utils.js';
+import {
+  signUpWithSupabase,
+  signInWithSupabase,
+  signOutFromSupabase,
+  fetchCloudProfile,
+  fetchCloudQuizHistory,
+  isSupabaseReady
+} from './supabase-client.js';
 
 export function setAuthAlert(msg, type = 'error') {
   const alertBox = document.getElementById('authAlertBox');
@@ -96,7 +104,7 @@ export function closeAllModals() {
   setAuthAlert('');
 }
 
-export function signUpUser(name, email, password, level, goal) {
+export async function signUpUser(name, email, password, level, goal) {
   const cleanName = (name || '').trim();
   if (!cleanName || cleanName.length < 2) {
     setAuthAlert('Please enter your full name or nickname (at least 2 characters).');
@@ -118,23 +126,52 @@ export function signUpUser(name, email, password, level, goal) {
     return;
   }
 
+  let cloudUserId = null;
+  if (isSupabaseReady()) {
+    try {
+      const res = await signUpWithSupabase(cleanName, cleanEmail, cleanPw, level, goal);
+      if (res?.error && !res.error.toLowerCase().includes('already registered')) {
+        if (res.error.toLowerCase().includes('password') || res.error.toLowerCase().includes('valid')) {
+          setAuthAlert(res.error);
+          return;
+        }
+      }
+      if (res?.user?.id) {
+        cloudUserId = res.user.id;
+      }
+    } catch (e) {
+      console.warn('Cloud sign-up fallback:', e);
+    }
+  }
+
   if (!Array.isArray(state.users)) state.users = [];
   const existingUser = state.users.find(u => u.email && u.email.toLowerCase() === cleanEmail);
-  if (existingUser) {
+  if (existingUser && !cloudUserId) {
     setAuthAlert(`An account with email "${cleanEmail}" already exists. Please log in instead.`);
     return;
   }
 
   const initials = cleanName.charAt(0).toUpperCase();
-  const newUser = { id: 'usr_' + Date.now(), name: cleanName, initials, email: cleanEmail, password: cleanPw, level: level || 'intermediate', goal: goal || 'conversation', createdAt: new Date().toISOString() };
+  const newUser = {
+    id: cloudUserId || ('usr_' + Date.now()),
+    name: cleanName,
+    initials,
+    email: cleanEmail,
+    password: cleanPw,
+    level: level || 'intermediate',
+    goal: goal || 'conversation',
+    createdAt: new Date().toISOString()
+  };
   state.users.unshift(newUser);
 
-  const newProfile = { name: cleanName, initials, email: cleanEmail };
+  const newProfile = { name: cleanName, initials, email: cleanEmail, supabaseUserId: cloudUserId };
   state.profiles = Array.isArray(state.profiles) ? [newProfile, ...state.profiles] : [newProfile];
   state.activeProfile = 0;
+  state.supabaseUserId = cloudUserId;
   state.personalizedLearning = { ...state.personalizedLearning, level: level || 'intermediate', goal: goal || 'conversation', dailyXpGoal: 100 };
   state.selectedDifficulty = level || 'intermediate';
   state.isLoggedIn = true;
+  saveState();
 
   document.getElementById('landing')?.classList.add('hidden');
   document.getElementById('app')?.classList.remove('hidden');
@@ -143,9 +180,12 @@ export function signUpUser(name, email, password, level, goal) {
   if (document.documentElement) document.documentElement.scrollTop = 0;
   if (document.body) document.body.scrollTop = 0;
   if (typeof window.setView === 'function') window.setView('dashboard');
+  if (cloudUserId && typeof window.showToast === 'function') {
+    window.showToast('Account connected to Supabase Cloud! ☁️');
+  }
 }
 
-export function loginUser(identifier, password) {
+export async function loginUser(identifier, password) {
   const cleanId = (identifier || '').trim();
   if (!cleanId) {
     setAuthAlert('Please enter your email or username to log in.');
@@ -153,13 +193,48 @@ export function loginUser(identifier, password) {
     return;
   }
 
+  const cleanPw = (password || '').trim();
+  let cloudUserId = null;
+
+  if (cleanId.includes('@') && cleanPw && isSupabaseReady()) {
+    try {
+      const res = await signInWithSupabase(cleanId.toLowerCase(), cleanPw);
+      if (res?.user?.id) {
+        cloudUserId = res.user.id;
+        state.supabaseUserId = cloudUserId;
+
+        // Fetch cloud profile if exists
+        const cloudProf = await fetchCloudProfile(cloudUserId);
+        if (cloudProf) {
+          if (typeof cloudProf.xp === 'number') state.xp = cloudProf.xp;
+          if (typeof cloudProf.level === 'number') state.level = cloudProf.level;
+          if (typeof cloudProf.streak === 'number') state.streak = cloudProf.streak;
+        }
+
+        // Fetch cloud quiz history
+        const cloudHistory = await fetchCloudQuizHistory(cloudUserId);
+        if (Array.isArray(cloudHistory) && cloudHistory.length) {
+          state.history = cloudHistory.map(row => ({
+            label: `Quiz (${row.topic || 'general'})`,
+            score: row.score || 0,
+            timestamp: new Date(row.created_at).getTime()
+          }));
+        }
+      } else if (res?.error && !state.users.some(u => u.email === cleanId.toLowerCase())) {
+        setAuthAlert(res.error);
+        return;
+      }
+    } catch (e) {
+      console.warn('Cloud sign-in fallback:', e);
+    }
+  }
+
   const matchedUser = (state.users || []).find(u =>
     (u.email && u.email.toLowerCase() === cleanId.toLowerCase()) ||
     (u.name && u.name.toLowerCase() === cleanId.toLowerCase())
   );
 
-  const cleanPw = (password || '').trim();
-  if (matchedUser && matchedUser.password) {
+  if (matchedUser && matchedUser.password && !cloudUserId) {
     if (matchedUser.password !== cleanPw) {
       setAuthAlert('Incorrect password. Please verify and try again.');
       document.getElementById('authLoginPassword')?.focus();
@@ -167,8 +242,8 @@ export function loginUser(identifier, password) {
     }
   }
 
-  const userName = matchedUser ? matchedUser.name : cleanId;
-  const userEmail = matchedUser ? matchedUser.email : `${cleanId.toLowerCase().replace(/\s+/g, '')}@engsphere.app`;
+  const userName = matchedUser ? matchedUser.name : (cleanId.includes('@') ? cleanId.split('@')[0] : cleanId);
+  const userEmail = matchedUser ? matchedUser.email : (cleanId.includes('@') ? cleanId.toLowerCase() : `${cleanId.toLowerCase().replace(/\s+/g, '')}@engsphere.app`);
   const initials = userName.charAt(0).toUpperCase();
 
   if (!Array.isArray(state.profiles)) state.profiles = [];
@@ -177,9 +252,11 @@ export function loginUser(identifier, password) {
     (p.name && p.name.toLowerCase() === userName.toLowerCase())
   );
 
-  if (existingIndex >= 0) state.activeProfile = existingIndex;
-  else {
-    state.profiles.unshift({ name: userName, initials, email: userEmail });
+  if (existingIndex >= 0) {
+    state.activeProfile = existingIndex;
+    if (cloudUserId) state.profiles[existingIndex].supabaseUserId = cloudUserId;
+  } else {
+    state.profiles.unshift({ name: userName, initials, email: userEmail, supabaseUserId: cloudUserId });
     state.activeProfile = 0;
   }
 
@@ -189,6 +266,8 @@ export function loginUser(identifier, password) {
   }
 
   state.isLoggedIn = true;
+  saveState();
+
   closeAllModals();
   document.getElementById('landing')?.classList.add('hidden');
   document.getElementById('app')?.classList.remove('hidden');
@@ -196,6 +275,10 @@ export function loginUser(identifier, password) {
   if (document.documentElement) document.documentElement.scrollTop = 0;
   if (document.body) document.body.scrollTop = 0;
   if (typeof window.setView === 'function') window.setView('dashboard');
+
+  if (cloudUserId && typeof window.showToast === 'function') {
+    window.showToast('Logged in & synced with Supabase Cloud! ☁️');
+  }
 }
 
 export function continueAsGuest() {
@@ -204,9 +287,14 @@ export function continueAsGuest() {
 
 export function signOutUser() {
   state.isLoggedIn = false;
+  state.supabaseUserId = null;
+  signOutFromSupabase();
+  saveState();
   document.getElementById('app')?.classList.add('hidden');
   document.getElementById('landing')?.classList.remove('hidden');
-  if (typeof window.scrollTo === 'function') window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo(0, 0);
+  if (document.documentElement) document.documentElement.scrollTop = 0;
+  if (document.body) document.body.scrollTop = 0;
 }
 
 export function exportUserData() {
