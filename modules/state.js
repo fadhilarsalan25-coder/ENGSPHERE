@@ -3,6 +3,7 @@ import { STORAGE_KEY } from './data.js';
 
 export const createDefaultState = () => ({
   isLoggedIn: false,
+  supabaseUserId: null,
   theme: 'dark',
   lang: 'en',
   level: 1,
@@ -86,4 +87,5 @@ export function levelLabel(level) {
   if (level <= 5) return 'Intermediate';
   return 'Advanced';
 }
+
 
