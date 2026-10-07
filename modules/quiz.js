@@ -3,6 +3,7 @@ import { saveState } from './storage.js';
 import { escapeHtml, formatTopic, capitalize } from './utils.js';
 import { BANK, TENSES, VOCAB } from './data.js';
 import { recordIncorrectQuestion } from './review.js';
+import { syncCloudProfile, recordCloudQuizHistory } from './supabase-client.js';
 
 export function renderTenses() {
   const grid = document.getElementById('tenseGrid');
@@ -490,6 +491,23 @@ export function renderQuiz() {
     });
     state.streak += 1;
     saveState();
+
+    if (state.supabaseUserId) {
+      const activeProf = state.profiles?.[state.activeProfile] || {};
+      syncCloudProfile(state.supabaseUserId, {
+        name: activeProf.name || 'Learner',
+        email: activeProf.email,
+        level: state.level,
+        xp: state.xp,
+        streak: state.streak
+      });
+      recordCloudQuizHistory(state.supabaseUserId, {
+        topic: state.quiz.isReviewMode ? 'Review' : state.selectedTopic,
+        level: state.selectedDifficulty,
+        score,
+        total: state.quiz.questions?.length || 5
+      });
+    }
 
     if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
     if (typeof window.renderBadges === 'function') window.renderBadges();
