@@ -248,7 +248,7 @@
       <div class="dash-grid">
         <div class="card welcome-card">
           <h2 id="dashGreeting" data-i18n="dash_greeting">Welcome back</h2>
-          <p id="dashDesc">You're set to <strong id="dashLevelWord">Beginner</strong> level. Jump back into a lesson or run a quick quiz to keep your streak alive.</p>
+          <p id="dashDesc">You're set to <strong id="dashLevelWord">Intermediate</strong> level. Jump back into a lesson or run a quick quiz to keep your streak alive.</p>
           <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
             <button class="btn btn-primary btn-sm" data-goto="practice" id="dashStartQuizBtn" data-i18n="dash_start_quiz">Start a quiz</button>
             <button class="btn btn-ghost btn-sm" data-goto="materials" id="dashBrowseMatBtn" data-i18n="dash_browse_mat">Browse materials</button>
@@ -542,8 +542,8 @@
         <div style="margin-bottom:var(--sp-3);">
           <label class="field-label">Starting Proficiency Level</label>
           <div class="auth-chip-row" id="authLevelChips">
-            <button type="button" class="pill active" data-level="beginner">Beginner (A1-A2)</button>
-            <button type="button" class="pill" data-level="intermediate">Intermediate (B1-B2)</button>
+            <button type="button" class="pill" data-level="beginner">Beginner (A1-A2)</button>
+            <button type="button" class="pill active" data-level="intermediate">Intermediate (B1-B2)</button>
             <button type="button" class="pill" data-level="advanced">Advanced (C1-C2)</button>
           </div>
         </div>
@@ -613,7 +613,7 @@
           <div class="profile-user-meta">
             <h4><span id="hubNameLabel">Learner</span> <button class="btn-text-action" id="hubEditNameBtn" title="Edit name">✏️ Edit</button></h4>
             <p class="profile-user-email" id="hubEmailLabel">learner@engsphere.app</p>
-            <div class="profile-user-badge" id="hubLevelBadge">Level 1 · Beginner</div>
+            <div class="profile-user-badge" id="hubLevelBadge" style="cursor:pointer;" title="Click to change level in Personalized Settings">Intermediate (B1-B2) · Level 1</div>
           </div>
         </div>
         <div id="hubNameEditForm" class="hidden" style="width:100%;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--line);display:flex;gap:.5rem;">
@@ -852,4 +852,3 @@
 <script src="modules/app.js" type="module"></script>
 </body>
 </html>
-
