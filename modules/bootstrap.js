@@ -1,4 +1,4 @@
-import { state, loadState, saveState, applyStreak, levelForXp, levelLabel } from './state.js';
+import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel } from './state.js';
 import { escapeHtml, showToast, formatTopic, capitalize } from './utils.js';
 import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from './review.js';
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
@@ -516,7 +516,18 @@ export function syncProfileHubUI() {
   });
 
   const badge = document.getElementById('hubLevelBadge');
-  if (badge) badge.textContent = `Level ${state.level} · ${levelLabel(state.level)}`;
+  if (badge) {
+    const prof = getProficiencyLevel();
+    const isId = state.lang === 'id';
+    let profTitle = 'Intermediate (B1-B2)';
+    if (prof === 'beginner') profTitle = isId ? 'Pemula (A1-A2)' : 'Beginner (A1-A2)';
+    else if (prof === 'advanced') profTitle = isId ? 'Mahir (C1-C2)' : 'Advanced (C1-C2)';
+    else profTitle = isId ? 'Menengah (B1-B2)' : 'Intermediate (B1-B2)';
+
+    badge.textContent = `${profTitle} · Level ${state.level}`;
+    badge.title = isId ? 'Klik untuk mengubah tingkat di Pengaturan Personal' : 'Click to change level in Personalized Settings';
+    badge.style.cursor = 'pointer';
+  }
 
   const streak = document.getElementById('hubMetricStreak');
   if (streak) streak.textContent = `🔥 ${state.streak}`;
@@ -539,14 +550,23 @@ export function syncProfileHubUI() {
     reviewCountText.textContent = `${unmastered} question${unmastered === 1 ? '' : 's'}`;
   }
 
-  // Sync personalized learning fields
+  // Sync personalized learning fields & chips
+  const activeProfLevel = getProficiencyLevel();
+  document.querySelectorAll('#persLevelChips .pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.persLevel === activeProfLevel);
+  });
+  const activeDailyXp = state.personalizedLearning?.dailyXpGoal || 100;
+  document.querySelectorAll('#persGoalChips .pill').forEach(btn => {
+    btn.classList.toggle('active', Number(btn.dataset.dailyXp) === Number(activeDailyXp));
+  });
+
   if (state.personalizedLearning) {
     const goalSelect = document.getElementById('persGoalSelect');
     if (goalSelect && state.personalizedLearning.goal) {
       goalSelect.value = state.personalizedLearning.goal;
     }
     const notesInput = document.getElementById('persNotesInput');
-    if (notesInput && state.personalizedLearning.customNotes) {
+    if (notesInput && state.personalizedLearning.customNotes !== undefined) {
       notesInput.value = state.personalizedLearning.customNotes;
     }
   }
@@ -579,11 +599,11 @@ export function syncLevelUI() {
 
   const word = document.getElementById('dashLevelWord');
   if (word) {
-    const rawLabel = levelLabel(state.level);
+    const prof = getProficiencyLevel();
     if (state.lang === 'id') {
-      word.textContent = rawLabel === 'Beginner' ? 'Pemula' : rawLabel === 'Advanced' ? 'Mahir' : 'Menengah';
+      word.textContent = prof === 'beginner' ? 'Pemula' : prof === 'advanced' ? 'Mahir' : 'Menengah';
     } else {
-      word.textContent = rawLabel;
+      word.textContent = prof === 'beginner' ? 'Beginner' : prof === 'advanced' ? 'Advanced' : 'Intermediate';
     }
   }
 
@@ -878,14 +898,47 @@ export function bindChipSelectors() {
     const activeLevelBtn = document.querySelector('#persLevelChips .pill.active');
     const activeGoalBtn = document.querySelector('#persGoalChips .pill.active');
 
+    const newLevel = activeLevelBtn?.dataset.persLevel || 'intermediate';
+    const newGoal = goalSelect?.value || 'conversation';
+    const newDailyXp = Number(activeGoalBtn?.dataset.dailyXp || 100);
+    const newNotes = notesInput?.value || '';
+
     state.personalizedLearning = {
-      goal: goalSelect?.value || 'conversation',
-      level: activeLevelBtn?.dataset.persLevel || state.selectedDifficulty || 'intermediate',
-      dailyXpGoal: Number(activeGoalBtn?.dataset.dailyXp || 100),
-      customNotes: notesInput?.value || ''
+      goal: newGoal,
+      level: newLevel,
+      dailyXpGoal: newDailyXp,
+      customNotes: newNotes
     };
+    state.selectedDifficulty = newLevel;
+
+    // Update active user in state.users
+    const activeProf = state.profiles?.[state.activeProfile] || state.profiles?.[0];
+    const user = (state.users || []).find(u =>
+      (activeProf?.email && u.email && u.email.toLowerCase() === activeProf.email.toLowerCase()) ||
+      (activeProf?.name && u.name && u.name.toLowerCase() === activeProf.name.toLowerCase())
+    );
+    if (user) {
+      user.level = newLevel;
+      user.goal = newGoal;
+    }
+    if (activeProf) {
+      activeProf.level = newLevel;
+    }
+
     saveState();
-    showToast('Personalized preferences saved! 🎯');
+    syncLevelUI();
+    syncProfileHubUI();
+    document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.diff === newLevel);
+    });
+    document.querySelectorAll('#aiDifficultyChips [data-diff]').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.diff === newLevel);
+    });
+    showToast(state.lang === 'id' ? 'Preferensi belajar personal berhasil disimpan! 🎯' : 'Personalized preferences saved! 🎯');
+  });
+
+  document.getElementById('hubLevelBadge')?.addEventListener('click', () => {
+    document.querySelector('.prof-subtab-btn[data-prof-tab="personalized"]')?.click();
   });
 
   // Auth chip selectors
@@ -990,6 +1043,7 @@ export function init() {
   window.loginUser = loginUser;
   window.openAuthModal = openAuthModal;
   window.syncLevelUI = syncLevelUI;
+  window.syncProfileHubUI = syncProfileHubUI;
   window.renderBadges = renderBadges;
   window.renderHistory = renderHistory;
   window.applyLanguage = applyLanguage;
