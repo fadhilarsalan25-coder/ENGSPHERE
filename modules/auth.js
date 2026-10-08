@@ -300,6 +300,7 @@ export function signOutUser() {
   state.supabaseUserId = null;
   signOutFromSupabase();
   saveState();
+  closeAllModals();
   document.getElementById('app')?.classList.add('hidden');
   document.getElementById('landing')?.classList.remove('hidden');
   window.scrollTo(0, 0);
@@ -332,5 +333,3 @@ export function importUserData(file) {
   };
   reader.readAsText(file);
 }
-
-   
