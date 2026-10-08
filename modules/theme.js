@@ -4,10 +4,8 @@ import { saveState } from './storage.js';
 export function applyTheme(theme, persist = true) {
   state.theme = theme === 'light' ? 'light' : 'dark';
   const light = state.theme === 'light';
-  document.documentElement.toggleAttribute('data-theme', light);
-  document.body.toggleAttribute('data-theme', light);
-  document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
-  document.body.setAttribute('data-theme', light ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.body.setAttribute('data-theme', state.theme);
   const label = document.getElementById('themeStatusLabel');
   if (label) {
     if (state.lang === 'id') {
