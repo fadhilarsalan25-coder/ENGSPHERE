@@ -56,6 +56,18 @@ export function loadState() {
     if (!state.personalizedLearning) state.personalizedLearning = createDefaultState().personalizedLearning;
     if (!state.theme) state.theme = 'dark';
     if (!state.lang || (state.lang !== 'id' && state.lang !== 'en')) state.lang = 'en';
+
+    // Reconcile and synchronize learning proficiency level
+    const prof = getProficiencyLevel();
+    if (!state.selectedDifficulty || (state.selectedDifficulty === 'beginner' && prof !== 'beginner')) {
+      state.selectedDifficulty = prof;
+    }
+    if (state.personalizedLearning) {
+      state.personalizedLearning.level = prof;
+    }
+    if (state.profiles && state.profiles[state.activeProfile]) {
+      state.profiles[state.activeProfile].level = prof;
+    }
   } catch (error) {
     console.warn('Could not read state', error);
   }
@@ -82,10 +94,29 @@ export function levelForXp(xp) {
   return Math.max(1, Math.min(9, Math.floor(xp / 100) + 1));
 }
 
-export function levelLabel(level) {
+export function getProficiencyLevel() {
+  const activeProf = state.profiles?.[state.activeProfile] || state.profiles?.[0];
+  const matchedUser = (state.users || []).find(u =>
+    (activeProf?.email && u.email && u.email.toLowerCase() === activeProf.email.toLowerCase()) ||
+    (activeProf?.name && u.name && u.name.toLowerCase() === activeProf.name.toLowerCase())
+  );
+  const val = state.personalizedLearning?.level || matchedUser?.level || activeProf?.level || state.selectedDifficulty;
+  if (val && ['beginner', 'intermediate', 'advanced'].includes(String(val).toLowerCase())) {
+    return String(val).toLowerCase();
+  }
+  return 'intermediate';
+}
+
+export function levelLabel(level, preferredProficiency) {
+  if (preferredProficiency && ['beginner', 'intermediate', 'advanced'].includes(String(preferredProficiency).toLowerCase())) {
+    const p = String(preferredProficiency).toLowerCase();
+    return p === 'beginner' ? 'Beginner' : p === 'advanced' ? 'Advanced' : 'Intermediate';
+  }
+  const prof = getProficiencyLevel();
+  if (prof) {
+    return prof === 'beginner' ? 'Beginner' : prof === 'advanced' ? 'Advanced' : 'Intermediate';
+  }
   if (level <= 2) return 'Beginner';
   if (level <= 5) return 'Intermediate';
   return 'Advanced';
 }
-
-
