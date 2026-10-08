@@ -85,6 +85,9 @@ export function openAuthModal(mode = 'sign-up') {
 export function openProfileModal() {
   const modal = document.getElementById('profileModalOverlay');
   if (!modal) return;
+  if (typeof window.syncProfileHubUI === 'function') {
+    window.syncProfileHubUI();
+  }
   modal.classList.remove('hidden');
   modal.style.setProperty('display', 'flex', 'important');
 }
@@ -164,7 +167,7 @@ export async function signUpUser(name, email, password, level, goal) {
   };
   state.users.unshift(newUser);
 
-  const newProfile = { name: cleanName, initials, email: cleanEmail, supabaseUserId: cloudUserId };
+  const newProfile = { name: cleanName, initials, email: cleanEmail, supabaseUserId: cloudUserId, level: level || 'intermediate' };
   state.profiles = Array.isArray(state.profiles) ? [newProfile, ...state.profiles] : [newProfile];
   state.activeProfile = 0;
   state.supabaseUserId = cloudUserId;
@@ -172,6 +175,8 @@ export async function signUpUser(name, email, password, level, goal) {
   state.selectedDifficulty = level || 'intermediate';
   state.isLoggedIn = true;
   saveState();
+  if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
+  if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
 
   document.getElementById('landing')?.classList.add('hidden');
   document.getElementById('app')?.classList.remove('hidden');
@@ -263,10 +268,15 @@ export async function loginUser(identifier, password) {
   if (matchedUser && matchedUser.level) {
     state.personalizedLearning = { ...state.personalizedLearning, level: matchedUser.level, goal: matchedUser.goal || 'conversation' };
     state.selectedDifficulty = matchedUser.level;
+    if (state.profiles && state.profiles[state.activeProfile]) {
+      state.profiles[state.activeProfile].level = matchedUser.level;
+    }
   }
 
   state.isLoggedIn = true;
   saveState();
+  if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
+  if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
 
   closeAllModals();
   document.getElementById('landing')?.classList.add('hidden');
@@ -322,3 +332,5 @@ export function importUserData(file) {
   };
   reader.readAsText(file);
 }
+
+   
