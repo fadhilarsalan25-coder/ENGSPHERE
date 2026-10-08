@@ -82,12 +82,14 @@ export function openAuthModal(mode = 'sign-up') {
   renderAuthSavedProfiles();
 }
 
-export function openProfileModal() {
+export function openProfileModal(subtab = 'personalized') {
   const modal = document.getElementById('profileModalOverlay');
   if (!modal) return;
   if (typeof window.syncProfileHubUI === 'function') {
     window.syncProfileHubUI();
   }
+  const tabBtn = document.querySelector(`.prof-subtab-btn[data-prof-tab="${subtab}"]`);
+  if (tabBtn) tabBtn.click();
   modal.classList.remove('hidden');
   modal.style.setProperty('display', 'flex', 'important');
 }
