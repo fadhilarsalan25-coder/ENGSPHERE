@@ -643,23 +643,36 @@ export function renderHistory() {
 
 export function applyTheme(theme, persist = true) {
   state.theme = theme === 'light' ? 'light' : 'dark';
+  const light = state.theme === 'light';
   document.documentElement.setAttribute('data-theme', state.theme);
   document.body.setAttribute('data-theme', state.theme);
   const label = document.getElementById('themeStatusLabel');
-  if (label) label.textContent = state.theme === 'light' ? 'Crisp Light Mode' : 'Dark Navy Mode';
-  document.getElementById('themeToggleBtn')?.setAttribute('aria-checked', String(state.theme === 'light'));
+  if (label) {
+    if (state.lang === 'id') {
+      label.textContent = light ? 'Mode Biru Muda Terang' : 'Mode Biru Navy';
+    } else {
+      label.textContent = light ? 'Crisp Light Blue Mode' : 'Dark Navy Mode';
+    }
+  }
+  document.getElementById('themeToggleBtn')?.setAttribute('aria-checked', String(light));
   if (persist) saveState();
 }
 
 export function toggleTheme() {
-  applyTheme(state.theme === 'light' ? 'dark' : 'light');
-  showToast(`Switched to ${state.theme === 'light' ? 'Light' : 'Dark'} mode`);
+  const next = state.theme === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  const isId = state.lang === 'id';
+  showToast(isId
+    ? `Beralih ke ${next === 'light' ? 'Mode Biru Muda Terang' : 'Mode Biru Navy'}`
+    : `Switched to ${next === 'light' ? 'Light Blue' : 'Dark Navy'} mode`
+  );
 }
 
 export function applyLanguage(lang, persist = true, notify = false) {
   state.lang = lang === 'id' ? 'id' : 'en';
   translateUI(state.lang, state);
   closeAllLangDropdowns();
+  applyTheme(state.theme, false);
   try {
     renderReviewSection();
     renderTenses();
@@ -934,7 +947,8 @@ export function bindChipSelectors() {
     document.querySelectorAll('#aiDifficultyChips [data-diff]').forEach(pill => {
       pill.classList.toggle('active', pill.dataset.diff === newLevel);
     });
-    showToast(state.lang === 'id' ? 'Preferensi belajar personal berhasil disimpan! 🎯' : 'Personalized preferences saved! 🎯');
+    // Close profile modal and suppress notification bubble with glitter emoji per user request
+    closeAllModals();
   });
 
   document.getElementById('hubLevelBadge')?.addEventListener('click', () => {
@@ -1007,7 +1021,10 @@ export function initNavigation() {
   document.getElementById('authQuickGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('authLoginGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('profilePillBtn')?.addEventListener('click', openProfileModal);
-  document.getElementById('hubSignOutBtn')?.addEventListener('click', signOutUser);
+  document.getElementById('hubSignOutBtn')?.addEventListener('click', () => {
+    closeAllModals();
+    signOutUser();
+  });
   document.getElementById('themeToggleBtn')?.addEventListener('click', toggleTheme);
 
   document.getElementById('authTabSignUp')?.addEventListener('click', () => openAuthModal('sign-up'));
