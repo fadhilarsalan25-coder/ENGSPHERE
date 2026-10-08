@@ -695,43 +695,13 @@
 
       <!-- 4. Settings Subtabs -->
       <div class="prof-subtabs">
-        <button class="prof-subtab-btn active" data-prof-tab="data-control">🛠️ Data Control</button>
-        <button class="prof-subtab-btn" data-prof-tab="personalized">🎯 Personalized Learning</button>
+        <button class="prof-subtab-btn active" data-prof-tab="personalized">🎯 Personalized Learning</button>
+        <button class="prof-subtab-btn" data-prof-tab="data-control">🛠️ Data Control</button>
         <button class="prof-subtab-btn" data-prof-tab="help-center">❓ Help Center</button>
       </div>
 
-      <!-- TAB 1: DATA CONTROL -->
-      <div class="setting-panel" id="profPanelDataControl">
-        <div class="setting-card">
-          <h5><span>💾</span> Export & Backup Data</h5>
-          <p>Export all your learned XP, streaks, completed test logs, and personalized preferences as a local JSON file.</p>
-          <div class="setting-btn-row">
-            <button class="btn btn-primary btn-sm" id="exportDataBtn">📥 Export Data (JSON)</button>
-            <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
-              📤 Import Backup
-              <input type="file" id="importBackupInput" accept=".json" style="display:none;">
-            </label>
-          </div>
-        </div>
-
-        <div class="setting-card">
-          <h5><span>🎯</span> Targeted Review Mistake Queue</h5>
-          <p>You currently have <strong id="hubReviewCountText">0 questions</strong> in your targeted review queue. You can clear them without affecting your XP.</p>
-          <div class="setting-btn-row">
-            <button class="btn btn-ghost btn-sm" id="clearReviewQueueBtn">Clear Review Mistakes</button>
-            <button class="btn btn-ghost btn-sm" id="clearQuizHistoryBtn">Clear Test History Log</button>
-          </div>
-        </div>
-
-        <div class="setting-card" style="border-color:rgba(255,122,122,.3);">
-          <h5 style="color:var(--danger);"><span>⚠️</span> Reset All Learning Data</h5>
-          <p>Permanently reset your level, total XP, streak counters, badges, and history back to day one.</p>
-          <button class="btn btn-ghost btn-sm" id="hubResetAllBtn" style="color:var(--danger);border-color:rgba(255,122,122,.4);">Reset All Progress</button>
-        </div>
-      </div>
-
-      <!-- TAB 2: PERSONALIZED LEARNING -->
-      <div class="setting-panel hidden" id="profPanelPersonalized">
+      <!-- TAB 1: PERSONALIZED LEARNING (Default Active) -->
+      <div class="setting-panel" id="profPanelPersonalized">
         <div class="setting-card">
           <h5><span>🎯</span> Learning Focus & Custom Tutor Instructions</h5>
           <p>Tell EngSphere what you want to achieve and customize your practice experience.</p>
@@ -769,7 +739,39 @@
             <textarea class="text-input" id="persNotesInput" rows="3" placeholder="e.g. Focus on past tenses and business meeting vocabulary. Give clear grammar rules when I choose the wrong answer..."></textarea>
           </div>
 
-          <button class="btn btn-primary btn-sm" id="savePersonalizedBtn">💾 Save Personalized Preferences</button>
+          <div style="display:flex;align-items:center;gap:.75rem;margin-top:.5rem;">
+            <button class="btn btn-primary" id="savePersonalizedBtn" style="padding:.6rem 1.4rem;font-weight:700;">💾 Save Personalized Preferences</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: DATA CONTROL -->
+      <div class="setting-panel hidden" id="profPanelDataControl">
+        <div class="setting-card">
+          <h5><span>💾</span> Export & Backup Data</h5>
+          <p>Export all your learned XP, streaks, completed test logs, and personalized preferences as a local JSON file.</p>
+          <div class="setting-btn-row">
+            <button class="btn btn-primary btn-sm" id="exportDataBtn">📥 Export Data (JSON)</button>
+            <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
+              📤 Import Backup
+              <input type="file" id="importBackupInput" accept=".json" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-card">
+          <h5><span>🎯</span> Targeted Review Mistake Queue</h5>
+          <p>You currently have <strong id="hubReviewCountText">0 questions</strong> in your targeted review queue. You can clear them without affecting your XP.</p>
+          <div class="setting-btn-row">
+            <button class="btn btn-ghost btn-sm" id="clearReviewQueueBtn">Clear Review Mistakes</button>
+            <button class="btn btn-ghost btn-sm" id="clearQuizHistoryBtn">Clear Test History Log</button>
+          </div>
+        </div>
+
+        <div class="setting-card" style="border-color:rgba(255,122,122,.3);">
+          <h5 style="color:var(--danger);"><span>⚠️</span> Reset All Learning Data</h5>
+          <p>Permanently reset your level, total XP, streak counters, badges, and history back to day one.</p>
+          <button class="btn btn-ghost btn-sm" id="hubResetAllBtn" style="color:var(--danger);border-color:rgba(255,122,122,.4);">Reset All Progress</button>
         </div>
       </div>
 
