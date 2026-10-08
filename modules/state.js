@@ -54,7 +54,7 @@ export function loadState() {
     }
     if (!Array.isArray(state.reviewQuestions)) state.reviewQuestions = [];
     if (!state.personalizedLearning) state.personalizedLearning = createDefaultState().personalizedLearning;
-    if (!state.theme) state.theme = 'dark';
+    if (!state.theme || (state.theme !== 'light' && state.theme !== 'dark')) state.theme = 'dark';
     if (!state.lang || (state.lang !== 'id' && state.lang !== 'en')) state.lang = 'en';
 
     // Reconcile and synchronize learning proficiency level
