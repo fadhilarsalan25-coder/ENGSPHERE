@@ -9,7 +9,13 @@ export function applyTheme(theme, persist = true) {
   document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
   document.body.setAttribute('data-theme', light ? 'light' : 'dark');
   const label = document.getElementById('themeStatusLabel');
-  if (label) label.textContent = light ? 'Crisp Light Mode' : 'Dark Navy Mode';
+  if (label) {
+    if (state.lang === 'id') {
+      label.textContent = light ? 'Mode Biru Muda Terang' : 'Mode Biru Navy';
+    } else {
+      label.textContent = light ? 'Crisp Light Blue Mode' : 'Dark Navy Mode';
+    }
+  }
   const toggle = document.getElementById('themeToggleBtn');
   if (toggle) toggle.setAttribute('aria-checked', String(light));
   if (persist) saveState();
@@ -18,5 +24,11 @@ export function applyTheme(theme, persist = true) {
 export function toggleTheme(showToast = () => {}) {
   const next = state.theme === 'light' ? 'dark' : 'light';
   applyTheme(next);
-  showToast(`Switched to ${next === 'light' ? 'Light' : 'Dark'} mode`);
+  if (typeof showToast === 'function') {
+    const isId = state.lang === 'id';
+    showToast(isId
+      ? `Beralih ke ${next === 'light' ? 'Mode Biru Muda Terang' : 'Mode Biru Navy'}`
+      : `Switched to ${next === 'light' ? 'Light Blue' : 'Dark Navy'} mode`
+    );
+  }
 }
