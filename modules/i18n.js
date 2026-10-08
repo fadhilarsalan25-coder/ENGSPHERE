@@ -1,3 +1,5 @@
+import { getProficiencyLevel } from './state.js';
+
 export const I18N = {
   en: {
     langCode: 'EN',
@@ -458,7 +460,7 @@ export function translateUI(lang, state) {
   // 8. Dashboard description
   const dashDesc = document.getElementById('dashDesc');
   if (dashDesc && state) {
-    const currentDiff = state.selectedDifficulty || 'intermediate';
+    const currentDiff = getProficiencyLevel() || state.selectedDifficulty || 'intermediate';
     const diffWord = currentDiff === 'beginner' ? t.level_beginner : currentDiff === 'advanced' ? t.level_advanced : t.level_intermediate;
     if (selected === 'id') {
       dashDesc.innerHTML = `Tingkat belajar Anda: <strong id="dashLevelWord">${diffWord}</strong>. Buka materi pelajaran atau mulai kuis untuk menjaga streak Anda.`;
