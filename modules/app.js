@@ -41,7 +41,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (typeof cloudProf.streak === 'number') state.streak = cloudProf.streak;
           }
 
+          const initialLevel = session.user.user_metadata?.initial_level;
+          if (initialLevel && ['beginner', 'intermediate', 'advanced'].includes(initialLevel.toLowerCase())) {
+            state.selectedDifficulty = initialLevel.toLowerCase();
+            if (state.personalizedLearning) {
+              state.personalizedLearning.level = initialLevel.toLowerCase();
+            }
+            if (state.profiles && state.profiles[state.activeProfile]) {
+              state.profiles[state.activeProfile].level = initialLevel.toLowerCase();
+            }
+          }
+
           saveState();
+          if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
+          if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
         }
       } catch (e) {
         console.warn('Session check fallback:', e);
@@ -77,4 +90,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to activate EngSphere navigation:', error);
   }
 });
-
