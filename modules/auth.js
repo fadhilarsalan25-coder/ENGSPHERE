@@ -26,32 +26,6 @@ export function renderAuthSavedProfiles() {
   const list = document.getElementById('authProfileList');
   if (!list) return;
   list.innerHTML = '';
-  const profiles = state.profiles || [];
-  if (!profiles.length) {
-    list.innerHTML = '<div style="font-size:.82rem;color:var(--muted-dim);padding:.4rem;">No saved profiles on this browser yet.</div>';
-    return;
-  }
-  profiles.forEach((profile, idx) => {
-    const row = document.createElement('div');
-    row.className = 'profile-row' + (idx === state.activeProfile ? ' selected' : '');
-    row.innerHTML = `
-      <div class="avatar sm">${escapeHtml(profile.initials || 'L')}</div>
-      <div class="profile-row-info">
-        <strong>${escapeHtml(profile.name || 'Learner')}</strong>
-        <span>${escapeHtml(profile.email || 'learner@engsphere.app')} · Level ${state.level}</span>
-      </div>
-      <button type="button" class="btn btn-ghost btn-sm" style="font-size:.74rem;padding:.2rem .5rem;">Use</button>
-    `;
-    row.addEventListener('click', () => {
-      const idInput = document.getElementById('authLoginIdentifier');
-      if (idInput) idInput.value = profile.email || profile.name;
-      state.activeProfile = idx;
-      if (typeof window.loginUser === 'function') {
-        window.loginUser(profile.email || profile.name, '');
-      }
-    });
-    list.appendChild(row);
-  });
 }
 
 export function openAuthModal(mode = 'sign-up') {
@@ -79,7 +53,6 @@ export function openAuthModal(mode = 'sign-up') {
     paneLogin?.classList.remove('hidden');
     setTimeout(() => document.getElementById('authLoginIdentifier')?.focus(), 60);
   }
-  renderAuthSavedProfiles();
 }
 
 export function openProfileModal(subtab = 'personalized') {
