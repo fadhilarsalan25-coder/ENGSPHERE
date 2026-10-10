@@ -1,4 +1,5 @@
-import { state, saveState } from './state.js';
+import { state, saveState, isGuestUser } from './state.js';
+export { isGuestUser };
 import { escapeHtml } from './utils.js';
 import {
   signUpWithSupabase,
@@ -149,9 +150,11 @@ export async function signUpUser(name, email, password, level, goal) {
   state.personalizedLearning = { ...state.personalizedLearning, level: level || 'intermediate', goal: goal || 'conversation', dailyXpGoal: 100 };
   state.selectedDifficulty = level || 'intermediate';
   state.isLoggedIn = true;
+  state.isGuest = false;
   saveState();
   if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
   if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
+  if (typeof window.syncQuizGuestRestrictionsUI === 'function') window.syncQuizGuestRestrictionsUI();
 
   document.getElementById('landing')?.classList.add('hidden');
   document.getElementById('app')?.classList.remove('hidden');
@@ -248,10 +251,18 @@ export async function loginUser(identifier, password) {
     }
   }
 
+  const isGuestLogin = cleanId.toLowerCase() === 'guest learner' && !cleanPw;
+  state.isGuest = isGuestLogin;
   state.isLoggedIn = true;
+  if (isGuestLogin) {
+    state.selectedTopic = 'mixed';
+    state.selectedCount = 3;
+    if (state.selectedDifficulty === 'advanced') state.selectedDifficulty = 'intermediate';
+  }
   saveState();
   if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
   if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
+  if (typeof window.syncQuizGuestRestrictionsUI === 'function') window.syncQuizGuestRestrictionsUI();
 
   closeAllModals();
   document.getElementById('landing')?.classList.add('hidden');
@@ -267,15 +278,28 @@ export async function loginUser(identifier, password) {
 }
 
 export function continueAsGuest() {
+  state.isGuest = true;
+  state.isLoggedIn = true;
+  state.supabaseUserId = null;
+  state.selectedTopic = 'mixed';
+  if (state.selectedDifficulty === 'advanced') {
+    state.selectedDifficulty = 'intermediate';
+  }
+  state.selectedCount = 3;
   loginUser('Guest Learner', '');
 }
 
 export function signOutUser() {
   state.isLoggedIn = false;
+  state.isGuest = true;
   state.supabaseUserId = null;
+  state.selectedTopic = 'mixed';
+  state.selectedCount = 3;
+  if (state.selectedDifficulty === 'advanced') state.selectedDifficulty = 'intermediate';
   signOutFromSupabase();
   saveState();
   closeAllModals();
+  if (typeof window.syncQuizGuestRestrictionsUI === 'function') window.syncQuizGuestRestrictionsUI();
   document.getElementById('app')?.classList.add('hidden');
   document.getElementById('landing')?.classList.remove('hidden');
   window.scrollTo(0, 0);
@@ -308,4 +332,3 @@ export function importUserData(file) {
   };
   reader.readAsText(file);
 }
-
