@@ -1,4 +1,4 @@
-import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel } from './state.js';
+import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel, isGuestUser } from './state.js';
 import { escapeHtml, showToast, formatTopic, capitalize } from './utils.js';
 import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from './review.js';
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
@@ -1095,3 +1095,4 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+
