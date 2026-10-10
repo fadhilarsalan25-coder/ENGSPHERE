@@ -3,6 +3,7 @@ import { STORAGE_KEY } from './data.js';
 
 export const createDefaultState = () => ({
   isLoggedIn: false,
+  isGuest: true,
   supabaseUserId: null,
   theme: 'dark',
   lang: 'en',
@@ -68,9 +69,24 @@ export function loadState() {
     if (state.profiles && state.profiles[state.activeProfile]) {
       state.profiles[state.activeProfile].level = prof;
     }
+
+    if (typeof state.isGuest === 'undefined') {
+      const activeProf = state.profiles?.[state.activeProfile];
+      state.isGuest = !state.isLoggedIn || (activeProf?.name === 'Guest Learner' && !state.supabaseUserId);
+    }
   } catch (error) {
     console.warn('Could not read state', error);
   }
+}
+
+export function isGuestUser() {
+  if (!state.isLoggedIn) return true;
+  if (state.isGuest === true) return true;
+  const activeProf = state.profiles?.[state.activeProfile];
+  if (activeProf && (activeProf.name === 'Guest Learner' || activeProf.email === 'guest@engsphere.app') && !state.supabaseUserId) {
+    return true;
+  }
+  return false;
 }
 
 export function saveState() {
