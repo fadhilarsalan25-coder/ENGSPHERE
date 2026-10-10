@@ -1,9 +1,10 @@
-import { state } from './state.js';
+import { state, isGuestUser } from './state.js';
 import { saveState } from './storage.js';
 import { escapeHtml, formatTopic, capitalize } from './utils.js';
 import { BANK, TENSES, VOCAB } from './data.js';
 import { recordIncorrectQuestion } from './review.js';
 import { syncCloudProfile, recordCloudQuizHistory } from './supabase-client.js';
+import { openAuthModal } from './auth.js';
 
 export function renderTenses() {
   const grid = document.getElementById('tenseGrid');
@@ -1021,15 +1022,30 @@ export function startQuiz(adaptiveOptions = {}) {
     let nextDiff = currentDiff;
 
     if (prevScore >= 80) {
-      if (currentDiff === 'beginner') nextDiff = 'intermediate';
-      else if (currentDiff === 'intermediate') nextDiff = 'advanced';
+      if (currentDiff === 'beginner') {
+        nextDiff = 'intermediate';
+      } else if (currentDiff === 'intermediate') {
+        if (isGuestUser()) {
+          nextDiff = 'intermediate';
+        } else {
+          nextDiff = 'advanced';
+        }
+      }
 
       state.selectedDifficulty = nextDiff;
-      state.adaptiveNotice = {
-        type: 'levelup',
-        msg_en: `🎯 Level Up! You scored ${prevScore}%! Difficulty auto-adapted to ${capitalize(nextDiff)}.`,
-        msg_id: `🎯 Naik Tingkat! Anda meraih ${prevScore}%! Kesulitan otomatis disesuaikan ke ${formatDiffName(nextDiff, 'id')}.`
-      };
+      if (isGuestUser() && currentDiff === 'intermediate') {
+        state.adaptiveNotice = {
+          type: 'levelup',
+          msg_en: `🎯 Mastered Intermediate (${prevScore}%)! Create a free account to unlock Advanced level.`,
+          msg_id: `🎯 Hebat! Menguasai Intermediate (${prevScore}%)! Daftar akun gratis untuk membuka tingkat Advanced.`
+        };
+      } else {
+        state.adaptiveNotice = {
+          type: 'levelup',
+          msg_en: `🎯 Level Up! You scored ${prevScore}%! Difficulty auto-adapted to ${capitalize(nextDiff)}.`,
+          msg_id: `🎯 Naik Tingkat! Anda meraih ${prevScore}%! Kesulitan otomatis disesuaikan ke ${formatDiffName(nextDiff, 'id')}.`
+        };
+      }
     } else if (prevScore < 50) {
       if (currentDiff === 'advanced') nextDiff = 'intermediate';
       else if (currentDiff === 'intermediate') nextDiff = 'beginner';
@@ -1051,12 +1067,27 @@ export function startQuiz(adaptiveOptions = {}) {
     syncDifficultyChipsUI(state.selectedDifficulty);
   }
 
-  const count = state.selectedCount || state.selectedAIQuestions || 5;
-  const topic = state.selectedTopic || 'mixed';
-  const difficulty = state.selectedDifficulty || 'intermediate';
+  const isGuest = isGuestUser();
+  if (isGuest) {
+    state.selectedTopic = 'mixed';
+    if (state.selectedDifficulty === 'advanced') {
+      state.selectedDifficulty = 'intermediate';
+    }
+    state.selectedCount = 3;
+    state.selectedAIQuestions = 3;
+  }
+
+  const count = isGuest ? 3 : (state.selectedCount || state.selectedAIQuestions || 5);
+  const topic = isGuest ? 'mixed' : (state.selectedTopic || 'mixed');
+  const difficulty = isGuest
+    ? (state.selectedDifficulty === 'advanced' ? 'intermediate' : (state.selectedDifficulty || 'intermediate'))
+    : (state.selectedDifficulty || 'intermediate');
 
   state.recentQuestionIds = state.recentQuestionIds || [];
-  const questions = getAdaptiveQuestionSet(topic, difficulty, count, state.recentQuestionIds);
+  let questions = getAdaptiveQuestionSet(topic, difficulty, count, state.recentQuestionIds);
+  if (isGuest && questions.length > 3) {
+    questions = questions.slice(0, 3);
+  }
 
   // Record newly selected question IDs into recent memory to guarantee non-repetition
   questions.forEach(q => {
