@@ -489,6 +489,10 @@ export function translateUI(lang, state) {
       if (p) p.textContent = t.ql_quiz_desc;
     }
   });
+
+  if (typeof syncQuizGuestRestrictionsUI === 'function') {
+    syncQuizGuestRestrictionsUI();
+  }
 }
 
 export function setView(name) {
@@ -499,11 +503,19 @@ export function setView(name) {
       renderHistory();
       renderBadges();
     }
+    if (currentView === 'practice') {
+      syncQuizGuestRestrictionsUI();
+    }
   });
 }
 
 export function syncProfileHubUI() {
-  const profile = state.profiles?.[state.activeProfile] || state.profiles?.[0] || { name: 'Learner', initials: 'L', email: 'learner@engsphere.app' };
+  const isGuest = isGuestUser();
+  const isId = state.lang === 'id';
+  const profile = isGuest
+    ? { name: isId ? 'Tamu (Guest)' : 'Guest Learner', initials: '👤', email: isId ? 'Mode Tamu · Akses Terbatas' : 'Guest Mode · Limited Access' }
+    : (state.profiles?.[state.activeProfile] || state.profiles?.[0] || { name: 'Learner', initials: 'L', email: 'learner@engsphere.app' });
+
   [
     ['profileNameLabel', profile.name],
     ['profileAvatar', profile.initials],
@@ -514,6 +526,11 @@ export function syncProfileHubUI() {
     const el = document.getElementById(id);
     if (el) el.textContent = value || '';
   });
+
+  const signOutBtn = document.getElementById('hubSignOutBtn');
+  if (signOutBtn) {
+    signOutBtn.innerHTML = `<span>🚪</span> ${isGuest ? (isId ? 'Keluar dari Mode Tamu' : 'Exit Guest Mode') : (isId ? 'Keluar Akun' : 'Sign Out')}`;
+  }
 
   const badge = document.getElementById('hubLevelBadge');
   if (badge) {
@@ -714,7 +731,15 @@ export function bindChipSelectors() {
   // Topic chips (Quick quiz & AI)
   document.querySelectorAll('#quizTopicChips [data-topic]').forEach(btn => {
     btn.addEventListener('click', () => {
-      state.selectedTopic = btn.dataset.topic;
+      const topic = btn.dataset.topic;
+      if (isGuestUser() && topic !== 'mixed') {
+        const isId = state.lang === 'id';
+        showToast(isId 
+          ? '🔒 Kuis topik khusus terkunci untuk Mode Tamu. Sign Up gratis untuk membuka semua topik materi!' 
+          : '🔒 Topic quizzes are locked for guests. Sign up for free to unlock all topics!');
+        return;
+      }
+      state.selectedTopic = topic;
       document.querySelectorAll('#quizTopicChips [data-topic]').forEach(item => item.classList.toggle('active', item === btn));
     });
   });
@@ -728,7 +753,15 @@ export function bindChipSelectors() {
   // Difficulty chips
   document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(btn => {
     btn.addEventListener('click', () => {
-      state.selectedDifficulty = btn.dataset.diff;
+      const diff = btn.dataset.diff;
+      if (isGuestUser() && diff === 'advanced') {
+        const isId = state.lang === 'id';
+        showToast(isId 
+          ? '🔒 Tingkat Advanced (C1-C2) dikhususkan untuk Member terdaftar. Sign Up gratis untuk membuka!' 
+          : '🔒 Advanced level is reserved for registered members. Sign up for free to unlock!');
+        return;
+      }
+      state.selectedDifficulty = diff;
       document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(item => item.classList.toggle('active', item === btn));
     });
   });
@@ -742,11 +775,110 @@ export function bindChipSelectors() {
   // Question count chips (Quiz)
   document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(btn => {
     btn.addEventListener('click', () => {
-      state.selectedCount = Number(btn.dataset.count);
-      state.selectedAIQuestions = Number(btn.dataset.count);
+      const count = Number(btn.dataset.count);
+      if (isGuestUser() && count > 3) {
+        const isId = state.lang === 'id';
+        showToast(isId 
+          ? '🔒 Mode Tamu dibatasi maksimal 3 butir soal per kuis. Sign Up gratis untuk memilih 5, 7, atau 10 soal!' 
+          : '🔒 Guest mode is limited to 3 questions. Sign up for free to select 5, 7, or 10 questions!');
+        return;
+      }
+      state.selectedCount = count;
+      state.selectedAIQuestions = count;
       document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(item => item.classList.toggle('active', item === btn));
     });
   });
+}
+
+export function syncQuizGuestRestrictionsUI() {
+  const isGuest = isGuestUser();
+  const guestBanner = document.getElementById('quizGuestNotice');
+  const memberBanner = document.getElementById('quizMemberBadge');
+  const isId = state.lang === 'id';
+
+  if (guestBanner) guestBanner.classList.toggle('hidden', !isGuest);
+  if (memberBanner) memberBanner.classList.toggle('hidden', isGuest);
+
+  const guestSummaryEl = document.getElementById('guestLimitSummaryText');
+  if (guestSummaryEl) {
+    guestSummaryEl.textContent = isId 
+      ? 'Terbatas: 3 Soal · Beginner–Intermediate · Mixed Review' 
+      : 'Limited: 3 Questions · Beginner–Intermediate · Mixed Review';
+  }
+  const guestDescEl = document.getElementById('guestBannerDescText');
+  if (guestDescEl) {
+    guestDescEl.textContent = isId 
+      ? 'Anda sedang belajar sebagai tamu. Buat akun gratis untuk membuka semua topik materi, tingkat Advanced, dan latihan hingga 10 soal!' 
+      : 'You are practicing in guest mode. Create a free account to unlock all curriculum topics, Advanced difficulty, and up to 10 questions!';
+  }
+  const guestBtnEl = document.getElementById('quizGuestSignUpBtn');
+  if (guestBtnEl) {
+    guestBtnEl.textContent = isId ? '🔓 Sign Up / Log In (Akses Penuh)' : '🔓 Sign Up / Log In (Full Access)';
+  }
+
+  const memberTitleEl = document.getElementById('memberBadgeTitleText');
+  if (memberTitleEl) {
+    memberTitleEl.textContent = isId ? 'Akun Member Aktif · Akses Penuh' : 'Active Member Account · Full Access';
+  }
+  const memberDescEl = document.getElementById('memberBadgeDescText');
+  if (memberDescEl) {
+    memberDescEl.textContent = isId 
+      ? 'Bebas memilih semua topik materi, tingkat kesulitan Beginner hingga Advanced, dan jumlah 3, 5, 7, atau 10 soal.' 
+      : 'Full access unlocked: all topics, beginner to advanced levels, and flexible 3 to 10 questions.';
+  }
+
+  if (isGuest) {
+    state.selectedTopic = 'mixed';
+    if (state.selectedDifficulty === 'advanced') {
+      state.selectedDifficulty = 'intermediate';
+    }
+    state.selectedCount = 3;
+
+    // Lock non-mixed topics
+    document.querySelectorAll('#quizTopicChips [data-topic]').forEach(btn => {
+      const isMixed = btn.dataset.topic === 'mixed';
+      btn.classList.toggle('is-locked', !isMixed);
+      btn.classList.toggle('active', isMixed);
+      btn.title = isMixed ? '' : (isId ? 'Terkunci untuk tamu - Daftar untuk akses penuh' : 'Locked for guests - Sign up for full access');
+    });
+
+    // Lock advanced difficulty
+    document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(btn => {
+      const isAdv = btn.dataset.diff === 'advanced';
+      btn.classList.toggle('is-locked', isAdv);
+      btn.classList.toggle('active', btn.dataset.diff === state.selectedDifficulty);
+      btn.title = isAdv ? (isId ? 'Terkunci untuk tamu - Daftar untuk akses penuh' : 'Locked for guests - Sign up for full access') : '';
+    });
+
+    // Lock counts > 3
+    document.querySelectorAll('#quizCountChips [data-count]').forEach(btn => {
+      const count = Number(btn.dataset.count);
+      const is3 = count === 3;
+      btn.classList.toggle('is-locked', !is3);
+      btn.classList.toggle('active', is3);
+      btn.title = is3 ? '' : (isId ? 'Terkunci untuk tamu (Maksimal 3 soal)' : 'Locked for guests (Max 3 questions)');
+    });
+  } else {
+    // Registered member: unlock all chips
+    document.querySelectorAll('#quizTopicChips [data-topic]').forEach(btn => {
+      btn.classList.remove('is-locked');
+      btn.removeAttribute('title');
+      btn.classList.toggle('active', btn.dataset.topic === (state.selectedTopic || 'mixed'));
+    });
+
+    document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(btn => {
+      btn.classList.remove('is-locked');
+      btn.removeAttribute('title');
+      btn.classList.toggle('active', btn.dataset.diff === (state.selectedDifficulty || 'intermediate'));
+    });
+
+    document.querySelectorAll('#quizCountChips [data-count]').forEach(btn => {
+      btn.classList.remove('is-locked');
+      btn.removeAttribute('title');
+      btn.classList.toggle('active', Number(btn.dataset.count) === (state.selectedCount || 5));
+    });
+  }
+}
 
   // Materials subtabs
   document.querySelectorAll('[data-msub]').forEach(btn => {
@@ -1051,6 +1183,7 @@ export function initNavigation() {
     );
   });
 
+  document.getElementById('quizGuestSignUpBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
   document.getElementById('exportDataBtn')?.addEventListener('click', exportUserData);
   document.getElementById('importBackupInput')?.addEventListener('change', e => importUserData(e.target.files?.[0]));
 }
@@ -1061,6 +1194,7 @@ export function init() {
   window.openAuthModal = openAuthModal;
   window.syncLevelUI = syncLevelUI;
   window.syncProfileHubUI = syncProfileHubUI;
+  window.syncQuizGuestRestrictionsUI = syncQuizGuestRestrictionsUI;
   window.renderBadges = renderBadges;
   window.renderHistory = renderHistory;
   window.applyLanguage = applyLanguage;
@@ -1080,6 +1214,7 @@ export function init() {
   initNavigation();
   bindChipSelectors();
   initLandingScrollAnimations();
+  syncQuizGuestRestrictionsUI();
 
   const isLogged = Boolean(state.isLoggedIn);
   if (isLogged) {
@@ -1095,4 +1230,3 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-
