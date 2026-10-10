@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { data: { session } } = await sb.auth.getSession();
         if (session?.user?.id) {
           state.isLoggedIn = true;
+          state.isGuest = false;
           state.supabaseUserId = session.user.id;
           const userEmail = session.user.email || '';
           const userName = session.user.user_metadata?.display_name || userEmail.split('@')[0] || 'Learner';
