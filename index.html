@@ -436,6 +436,32 @@
 
       <div id="psub-quiz">
         <div class="card quiz-setup" id="quizSetupBox">
+          <!-- Guest vs Member Access Indicator -->
+          <div id="quizGuestNotice" class="guest-access-banner hidden">
+            <div class="guest-banner-left">
+              <div class="guest-tag-row">
+                <span class="guest-pill-badge">👤 Mode Tamu</span>
+                <span class="guest-limit-summary" id="guestLimitSummaryText">Terbatas: 3 Soal · Beginner–Intermediate · Mixed Review</span>
+              </div>
+              <p class="guest-banner-desc" id="guestBannerDescText">
+                Anda sedang belajar sebagai tamu. Buat akun gratis untuk membuka semua topik materi, tingkat Advanced, dan latihan hingga 10 soal!
+              </p>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm guest-banner-cta" id="quizGuestSignUpBtn">
+              🔓 Sign Up / Log In (Akses Penuh)
+            </button>
+          </div>
+
+          <div id="quizMemberBadge" class="member-access-banner hidden">
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span style="font-size:1.2rem;">✨</span>
+              <div>
+                <strong style="color:var(--sky-bright);font-size:.85rem;" id="memberBadgeTitleText">Akun Member Aktif · Akses Penuh</strong>
+                <div style="font-size:.76rem;color:var(--muted);" id="memberBadgeDescText">Bebas memilih semua topik materi, tingkat kesulitan Beginner hingga Advanced, dan jumlah 3, 5, 7, atau 10 soal.</div>
+              </div>
+            </div>
+          </div>
+
           <div class="setup-row">
             <label data-i18n="topic_label">Topic</label>
             <div class="chip-row" id="quizTopicChips">
