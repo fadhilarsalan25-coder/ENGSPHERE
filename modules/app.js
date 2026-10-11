@@ -1,7 +1,7 @@
 import './bootstrap.js';
 import { setView } from './bootstrap.js';
 import { openAuthModal } from './auth.js';
-import { state, saveState } from './state.js';
+import { state, saveState, isGuestUser } from './state.js';
 import { getSupabase, fetchCloudProfile } from './supabase-client.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -9,64 +9,79 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.setView = setView;
     window.openAuthModal = openAuthModal;
 
+    // Reusable function to apply authenticated session
+    async function applyUserSession(session) {
+      if (!session?.user?.id) return;
+      state.isLoggedIn = true;
+      state.isGuest = false;
+      state.supabaseUserId = session.user.id;
+      const userEmail = session.user.email || '';
+      const userName = session.user.user_metadata?.full_name || session.user.user_metadata?.display_name || userEmail.split('@')[0] || 'Learner';
+
+      if (!Array.isArray(state.profiles)) state.profiles = [];
+      const idx = state.profiles.findIndex(p => p.email === userEmail || p.supabaseUserId === session.user.id);
+      if (idx >= 0) {
+        state.activeProfile = idx;
+      } else {
+        state.profiles.unshift({
+          name: userName,
+          initials: userName.charAt(0).toUpperCase(),
+          email: userEmail,
+          supabaseUserId: session.user.id
+        });
+        state.activeProfile = 0;
+      }
+
+      const cloudProf = await fetchCloudProfile(session.user.id);
+      if (cloudProf) {
+        if (typeof cloudProf.xp === 'number') state.xp = cloudProf.xp;
+        if (typeof cloudProf.level === 'number') state.level = cloudProf.level;
+        if (typeof cloudProf.streak === 'number') state.streak = cloudProf.streak;
+      }
+
+      const initialLevel = session.user.user_metadata?.initial_level;
+      if (initialLevel && ['beginner', 'intermediate', 'advanced'].includes(initialLevel.toLowerCase())) {
+        state.selectedDifficulty = initialLevel.toLowerCase();
+        if (state.personalizedLearning) {
+          state.personalizedLearning.level = initialLevel.toLowerCase();
+        }
+        if (state.profiles && state.profiles[state.activeProfile]) {
+          state.profiles[state.activeProfile].level = initialLevel.toLowerCase();
+        }
+      }
+
+      saveState();
+      if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
+      if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
+      if (typeof window.syncQuizGuestRestrictionsUI === 'function') window.syncQuizGuestRestrictionsUI();
+      if (typeof window.setView === 'function') window.setView('dashboard');
+    }
+
     // Check for existing Supabase cloud session
     const sb = getSupabase();
     if (sb) {
       try {
         const { data: { session } } = await sb.auth.getSession();
-        if (session?.user?.id) {
-          state.isLoggedIn = true;
-          state.isGuest = false;
-          state.supabaseUserId = session.user.id;
-          const userEmail = session.user.email || '';
-          const userName = session.user.user_metadata?.display_name || userEmail.split('@')[0] || 'Learner';
-
-          if (!Array.isArray(state.profiles)) state.profiles = [];
-          const idx = state.profiles.findIndex(p => p.email === userEmail || p.supabaseUserId === session.user.id);
-          if (idx >= 0) {
-            state.activeProfile = idx;
-          } else {
-            state.profiles.unshift({
-              name: userName,
-              initials: userName.charAt(0).toUpperCase(),
-              email: userEmail,
-              supabaseUserId: session.user.id
-            });
-            state.activeProfile = 0;
-          }
-
-          const cloudProf = await fetchCloudProfile(session.user.id);
-          if (cloudProf) {
-            if (typeof cloudProf.xp === 'number') state.xp = cloudProf.xp;
-            if (typeof cloudProf.level === 'number') state.level = cloudProf.level;
-            if (typeof cloudProf.streak === 'number') state.streak = cloudProf.streak;
-          }
-
-          const initialLevel = session.user.user_metadata?.initial_level;
-          if (initialLevel && ['beginner', 'intermediate', 'advanced'].includes(initialLevel.toLowerCase())) {
-            state.selectedDifficulty = initialLevel.toLowerCase();
-            if (state.personalizedLearning) {
-              state.personalizedLearning.level = initialLevel.toLowerCase();
-            }
-            if (state.profiles && state.profiles[state.activeProfile]) {
-              state.profiles[state.activeProfile].level = initialLevel.toLowerCase();
-            }
-          }
-
-          saveState();
-          if (typeof window.syncLevelUI === 'function') window.syncLevelUI();
-          if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
+        if (session) {
+          await applyUserSession(session);
         }
+
+        // Listen for OAuth redirects and auth state changes
+        sb.auth.onAuthStateChange(async (event, session) => {
+          if (session && (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED')) {
+            await applyUserSession(session);
+          }
+        });
       } catch (e) {
         console.warn('Session check fallback:', e);
       }
     }
 
-    // Preserve logged-in state if user was already active
-    if (!state.isLoggedIn) {
+    // If registered member, go to dashboard; if guest or logged out, start at landing
+    if (!state.isLoggedIn || isGuestUser()) {
       setView('landing');
     } else {
-      setView(state.currentView || 'dashboard');
+      setView('dashboard');
     }
 
     // Attach primary landing CTAs
