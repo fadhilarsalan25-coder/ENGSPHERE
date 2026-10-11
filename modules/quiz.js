@@ -1073,11 +1073,9 @@ export function startQuiz(adaptiveOptions = {}) {
     if (state.selectedDifficulty === 'advanced') {
       state.selectedDifficulty = 'intermediate';
     }
-    state.selectedCount = 3;
-    state.selectedAIQuestions = 3;
   }
 
-  const count = isGuest ? 3 : (state.selectedCount || state.selectedAIQuestions || 5);
+  const count = state.selectedCount || state.selectedAIQuestions || 5;
   const topic = isGuest ? 'mixed' : (state.selectedTopic || 'mixed');
   const difficulty = isGuest
     ? (state.selectedDifficulty === 'advanced' ? 'intermediate' : (state.selectedDifficulty || 'intermediate'))
@@ -1085,9 +1083,6 @@ export function startQuiz(adaptiveOptions = {}) {
 
   state.recentQuestionIds = state.recentQuestionIds || [];
   let questions = getAdaptiveQuestionSet(topic, difficulty, count, state.recentQuestionIds);
-  if (isGuest && questions.length > 3) {
-    questions = questions.slice(0, 3);
-  }
 
   // Record newly selected question IDs into recent memory to guarantee non-repetition
   questions.forEach(q => {
@@ -1156,6 +1151,23 @@ export function renderQuiz() {
         : `Good job! Your consistency is building. Click below to generate a brand new set of non-repeating questions.`;
     }
 
+    const isGuest = isGuestUser();
+    const guestResultCallout = isGuest ? `
+      <div class="guest-result-box" style="margin:1rem auto;padding:.85rem 1.15rem;background:linear-gradient(135deg, rgba(245,158,11,.12), rgba(217,119,6,.06));border:1px solid rgba(245,158,11,.35);border-radius:var(--r-md);max-width:520px;text-align:center;">
+        <div style="font-size:.85rem;font-weight:700;color:#fbbf24;margin-bottom:.3rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">
+          <span>🔒</span> ${isId ? 'Sesi Selesai (Mode Tamu)' : 'Session Finished (Guest Mode)'}
+        </div>
+        <p style="font-size:.82rem;color:var(--text);margin:0 0 .65rem 0;line-height:1.45;">
+          ${isId 
+            ? 'Ingin menyimpan rekor XP Anda ke Cloud, serta membuka kuis topik khusus (Tenses, To Be, Vocab, Grammar) dan tingkat Advanced?' 
+            : 'Want to sync your XP to Cloud, and unlock topic-specific quizzes (Tenses, To Be, Vocab, Grammar) and Advanced level?'}
+        </p>
+        <button type="button" class="btn btn-primary btn-sm" id="quizResultGuestSignUpBtn" style="font-weight:700;">
+          ${isId ? '🚀 Buat Akun / Log In (Akses Penuh)' : '🚀 Create Free Account / Log In'}
+        </button>
+      </div>
+    ` : '';
+
     playArea.innerHTML = `
       <div class="card quiz-results">
         <div class="score">${score}%</div>
@@ -1170,6 +1182,8 @@ export function renderQuiz() {
           </p>
         </div>
 
+        ${guestResultCallout}
+
         <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:var(--sp-4);">
           <button class="btn btn-primary" id="quizAgainBtn">
             ${isId ? '⚡ Coba Kuis Baru (Adaptif)' : '⚡ Try Another Quiz (Fresh Adaptive)'}
@@ -1183,6 +1197,10 @@ export function renderQuiz() {
         </div>
       </div>
     `;
+
+    document.getElementById('quizResultGuestSignUpBtn')?.addEventListener('click', () => {
+      openAuthModal('sign-up');
+    });
 
     state.xp += xp;
     state.history.unshift({
