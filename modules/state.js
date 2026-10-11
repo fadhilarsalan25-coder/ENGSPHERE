@@ -70,9 +70,11 @@ export function loadState() {
       state.profiles[state.activeProfile].level = prof;
     }
 
-    if (typeof state.isGuest === 'undefined') {
-      const activeProf = state.profiles?.[state.activeProfile];
-      state.isGuest = !state.isLoggedIn || (activeProf?.name === 'Guest Learner' && !state.supabaseUserId);
+    // If not authenticated via Supabase cloud, ensure recognized as guest learner
+    if (!state.supabaseUserId) {
+      state.isGuest = true;
+    } else {
+      state.isGuest = false;
     }
   } catch (error) {
     console.warn('Could not read state', error);
@@ -81,11 +83,8 @@ export function loadState() {
 
 export function isGuestUser() {
   if (!state.isLoggedIn) return true;
+  if (!state.supabaseUserId) return true;
   if (state.isGuest === true) return true;
-  const activeProf = state.profiles?.[state.activeProfile];
-  if (activeProf && (activeProf.name === 'Guest Learner' || activeProf.email === 'guest@engsphere.app') && !state.supabaseUserId) {
-    return true;
-  }
   return false;
 }
 
