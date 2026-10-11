@@ -1,4 +1,4 @@
-import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel, isGuestUser } from './state.js';
+import{ state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel, isGuestUser } from './state.js';
 import { escapeHtml, showToast, formatTopic, capitalize } from './utils.js';
 import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from './review.js';
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
@@ -18,7 +18,7 @@ export const I18N = {
     landing_signup_short: 'Sign up',
     landing_cta_start: '🚀 Sign up / Get Started',
     landing_cta_login: 'Log in to account',
-    landing_cta_inside: "See what's inside",
+    landing_cta_inside: "See what's inside",import
     final_start: '🚀 Sign up / Get Started Free',
     final_login: 'I already have an account',
     nav_dashboard: '🏠 Dashboard',
@@ -526,6 +526,62 @@ export function syncProfileHubUI() {
     const el = document.getElementById(id);
     if (el) el.textContent = value || '';
   });
+
+  // Toggle guest-specific topbar button and banners
+  const guestTopBtn = document.getElementById('guestTopLoginBtn');
+  if (guestTopBtn) {
+    guestTopBtn.classList.toggle('hidden', !isGuest);
+  }
+  const guestTopBtnText = document.getElementById('guestTopBtnText');
+  if (guestTopBtnText) {
+    guestTopBtnText.textContent = isId ? 'Masuk' : 'Sign In';
+  }
+
+  const dashGuestBanner = document.getElementById('dashGuestBanner');
+  if (dashGuestBanner) {
+    dashGuestBanner.classList.toggle('hidden', !isGuest);
+  }
+  const dashGuestSummaryText = document.getElementById('dashGuestSummaryText');
+  if (dashGuestSummaryText) {
+    dashGuestSummaryText.textContent = isId 
+      ? 'Akses Kuis Terbatas & Progres di Perangkat Ini Saja'
+      : 'Local Progress Only · Limited Quizzes';
+  }
+  const dashGuestDescText = document.getElementById('dashGuestDescText');
+  if (dashGuestDescText) {
+    dashGuestDescText.textContent = isId
+      ? 'Masuk dengan akun Google Anda untuk menyimpan XP ke cloud, sinkronisasi antar perangkat, dan membuka semua topik kuis!'
+      : 'Sign in with your Google account to sync XP & streaks across devices, and unlock all curriculum quiz topics.';
+  }
+  const dashGuestGoogleBtnText = document.getElementById('dashGuestGoogleBtnText');
+  if (dashGuestGoogleBtnText) {
+    dashGuestGoogleBtnText.textContent = isId ? 'Masuk dengan Google' : 'Continue with Google';
+  }
+
+  const hubGuestUpgradeBox = document.getElementById('hubGuestUpgradeBox');
+  if (hubGuestUpgradeBox) {
+    hubGuestUpgradeBox.classList.toggle('hidden', !isGuest);
+  }
+  const hubGuestUpgradeTitle = document.getElementById('hubGuestUpgradeTitle');
+  if (hubGuestUpgradeTitle) {
+    hubGuestUpgradeTitle.textContent = isId ? 'Masuk dengan Akun Google' : 'Sign in with Google';
+  }
+  const hubGuestUpgradeDesc = document.getElementById('hubGuestUpgradeDesc');
+  if (hubGuestUpgradeDesc) {
+    hubGuestUpgradeDesc.textContent = isId
+      ? 'Saat ini Anda belajar sebagai tamu. Hubungkan akun Google untuk menyimpan XP, streak harian, dan membuka semua kategori kuis!'
+      : 'You are currently practicing in guest mode. Connect your Google account to save XP, daily streak, and unlock all quiz topics!';
+  }
+
+  const mobileNavProfileLabel = document.getElementById('mobileNavProfileLabel');
+  if (mobileNavProfileLabel) {
+    mobileNavProfileLabel.textContent = isGuest ? (isId ? 'Masuk' : 'Login') : (isId ? 'Profil' : 'Profile');
+  }
+
+  const hubGoLandingLabel = document.getElementById('hubGoLandingLabel');
+  if (hubGoLandingLabel) {
+    hubGoLandingLabel.textContent = isId ? 'Halaman Utama (Landing)' : 'Landing Page';
+  }
 
   const signOutBtn = document.getElementById('hubSignOutBtn');
   if (signOutBtn) {
@@ -1174,6 +1230,14 @@ export function initNavigation() {
 
   document.getElementById('googleSignUpBtn')?.addEventListener('click', loginWithGoogle);
   document.getElementById('googleLoginBtn')?.addEventListener('click', loginWithGoogle);
+  document.getElementById('guestTopLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
+  document.getElementById('dashGuestGoogleBtn')?.addEventListener('click', loginWithGoogle);
+  document.getElementById('hubGoogleSignInBtn')?.addEventListener('click', loginWithGoogle);
+  document.getElementById('mobileNavProfileBtn')?.addEventListener('click', openProfileModal);
+  document.getElementById('hubGoLandingBtn')?.addEventListener('click', () => {
+    closeAllModals();
+    setView('landing');
+  });
   document.getElementById('quizGuestSignUpBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
   document.getElementById('exportDataBtn')?.addEventListener('click', exportUserData);
   document.getElementById('importBackupInput')?.addEventListener('change', e => importUserData(e.target.files?.[0]));
@@ -1207,9 +1271,12 @@ export function init() {
   initLandingScrollAnimations();
   syncQuizGuestRestrictionsUI();
 
+  // If user is a registered member, start at dashboard.
+  // If user is in guest mode or not logged in, always start at the official landing page so they can sign in or explore.
   const isLogged = Boolean(state.isLoggedIn);
-  if (isLogged) {
-    setView(state.currentView || 'dashboard');
+  const isGuest = isGuestUser();
+  if (isLogged && !isGuest) {
+    setView('dashboard');
   } else {
     setView('landing');
   }
