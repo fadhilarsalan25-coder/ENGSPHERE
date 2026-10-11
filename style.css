@@ -866,7 +866,29 @@ body {
   .level-ring-mini{position:relative;width:26px;height:26px;flex-shrink:0;}
   .level-ring-mini svg{transform:rotate(-90deg);}
   .level-ring-mini .bg{stroke:var(--navy-600);}
-  .level-ring-mini .fg{stroke:var(--sky);stroke-linecap:round;transition:stroke-dashoffset .6s var(--ease);}
+  .guest-top-login-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+    padding:.32rem .8rem;
+    font-size:.82rem;
+    font-weight:700;
+    border-radius:var(--r-pill);
+    background:linear-gradient(135deg, #1e40af, #0284c7);
+    border:1px solid rgba(79,195,255,.5);
+    color:#fff;
+    box-shadow:0 2px 8px rgba(37,99,235,.35);
+    cursor:pointer;
+    flex-shrink:0;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .guest-top-login-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(37,99,235,.5);
+  }
+  .guest-top-login-btn.hidden{
+    display:none !important;
+  }
 
   @media (max-width:900px){
     /* Fixed topbar ensures the EngSphere logo & stats are ALWAYS pinned & visible on Android */
@@ -1096,12 +1118,16 @@ body {
   }
 
   @media (max-width:380px){
-    .topbar .brand{font-size:.88rem;gap:.25rem;}
-    .topbar .brand img{width:24px;height:24px;min-width:24px;min-height:24px;}
+    .topbar-inner{padding:calc(0.4rem + env(safe-area-inset-top,0px)) 0.5rem 0.4rem;}
+    .topbar .brand{font-size:.85rem;gap:.25rem;}
+    .topbar .brand img{width:22px;height:22px;min-width:22px;min-height:22px;}
     .stats-chip{gap:.2rem;}
-    .level-badge-mini{padding:.18rem .4rem .18rem .25rem;font-size:.72rem;}
-    .stat-mini{padding:.18rem .35rem;font-size:.72rem;}
-    .lang-btn{padding:.22rem .4rem;font-size:.72rem;}
+    .level-badge-mini{padding:.15rem .35rem .15rem .22rem;font-size:.7rem;}
+    .level-ring-mini{width:22px;height:22px;}
+    .level-ring-mini svg{width:22px;height:22px;}
+    .stat-mini{padding:.15rem .3rem;font-size:.7rem;}
+    .lang-btn{padding:.2rem .35rem;font-size:.7rem;}
+    .guest-top-login-btn{padding:.2rem .45rem;font-size:.7rem;}
     .profile-pill span#profileNameLabel{display:none !important;}
   }
 
@@ -1713,6 +1739,4 @@ body {
     color: #78350f !important;
   }
 }
-
-
 
