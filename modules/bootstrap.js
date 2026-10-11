@@ -1,4 +1,4 @@
-import{ state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel, isGuestUser } from './state.js';
+import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getProficiencyLevel, isGuestUser } from './state.js';
 import { escapeHtml, showToast, formatTopic, capitalize } from './utils.js';
 import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from './review.js';
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
@@ -18,7 +18,7 @@ export const I18N = {
     landing_signup_short: 'Sign up',
     landing_cta_start: '🚀 Sign up / Get Started',
     landing_cta_login: 'Log in to account',
-    landing_cta_inside: "See what's inside",import
+    landing_cta_inside: "See what's inside",
     final_start: '🚀 Sign up / Get Started Free',
     final_login: 'I already have an account',
     nav_dashboard: '🏠 Dashboard',
@@ -529,8 +529,12 @@ export function syncProfileHubUI() {
 
   // Toggle guest-specific topbar button and banners
   const guestTopBtn = document.getElementById('guestTopLoginBtn');
+  const profilePillBtn = document.getElementById('profilePillBtn');
   if (guestTopBtn) {
     guestTopBtn.classList.toggle('hidden', !isGuest);
+  }
+  if (profilePillBtn) {
+    profilePillBtn.classList.toggle('hidden', isGuest);
   }
   const guestTopBtnText = document.getElementById('guestTopBtnText');
   if (guestTopBtnText) {
@@ -1170,7 +1174,13 @@ export function initNavigation() {
     btn.addEventListener('click', () => setView(btn.dataset.view || btn.dataset.goto));
   });
 
-  document.getElementById('appHomeBtn')?.addEventListener('click', () => setView('dashboard'));
+  document.getElementById('appHomeBtn')?.addEventListener('click', () => {
+    if (isGuestUser()) {
+      setView('landing');
+    } else {
+      setView('dashboard');
+    }
+  });
   document.getElementById('dashStartQuizBtn')?.addEventListener('click', () => setView('practice'));
   document.getElementById('dashBrowseMatBtn')?.addEventListener('click', () => setView('materials'));
 
@@ -1193,11 +1203,14 @@ export function initNavigation() {
   document.getElementById('getStartedBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
   document.getElementById('getStartedBtn2')?.addEventListener('click', () => openAuthModal('sign-up'));
   document.getElementById('landingHeroLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
+  document.getElementById('landingHeroGoogleBtn')?.addEventListener('click', loginWithGoogle);
+  document.getElementById('landingHeroGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('landingBottomLoginBtn')?.addEventListener('click', () => openAuthModal('login'));
 
   document.getElementById('authQuickGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('authLoginGuestBtn')?.addEventListener('click', continueAsGuest);
   document.getElementById('profilePillBtn')?.addEventListener('click', openProfileModal);
+  document.getElementById('topLevelBadge')?.addEventListener('click', openProfileModal);
   document.getElementById('hubSignOutBtn')?.addEventListener('click', () => {
     closeAllModals();
     signOutUser();
