@@ -98,6 +98,29 @@ export async function signInWithSupabase(email, password) {
 }
 
 /**
+ * Sign In / Sign Up with Google via Supabase OAuth
+ */
+export async function signInWithGoogle() {
+  const sb = getSupabase();
+  if (!sb) return { error: 'Supabase client is not loaded' };
+
+  try {
+    const { data, error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+
+    if (error) return { error: error.message };
+    return { data };
+  } catch (err) {
+    console.error('Google Sign In error:', err);
+    return { error: err.message || 'Failed to initiate Google login' };
+  }
+}
+
+/**
  * Sign Out from Supabase Auth
  */
 export async function signOutFromSupabase() {
