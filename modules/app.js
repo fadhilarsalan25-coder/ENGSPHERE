@@ -1,6 +1,6 @@
 import './bootstrap.js';
 import { setView } from './bootstrap.js';
-import { openAuthModal } from './auth.js';
+import { openAuthModal, loginWithGoogle, continueAsGuest } from './auth.js';
 import { state, saveState, isGuestUser } from './state.js';
 import { getSupabase, fetchCloudProfile } from './supabase-client.js';
 
@@ -100,6 +100,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         el.addEventListener('click', () => openAuthModal(mode));
       }
     });
+
+    document.getElementById('landingHeroGoogleBtn')?.addEventListener('click', loginWithGoogle);
+    document.getElementById('landingHeroGuestBtn')?.addEventListener('click', continueAsGuest);
 
     console.log('EngSphere Global Navigation & Supabase Cloud Activated! ✅');
   } catch (error) {
