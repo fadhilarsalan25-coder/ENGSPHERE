@@ -256,7 +256,6 @@ export async function loginUser(identifier, password) {
   state.isLoggedIn = true;
   if (isGuestLogin) {
     state.selectedTopic = 'mixed';
-    state.selectedCount = 3;
     if (state.selectedDifficulty === 'advanced') state.selectedDifficulty = 'intermediate';
   }
   saveState();
@@ -285,7 +284,6 @@ export function continueAsGuest() {
   if (state.selectedDifficulty === 'advanced') {
     state.selectedDifficulty = 'intermediate';
   }
-  state.selectedCount = 3;
   loginUser('Guest Learner', '');
 }
 
@@ -294,7 +292,6 @@ export function signOutUser() {
   state.isGuest = true;
   state.supabaseUserId = null;
   state.selectedTopic = 'mixed';
-  state.selectedCount = 3;
   if (state.selectedDifficulty === 'advanced') state.selectedDifficulty = 'intermediate';
   signOutFromSupabase();
   saveState();
