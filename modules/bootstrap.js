@@ -727,69 +727,6 @@ export function initLanguageSwitcher() {
   });
 }
 
-export function bindChipSelectors() {
-  // Topic chips (Quick quiz & AI)
-  document.querySelectorAll('#quizTopicChips [data-topic]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const topic = btn.dataset.topic;
-      if (isGuestUser() && topic !== 'mixed') {
-        const isId = state.lang === 'id';
-        showToast(isId 
-          ? '🔒 Kuis topik khusus terkunci untuk Mode Tamu. Sign Up gratis untuk membuka semua topik materi!' 
-          : '🔒 Topic quizzes are locked for guests. Sign up for free to unlock all topics!');
-        return;
-      }
-      state.selectedTopic = topic;
-      document.querySelectorAll('#quizTopicChips [data-topic]').forEach(item => item.classList.toggle('active', item === btn));
-    });
-  });
-  document.querySelectorAll('#aiTopicChips [data-topic]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.selectedTopic = btn.dataset.topic;
-      document.querySelectorAll('#aiTopicChips [data-topic]').forEach(item => item.classList.toggle('active', item === btn));
-    });
-  });
-
-  // Difficulty chips
-  document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const diff = btn.dataset.diff;
-      if (isGuestUser() && diff === 'advanced') {
-        const isId = state.lang === 'id';
-        showToast(isId 
-          ? '🔒 Tingkat Advanced (C1-C2) dikhususkan untuk Member terdaftar. Sign Up gratis untuk membuka!' 
-          : '🔒 Advanced level is reserved for registered members. Sign up for free to unlock!');
-        return;
-      }
-      state.selectedDifficulty = diff;
-      document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(item => item.classList.toggle('active', item === btn));
-    });
-  });
-  document.querySelectorAll('#aiDifficultyChips [data-diff]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.selectedDifficulty = btn.dataset.diff;
-      document.querySelectorAll('#aiDifficultyChips [data-diff]').forEach(item => item.classList.toggle('active', item === btn));
-    });
-  });
-
-  // Question count chips (Quiz)
-  document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const count = Number(btn.dataset.count);
-      if (isGuestUser() && count > 3) {
-        const isId = state.lang === 'id';
-        showToast(isId 
-          ? '🔒 Mode Tamu dibatasi maksimal 3 butir soal per kuis. Sign Up gratis untuk memilih 5, 7, atau 10 soal!' 
-          : '🔒 Guest mode is limited to 3 questions. Sign up for free to select 5, 7, or 10 questions!');
-        return;
-      }
-      state.selectedCount = count;
-      state.selectedAIQuestions = count;
-      document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(item => item.classList.toggle('active', item === btn));
-    });
-  });
-}
-
 export function syncQuizGuestRestrictionsUI() {
   const isGuest = isGuestUser();
   const guestBanner = document.getElementById('quizGuestNotice');
@@ -879,6 +816,68 @@ export function syncQuizGuestRestrictionsUI() {
     });
   }
 }
+
+export function bindChipSelectors() {
+  // Topic chips (Quick quiz & AI)
+  document.querySelectorAll('#quizTopicChips [data-topic]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const topic = btn.dataset.topic;
+      if (isGuestUser() && topic !== 'mixed') {
+        const isId = state.lang === 'id';
+        showToast(isId 
+          ? '🔒 Kuis topik khusus terkunci untuk Mode Tamu. Sign Up gratis untuk membuka semua topik materi!' 
+          : '🔒 Topic quizzes are locked for guests. Sign up for free to unlock all topics!');
+        return;
+      }
+      state.selectedTopic = topic;
+      document.querySelectorAll('#quizTopicChips [data-topic]').forEach(item => item.classList.toggle('active', item === btn));
+    });
+  });
+  document.querySelectorAll('#aiTopicChips [data-topic]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.selectedTopic = btn.dataset.topic;
+      document.querySelectorAll('#aiTopicChips [data-topic]').forEach(item => item.classList.toggle('active', item === btn));
+    });
+  });
+
+  // Difficulty chips
+  document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const diff = btn.dataset.diff;
+      if (isGuestUser() && diff === 'advanced') {
+        const isId = state.lang === 'id';
+        showToast(isId 
+          ? '🔒 Tingkat Advanced (C1-C2) dikhususkan untuk Member terdaftar. Sign Up gratis untuk membuka!' 
+          : '🔒 Advanced level is reserved for registered members. Sign up for free to unlock!');
+        return;
+      }
+      state.selectedDifficulty = diff;
+      document.querySelectorAll('#quizDifficultyChips [data-diff]').forEach(item => item.classList.toggle('active', item === btn));
+    });
+  });
+  document.querySelectorAll('#aiDifficultyChips [data-diff]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.selectedDifficulty = btn.dataset.diff;
+      document.querySelectorAll('#aiDifficultyChips [data-diff]').forEach(item => item.classList.toggle('active', item === btn));
+    });
+  });
+
+  // Question count chips (Quiz)
+  document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const count = Number(btn.dataset.count);
+      if (isGuestUser() && count > 3) {
+        const isId = state.lang === 'id';
+        showToast(isId 
+          ? '🔒 Mode Tamu dibatasi maksimal 3 butir soal per kuis. Sign Up gratis untuk memilih 5, 7, atau 10 soal!' 
+          : '🔒 Guest mode is limited to 3 questions. Sign up for free to select 5, 7, or 10 questions!');
+        return;
+      }
+      state.selectedCount = count;
+      state.selectedAIQuestions = count;
+      document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(item => item.classList.toggle('active', item === btn));
+    });
+  });
 
   // Materials subtabs
   document.querySelectorAll('[data-msub]').forEach(btn => {
@@ -1230,3 +1229,4 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+
