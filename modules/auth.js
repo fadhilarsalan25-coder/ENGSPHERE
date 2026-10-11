@@ -4,6 +4,7 @@ import { escapeHtml } from './utils.js';
 import {
   signUpWithSupabase,
   signInWithSupabase,
+  signInWithGoogle,
   signOutFromSupabase,
   fetchCloudProfile,
   fetchCloudQuizHistory,
@@ -273,6 +274,18 @@ export async function loginUser(identifier, password) {
 
   if (cloudUserId && typeof window.showToast === 'function') {
     window.showToast('Logged in & synced with Supabase Cloud! ☁️');
+  }
+}
+
+export async function loginWithGoogle() {
+  setAuthAlert('');
+  if (!isSupabaseReady()) {
+    setAuthAlert('Supabase client is not ready. Please try again.');
+    return;
+  }
+  const res = await signInWithGoogle();
+  if (res?.error) {
+    setAuthAlert(res.error);
   }
 }
 
