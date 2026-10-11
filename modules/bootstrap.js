@@ -2,7 +2,7 @@ import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getPr
 import { escapeHtml, showToast, formatTopic, capitalize } from './utils.js';
 import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from './review.js';
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
-import { openAuthModal, openProfileModal, closeAllModals, signUpUser, loginUser, continueAsGuest, signOutUser, exportUserData, importUserData } from './auth.js';
+import { openAuthModal, openProfileModal, closeAllModals, signUpUser, loginUser, loginWithGoogle, continueAsGuest, signOutUser, exportUserData, importUserData } from './auth.js';
 import { initLandingScrollAnimations } from './landing.js';
 import { bindNavigation, setView as navSetView } from './navigation.js';
 
@@ -1172,6 +1172,8 @@ export function initNavigation() {
     );
   });
 
+  document.getElementById('googleSignUpBtn')?.addEventListener('click', loginWithGoogle);
+  document.getElementById('googleLoginBtn')?.addEventListener('click', loginWithGoogle);
   document.getElementById('quizGuestSignUpBtn')?.addEventListener('click', () => openAuthModal('sign-up'));
   document.getElementById('exportDataBtn')?.addEventListener('click', exportUserData);
   document.getElementById('importBackupInput')?.addEventListener('change', e => importUserData(e.target.files?.[0]));
