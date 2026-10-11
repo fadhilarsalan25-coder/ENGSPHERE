@@ -739,14 +739,14 @@ export function syncQuizGuestRestrictionsUI() {
   const guestSummaryEl = document.getElementById('guestLimitSummaryText');
   if (guestSummaryEl) {
     guestSummaryEl.textContent = isId 
-      ? 'Terbatas: 3 Soal · Beginner–Intermediate · Mixed Review' 
-      : 'Limited: 3 Questions · Beginner–Intermediate · Mixed Review';
+      ? 'Terbatas: Beginner–Intermediate · Mixed Review (Jumlah Soal Bebas)' 
+      : 'Limited: Beginner–Intermediate · Mixed Review (Flexible Questions)';
   }
   const guestDescEl = document.getElementById('guestBannerDescText');
   if (guestDescEl) {
     guestDescEl.textContent = isId 
-      ? 'Anda sedang belajar sebagai tamu. Buat akun gratis untuk membuka semua topik materi, tingkat Advanced, dan latihan hingga 10 soal!' 
-      : 'You are practicing in guest mode. Create a free account to unlock all curriculum topics, Advanced difficulty, and up to 10 questions!';
+      ? 'Anda sedang belajar sebagai tamu. Pilihan jumlah soal bebas (3, 5, 7, atau 10). Buat akun gratis untuk membuka tingkat Advanced dan kuis per topik materi!' 
+      : 'You are practicing in guest mode. Question count is unrestricted (3, 5, 7, or 10). Create a free account to unlock Advanced difficulty and curriculum topic quizzes!';
   }
   const guestBtnEl = document.getElementById('quizGuestSignUpBtn');
   if (guestBtnEl) {
@@ -769,7 +769,6 @@ export function syncQuizGuestRestrictionsUI() {
     if (state.selectedDifficulty === 'advanced') {
       state.selectedDifficulty = 'intermediate';
     }
-    state.selectedCount = 3;
 
     // Lock non-mixed topics
     document.querySelectorAll('#quizTopicChips [data-topic]').forEach(btn => {
@@ -787,13 +786,11 @@ export function syncQuizGuestRestrictionsUI() {
       btn.title = isAdv ? (isId ? 'Terkunci untuk tamu - Daftar untuk akses penuh' : 'Locked for guests - Sign up for full access') : '';
     });
 
-    // Lock counts > 3
+    // Question count is unrestricted for guests
     document.querySelectorAll('#quizCountChips [data-count]').forEach(btn => {
-      const count = Number(btn.dataset.count);
-      const is3 = count === 3;
-      btn.classList.toggle('is-locked', !is3);
-      btn.classList.toggle('active', is3);
-      btn.title = is3 ? '' : (isId ? 'Terkunci untuk tamu (Maksimal 3 soal)' : 'Locked for guests (Max 3 questions)');
+      btn.classList.remove('is-locked');
+      btn.removeAttribute('title');
+      btn.classList.toggle('active', Number(btn.dataset.count) === (state.selectedCount || 5));
     });
   } else {
     // Registered member: unlock all chips
@@ -862,17 +859,10 @@ export function bindChipSelectors() {
     });
   });
 
-  // Question count chips (Quiz)
+  // Question count chips (Quiz) - Unrestricted for everyone
   document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(btn => {
     btn.addEventListener('click', () => {
       const count = Number(btn.dataset.count);
-      if (isGuestUser() && count > 3) {
-        const isId = state.lang === 'id';
-        showToast(isId 
-          ? '🔒 Mode Tamu dibatasi maksimal 3 butir soal per kuis. Sign Up gratis untuk memilih 5, 7, atau 10 soal!' 
-          : '🔒 Guest mode is limited to 3 questions. Sign up for free to select 5, 7, or 10 questions!');
-        return;
-      }
       state.selectedCount = count;
       state.selectedAIQuestions = count;
       document.querySelectorAll('#quizCountChips [data-count], #aiCountChips [data-count]').forEach(item => item.classList.toggle('active', item === btn));
@@ -1229,4 +1219,3 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-
