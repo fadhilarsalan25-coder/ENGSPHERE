@@ -25,6 +25,15 @@ export const createDefaultState = () => ({
     dailyXpGoal: 100,
     customNotes: 'Focus on everyday speaking tenses and clear explanations for incorrect choices.'
   },
+  onboarding: {
+    completed: false,
+    status: '',
+    goal: 'conversation',
+    level: 'intermediate',
+    focusArea: 'speaking',
+    dailyCommitment: 15,
+    completedAt: null
+  },
   currentView: 'dashboard',
   selectedMaterial: 'tenses',
   selectedPracticeTab: 'quiz',
@@ -55,6 +64,7 @@ export function loadState() {
     }
     if (!Array.isArray(state.reviewQuestions)) state.reviewQuestions = [];
     if (!state.personalizedLearning) state.personalizedLearning = createDefaultState().personalizedLearning;
+    if (!state.onboarding) state.onboarding = createDefaultState().onboarding;
     if (!state.theme || (state.theme !== 'light' && state.theme !== 'dark')) state.theme = 'dark';
     if (!state.lang || (state.lang !== 'id' && state.lang !== 'en')) state.lang = 'en';
 
@@ -135,3 +145,4 @@ export function levelLabel(level, preferredProficiency) {
   if (level <= 5) return 'Intermediate';
   return 'Advanced';
 }
+
