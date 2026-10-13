@@ -55,6 +55,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (typeof window.syncProfileHubUI === 'function') window.syncProfileHubUI();
       if (typeof window.syncQuizGuestRestrictionsUI === 'function') window.syncQuizGuestRestrictionsUI();
       if (typeof window.setView === 'function') window.setView('dashboard');
+
+      // If registered user hasn't completed onboarding interview yet, prompt them
+      if (!state.onboarding?.completed && !isGuestUser()) {
+        setTimeout(() => {
+          if (typeof window.openOnboardingModal === 'function') {
+            window.openOnboardingModal(false);
+          }
+        }, 500);
+      }
     }
 
     // Check for existing Supabase cloud session
