@@ -1315,8 +1315,121 @@ body {
   .conj-table td{padding:.55rem .3rem;border-bottom:1px solid var(--line);}
   .conj-table td.form{color:var(--sky-bright);font-weight:700;font-family:var(--font-d);}
   .rule-card{padding:var(--sp-5);margin-bottom:var(--sp-4);}
-  .rule-card h4{font-size:1rem;margin-bottom:.4rem;}
+  .rule-card h4{font-size:1.05rem;margin-bottom:.4rem;}
   .rule-card .tc-formula{font-family:'Space Grotesk',monospace;color:var(--sky-bright);font-size:.85rem;display:block;margin-bottom:.5rem;}
+
+  /* To Be 4 Core Functions Breakdown */
+  .tobe-jobs-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--sp-4) 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  .tobe-jobs-list > li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tobe-job-card {
+    background: var(--navy-800);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-5);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .tobe-job-card:hover {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-2);
+  }
+  .tobe-job-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: .45rem;
+  }
+  .tobe-job-title {
+    font-family: var(--font-d);
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .tobe-job-pill {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: .18rem .6rem;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--sky-bright);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .tobe-job-formula {
+    font-family: 'Space Grotesk', monospace;
+    font-size: .82rem;
+    color: var(--sky-bright);
+    background: var(--navy-950);
+    padding: .3rem .65rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line);
+    display: inline-block;
+    margin-bottom: .6rem;
+    word-break: break-word;
+  }
+  .tobe-job-desc {
+    font-size: .88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 .65rem 0;
+  }
+  .tobe-job-desc strong {
+    color: var(--text);
+  }
+  .tobe-job-examples {
+    background: var(--navy-950);
+    border-left: 3px solid var(--sky-bright);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    padding: .6rem .85rem;
+    margin-bottom: .6rem;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+  .tobe-job-ex {
+    font-size: .85rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .tobe-job-ex em {
+    color: var(--sky-bright);
+    font-style: normal;
+    font-weight: 600;
+  }
+  .tobe-job-ex span.ex-id {
+    color: var(--muted);
+    font-size: .82rem;
+    display: inline-block;
+    margin-left: .25rem;
+  }
+  .tobe-job-tip {
+    font-size: .82rem;
+    color: var(--amber);
+    background: rgba(255, 182, 72, 0.08);
+    border: 1px solid rgba(255, 182, 72, 0.22);
+    border-radius: var(--r-sm);
+    padding: .45rem .7rem;
+    line-height: 1.5;
+  }
+  .tobe-job-tip strong {
+    color: var(--amber);
+  }
 
   /* Vocabulary */
   .vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);}
@@ -1739,4 +1852,418 @@ body {
     color: #78350f !important;
   }
 }
+
+/* ========================================================
+   ONBOARDING / INTAKE QUESTIONNAIRE STYLES
+   ======================================================== */
+.onboarding-modal-box {
+  max-width: 660px;
+  width: 100%;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-strong);
+  background: var(--navy-800);
+  box-shadow: var(--shadow-2);
+}
+
+.onboard-modal-header {
+  padding: var(--sp-4) var(--sp-6) var(--sp-3);
+  border-bottom: 1px solid var(--line);
+  background: var(--navy-900);
+}
+
+.onboard-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+
+.onboard-tutor-tag {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--sky-bright);
+}
+
+.onboard-tutor-tag .tutor-avatar {
+  font-size: 1.25rem;
+}
+
+.onboard-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.onboard-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 178, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.onboard-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sky), var(--sky-bright));
+  border-radius: 999px;
+  transition: width .35s var(--ease);
+}
+
+.onboard-progress-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.onboard-skip-link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: .8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color .2s;
+}
+
+.onboard-skip-link:hover {
+  color: var(--text);
+}
+
+.onboard-modal-body {
+  padding: var(--sp-5) var(--sp-6);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 380px;
+  max-height: 62vh;
+}
+
+.onboard-step-badge {
+  display: inline-block;
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--sky-bright);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 999px;
+  padding: .2rem .65rem;
+  margin-bottom: .6rem;
+}
+
+.onboard-question-title {
+  font-family: var(--font-d);
+  font-size: 1.25rem;
+  margin: 0 0 .4rem 0;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.onboard-question-sub {
+  font-size: .88rem;
+  color: var(--muted);
+  margin: 0 0 var(--sp-4) 0;
+  line-height: 1.5;
+}
+
+.onboard-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+
+.onboard-option-card {
+  background: var(--navy-900);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: .85rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+  user-select: none;
+}
+
+.onboard-option-card:hover {
+  border-color: var(--sky);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.onboard-option-card.selected {
+  border-color: var(--sky-bright);
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 0 1px var(--sky-bright);
+}
+
+.onboard-option-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(148, 178, 255, 0.08);
+  border-radius: 12px;
+}
+
+.onboard-option-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.onboard-option-label {
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--text);
+}
+
+.onboard-option-desc {
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.onboard-option-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 800;
+  color: var(--sky-bright);
+  flex-shrink: 0;
+  transition: all .2s;
+}
+
+.onboard-option-card.selected .onboard-option-check {
+  border-color: var(--sky-bright);
+  background: var(--sky-bright);
+  color: #04101f;
+}
+
+/* Summary Pane */
+.onboard-summary-header {
+  text-align: center;
+  margin-bottom: var(--sp-4);
+}
+
+.onboard-celebrate-badge {
+  display: inline-block;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--success);
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 999px;
+  padding: .25rem .75rem;
+  margin-bottom: .6rem;
+}
+
+.onboard-summary-header h3 {
+  font-family: var(--font-d);
+  font-size: 1.35rem;
+  margin: 0 0 .4rem 0;
+  color: var(--text);
+}
+
+.onboard-summary-header p {
+  font-size: .88rem;
+  color: var(--muted);
+  max-width: 52ch;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.onboard-summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .65rem;
+  margin-bottom: var(--sp-4);
+}
+
+@media (max-width: 600px) {
+  .onboard-summary-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.onboard-sum-card {
+  background: var(--navy-900);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: .75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.onboard-sum-card.highlight {
+  border-color: rgba(255, 182, 72, 0.4);
+  background: rgba(255, 182, 72, 0.08);
+}
+
+.onboard-sum-card .sum-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.onboard-sum-card .sum-text {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  overflow: hidden;
+}
+
+.onboard-sum-card .sum-label {
+  font-size: .72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.onboard-sum-card .sum-val {
+  font-size: .88rem;
+  color: var(--text);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.onboard-gift-box {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.12), rgba(56, 189, 248, 0.12));
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: var(--r-md);
+  padding: .85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+}
+
+.onboard-gift-box .gift-icon {
+  font-size: 1.8rem;
+}
+
+.onboard-gift-box .gift-text {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.onboard-gift-box .gift-text strong {
+  color: var(--success);
+  font-size: .95rem;
+}
+
+.onboard-gift-box .gift-text span {
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+.onboard-modal-footer {
+  padding: var(--sp-4) var(--sp-6);
+  border-top: 1px solid var(--line);
+  background: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+/* Summary Grid in Profile Hub */
+.onboard-summary-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: .55rem;
+  margin-top: .6rem;
+}
+
+.onboard-chip-item {
+  background: var(--navy-900);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: .5rem .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.onboard-chip-item .chip-k {
+  font-size: .72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.onboard-chip-item .chip-v {
+  font-size: .85rem;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Light Mode Overrides for Onboarding */
+html[data-theme="light"] .onboarding-modal-box {
+  background: #ffffff !important;
+  border-color: rgba(26, 86, 175, 0.2) !important;
+  box-shadow: 0 20px 60px rgba(9, 30, 58, 0.2) !important;
+}
+
+html[data-theme="light"] .onboard-modal-header,
+html[data-theme="light"] .onboard-modal-footer {
+  background: #ebf5ff !important;
+  border-color: rgba(26, 86, 175, 0.15) !important;
+}
+
+html[data-theme="light"] .onboard-option-card {
+  background: #ffffff !important;
+  border-color: rgba(26, 86, 175, 0.16) !important;
+}
+
+html[data-theme="light"] .onboard-option-card:hover {
+  border-color: #0284c7 !important;
+  background: #f0f7ff !important;
+}
+
+html[data-theme="light"] .onboard-option-card.selected {
+  background: #e0f2fe !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 1px #0284c7 !important;
+}
+
+html[data-theme="light"] .onboard-option-icon {
+  background: rgba(2, 132, 199, 0.08) !important;
+}
+
+html[data-theme="light"] .onboard-sum-card,
+html[data-theme="light"] .onboard-chip-item {
+  background: #f0f7ff !important;
+  border-color: rgba(26, 86, 175, 0.14) !important;
+}
+
+html[data-theme="light"] .onboard-gift-box {
+  background: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+
 
