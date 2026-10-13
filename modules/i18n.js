@@ -155,11 +155,67 @@ export const I18N = {
     tobe_neg_desc: "Contract naturally in speech: <em>isn't, aren't, wasn't, weren't</em>. \"It is not far\" → \"It isn't far.\"",
     tobe_q_h4: 'Question forms',
     tobe_q_desc: 'Move the be-verb before the subject: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"',
-    tobe_jobs_h4: 'Four everyday jobs of "to be"',
-    tobe_job1: '<strong style="color:var(--text);">Identity</strong> — "I am Maria."',
-    tobe_job2: '<strong style="color:var(--text);">Description</strong> — "The soup is hot."',
-    tobe_job3: '<strong style="color:var(--text);">Location</strong> — "They are in Jakarta."',
-    tobe_job4: '<strong style="color:var(--text);">Existence</strong> — "There is a problem." / "There are two options."',
+    tobe_jobs_h4: 'Four Core Everyday Functions of "to be"',
+    tobe_job1: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">1. Identity &amp; Profession</span>
+        <span class="tobe-job-pill">Noun / Noun Phrase</span>
+      </div>
+      <div class="tobe-job-formula">Subject + to be (am / is / are / was / were) + Noun / Noun Phrase</div>
+      <p class="tobe-job-desc"><strong>Core Function:</strong> Links the subject to a noun or noun phrase to identify who or what someone/something is, including personal names, careers/professions, nationalities, family roles, and institutional titles.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"I am Maria."</em> <span class="ex-id">→ Stating personal name or identity.</span></div>
+        <div class="tobe-job-ex">📌 <em>"She is a software engineer."</em> <span class="ex-id">→ Stating profession or career.</span></div>
+        <div class="tobe-job-ex">📌 <em>"They are Indonesian students."</em> <span class="ex-id">→ Stating status, role &amp; nationality.</span></div>
+        <div class="tobe-job-ex">📌 <em>"Abraham Lincoln was the 16th US President."</em> <span class="ex-id">→ Past historical role &amp; title.</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Key Grammar Rule:</strong> Always use the indefinite article <em>a / an</em> before singular countable occupations (e.g., <em>"He is a doctor"</em>, NEVER <em>"He is doctor"</em>).</div>
+    </div>`,
+    tobe_job2: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">2. Description, State &amp; Age</span>
+        <span class="tobe-job-pill">Adjective</span>
+      </div>
+      <div class="tobe-job-formula">Subject + to be (am / is / are / was / were) + Adjective</div>
+      <p class="tobe-job-desc"><strong>Core Function:</strong> Connects the subject to an adjective describing physical attributes, emotional feelings, mental conditions, age, temperature, taste, size, or temporary/permanent states.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"The soup is hot and delicious."</em> <span class="ex-id">→ Describing physical temperature &amp; taste.</span></div>
+        <div class="tobe-job-ex">📌 <em>"We are very proud of your progress."</em> <span class="ex-id">→ Describing emotional states &amp; feelings.</span></div>
+        <div class="tobe-job-ex">📌 <em>"I am 22 years old."</em> <span class="ex-id">→ Stating age (English strictly uses <em>to be</em>, never <em>to have</em>!).</span></div>
+        <div class="tobe-job-ex">📌 <em>"The runners were exhausted after the race."</em> <span class="ex-id">→ Describing past physical state.</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Key Grammar Rule:</strong> Unlike languages that allow dropping verbs before adjectives, English sentences require a predicate verb. Never omit <em>to be</em>: say <em>"I am hungry"</em>, NOT <em>"I hungry"</em>.</div>
+    </div>`,
+    tobe_job3: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">3. Location, Position &amp; Origin</span>
+        <span class="tobe-job-pill">Prepositional Phrase / Adverb</span>
+      </div>
+      <div class="tobe-job-formula">Subject + to be (am / is / are / was / were) + Prepositional Phrase / Adverb of Place</div>
+      <p class="tobe-job-desc"><strong>Core Function:</strong> Pinpoints the geographic location, spatial placement of an object, physical whereabouts of a person, or regional/national origin.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"They are in Jakarta for a tech summit."</em> <span class="ex-id">→ City or geographical region.</span></div>
+        <div class="tobe-job-ex">📌 <em>"Your passport is on the living room table."</em> <span class="ex-id">→ Specific surface position.</span></div>
+        <div class="tobe-job-ex">📌 <em>"Where is Sarah? — She is at the office."</em> <span class="ex-id">→ Specific venue or whereabouts.</span></div>
+        <div class="tobe-job-ex">📌 <em>"Kenji is from Osaka, Japan."</em> <span class="ex-id">→ Country or city of origin.</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Key Grammar Rule:</strong> Pair accurately with prepositions of place: use <strong>in</strong> for cities/countries/enclosed spaces, <strong>on</strong> for surfaces/floors/streets, and <strong>at</strong> for specific locations (<em>at home, at work</em>).</div>
+    </div>`,
+    tobe_job4: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">4. Existence &amp; Presence (There is / There are)</span>
+        <span class="tobe-job-pill">There + To Be</span>
+      </div>
+      <div class="tobe-job-formula">There is / was + Singular / Uncountable Noun &nbsp;·&nbsp; There are / were + Plural Noun</div>
+      <p class="tobe-job-desc"><strong>Core Function:</strong> Introduces and declares the presence, existence, or occurrence of people, objects, problems, opportunities, or phenomena in a given setting.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"There is a critical issue in the system."</em> <span class="ex-id">→ Singular countable noun (one issue).</span></div>
+        <div class="tobe-job-ex">📌 <em>"There is fresh coffee available on the counter."</em> <span class="ex-id">→ Uncountable mass noun (coffee).</span></div>
+        <div class="tobe-job-ex">📌 <em>"There are three different solutions to consider."</em> <span class="ex-id">→ Plural countable noun (multiple solutions).</span></div>
+        <div class="tobe-job-ex">📌 <em>"There were many participants at the workshop."</em> <span class="ex-id">→ Past plural occurrence.</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Key Grammar Rule:</strong> Agreement is dictated by the noun that <em>follows</em> the verb: use <strong>There is</strong> for singular items and uncountable nouns (<em>water, info, advice, time</em>), and <strong>There are</strong> for plurals. Never use <em>have</em> to mean "there is/are".</div>
+    </div>`,
     tobe_build_h4: 'Building block for other grammar',
     tobe_build_desc: '<strong style="color:var(--text);">Continuous tenses:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Passive voice:</strong> be + past participle → "The door was opened."',
 
@@ -347,11 +403,67 @@ export const I18N = {
     tobe_neg_desc: 'Bentuk singkatan umum dalam percakapan: <em>isn\'t, aren\'t, wasn\'t, weren\'t</em>. "It is not far" → "It isn\'t far."',
     tobe_q_h4: 'Bentuk Kalimat Tanya',
     tobe_q_desc: 'Pindahkan to be ke depan subjek: "You are ready." → "Are you ready?" · "She was late." → "Was she late?"',
-    tobe_jobs_h4: '4 Fungsi Utama "to be" Sehari-hari',
-    tobe_job1: '<strong style="color:var(--text);">Identitas</strong> — "I am Maria."',
-    tobe_job2: '<strong style="color:var(--text);">Deskripsi Sifat/Keadaan</strong> — "The soup is hot."',
-    tobe_job3: '<strong style="color:var(--text);">Lokasi / Keberadaan</strong> — "They are in Jakarta."',
-    tobe_job4: '<strong style="color:var(--text);">Keberadaan Objek</strong> — "There is a problem." / "There are two options."',
+    tobe_jobs_h4: '4 Fungsi Utama "to be" Sehari-hari Beserta Deskripsi Lengkap',
+    tobe_job1: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">1. Identitas &amp; Profesi (Identity)</span>
+        <span class="tobe-job-pill">Noun / Noun Phrase</span>
+      </div>
+      <div class="tobe-job-formula">Subject + to be (am / is / are / was / were) + Noun / Noun Phrase</div>
+      <p class="tobe-job-desc"><strong>Fungsi Utama:</strong> Menghubungkan subjek dengan kata benda (noun/noun phrase) untuk menyatakan jati diri, nama seseorang, profesi/pekerjaan, hubungan kekeluargaan, kebangsaan, maupun peran status sosial.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"I am Maria."</em> <span class="ex-id">→ Menyatakan nama pribadi (Saya adalah Maria).</span></div>
+        <div class="tobe-job-ex">📌 <em>"She is a software engineer."</em> <span class="ex-id">→ Menyatakan profesi/pekerjaan (Dia seorang insinyur perangkat lunak).</span></div>
+        <div class="tobe-job-ex">📌 <em>"They are Indonesian students."</em> <span class="ex-id">→ Menyatakan status &amp; kebangsaan (Mereka adalah pelajar Indonesia).</span></div>
+        <div class="tobe-job-ex">📌 <em>"Abraham Lincoln was the 16th US President."</em> <span class="ex-id">→ Abraham Lincoln adalah presiden AS ke 16.</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Catatan Penting:</strong> Dalam bahasa Inggris, profesi tunggal yang dapat dihitung (singular countable noun) <strong>wajib</strong> diawali artikel <em>a</em> atau <em>an</em> (contoh: <em>"He is a doctor"</em>, BUKAN <em>"He is doctor"</em>).</div>
+    </div>`,
+    tobe_job2: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">2. Deskripsi Sifat, Kondisi &amp; Usia (Description)</span>
+        <span class="tobe-job-pill">Adjective</span>
+      </div>
+      <div class="tobe-job-formula">Subject + to be (am / is / are / was / were) + Adjective</div>
+      <p class="tobe-job-desc"><strong>Fungsi Utama:</strong> Menghubungkan subjek dengan kata sifat (adjective) untuk mendeskripsikan karakteristik fisik, suasana hati/emosi, usia, suhu, rasa, ukuran, atau keadaan sementara maupun permanen.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"The soup is hot and delicious."</em> <span class="ex-id">→ Deskripsi suhu &amp; rasa (Sup ini panas dan lezat).</span></div>
+        <div class="tobe-job-ex">📌 <em>"We are very proud of your progress."</em> <span class="ex-id">→ Kondisi emosi/perasaan (Kami sangat bangga dengan kemajuanmu).</span></div>
+        <div class="tobe-job-ex">📌 <em>"I am 22 years old."</em> <span class="ex-id">→ Menyatakan usia (Saya berumur 22 tahun — gunakan <em>to be</em>, bukan <em>have</em>!).</span></div>
+        <div class="tobe-job-ex">📌 <em>"The players were exhausted after the final match."</em> <span class="ex-id">→ Kondisi fisik masa lampau (Para pemain sangat kelelahan).</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Catatan Penting:</strong> Bahasa Indonesia sering meniadakan kata kerja saat mendeskripsikan sifat (misal: <em>"Saya lapar"</em>, <em>"Dia pintar"</em>). Namun dalam bahasa Inggris, kalimat wajib memiliki kata kerja predikat, sehingga <strong>to be</strong> tidak boleh dihilangkan: <em>"I am hungry"</em>, <em>"She is smart"</em>.</div>
+    </div>`,
+    tobe_job3: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">3. Lokasi, Posisi &amp; Tempat Asal (Location)</span>
+        <span class="tobe-job-pill">Prepositional Phrase / Adverb</span>
+      </div>
+      <div class="tobe-job-formula">Subject + to be (am / is / are / was / were) + Prepositional Phrase / Adverb of Place</div>
+      <p class="tobe-job-desc"><strong>Fungsi Utama:</strong> Menunjukkan letak geografis, posisi fisik suatu objek, tempat di mana subjek sedang berada, atau daerah/negara asal seseorang.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"They are in Jakarta for a business conference."</em> <span class="ex-id">→ Letak kota/wilayah (Mereka sedang di Jakarta).</span></div>
+        <div class="tobe-job-ex">📌 <em>"Your passport is on the living room table."</em> <span class="ex-id">→ Posisi permukaan spesifik (Paspor Anda ada di atas meja).</span></div>
+        <div class="tobe-job-ex">📌 <em>"Where is Sarah? — She is at the library."</em> <span class="ex-id">→ Titik lokasi keberadaan (Dia sedang di perpustakaan).</span></div>
+        <div class="tobe-job-ex">📌 <em>"Kenji is from Osaka, Japan."</em> <span class="ex-id">→ Tempat asal kelahiran / domisili (Kenji berasal dari Osaka).</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Catatan Penting:</strong> Sering dipasangkan dengan preposisi tempat: gunakan <strong>in</strong> untuk kota/negara/ruangan tertutup, <strong>on</strong> untuk permukaan/lantai/jalan, dan <strong>at</strong> untuk lokasi titik spesifik (misal: <em>at school, at home, at work</em>).</div>
+    </div>`,
+    tobe_job4: `<div class="tobe-job-card">
+      <div class="tobe-job-header">
+        <span class="tobe-job-title">4. Keberadaan / Eksistensi Objek (Existence: There is / There are)</span>
+        <span class="tobe-job-pill">There + To Be</span>
+      </div>
+      <div class="tobe-job-formula">There is / was + Singular / Uncountable Noun &nbsp;·&nbsp; There are / were + Plural Noun</div>
+      <p class="tobe-job-desc"><strong>Fungsi Utama:</strong> Menyatakan ada atau tidaknya suatu hal, seseorang, benda konkret, masalah, kesempatan, maupun fenomena dalam suatu situasi atau waktu tertentu.</p>
+      <div class="tobe-job-examples">
+        <div class="tobe-job-ex">📌 <em>"There is a critical issue in the system."</em> <span class="ex-id">→ Benda tunggal dapat dihitung / singular (Ada masalah kritis pada sistem).</span></div>
+        <div class="tobe-job-ex">📌 <em>"There is clean water available in the dispenser."</em> <span class="ex-id">→ Benda tak dapat dihitung / uncountable (Ada air bersih tersedia).</span></div>
+        <div class="tobe-job-ex">📌 <em>"There are three different solutions to consider."</em> <span class="ex-id">→ Benda jamak / plural (Ada tiga solusi berbeda untuk dipertimbangkan).</span></div>
+        <div class="tobe-job-ex">📌 <em>"There were many participants at yesterday's workshop."</em> <span class="ex-id">→ Keberadaan masa lampau / past plural (Ada banyak peserta di lokakarya kemarin).</span></div>
+      </div>
+      <div class="tobe-job-tip">💡 <strong>Catatan Penting:</strong> Pemilihan <em>is/are</em> atau <em>was/were</em> ditentukan oleh kata benda <strong>setelahnya</strong>. Gunakan <strong>is</strong> untuk tunggal dan benda abstrak/tak terhitung (<em>information, water, advice, time</em>), serta <strong>are</strong> untuk benda jamak (<em>two books, several issues</em>). Jangan gunakan <em>"have"</em> untuk menyatakan "ada"!</div>
+    </div>`,
     tobe_build_h4: 'Fondasi Pembentuk Pola Tata Bahasa Lain',
     tobe_build_desc: '<strong style="color:var(--text);">Bentuk Continuous:</strong> be + verb-ing → "I am learning." &nbsp;·&nbsp; <strong style="color:var(--text);">Kalimat Pasif:</strong> be + past participle (V3) → "The door was opened."',
 
