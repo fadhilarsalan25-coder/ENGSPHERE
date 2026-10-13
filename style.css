@@ -1315,8 +1315,121 @@ body {
   .conj-table td{padding:.55rem .3rem;border-bottom:1px solid var(--line);}
   .conj-table td.form{color:var(--sky-bright);font-weight:700;font-family:var(--font-d);}
   .rule-card{padding:var(--sp-5);margin-bottom:var(--sp-4);}
-  .rule-card h4{font-size:1rem;margin-bottom:.4rem;}
+  .rule-card h4{font-size:1.05rem;margin-bottom:.4rem;}
   .rule-card .tc-formula{font-family:'Space Grotesk',monospace;color:var(--sky-bright);font-size:.85rem;display:block;margin-bottom:.5rem;}
+
+  /* To Be 4 Core Functions Breakdown */
+  .tobe-jobs-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--sp-4) 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  .tobe-jobs-list > li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tobe-job-card {
+    background: var(--navy-800);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-5);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .tobe-job-card:hover {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-2);
+  }
+  .tobe-job-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: .45rem;
+  }
+  .tobe-job-title {
+    font-family: var(--font-d);
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .tobe-job-pill {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: .18rem .6rem;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--sky-bright);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .tobe-job-formula {
+    font-family: 'Space Grotesk', monospace;
+    font-size: .82rem;
+    color: var(--sky-bright);
+    background: var(--navy-950);
+    padding: .3rem .65rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line);
+    display: inline-block;
+    margin-bottom: .6rem;
+    word-break: break-word;
+  }
+  .tobe-job-desc {
+    font-size: .88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 .65rem 0;
+  }
+  .tobe-job-desc strong {
+    color: var(--text);
+  }
+  .tobe-job-examples {
+    background: var(--navy-950);
+    border-left: 3px solid var(--sky-bright);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    padding: .6rem .85rem;
+    margin-bottom: .6rem;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+  .tobe-job-ex {
+    font-size: .85rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .tobe-job-ex em {
+    color: var(--sky-bright);
+    font-style: normal;
+    font-weight: 600;
+  }
+  .tobe-job-ex span.ex-id {
+    color: var(--muted);
+    font-size: .82rem;
+    display: inline-block;
+    margin-left: .25rem;
+  }
+  .tobe-job-tip {
+    font-size: .82rem;
+    color: var(--amber);
+    background: rgba(255, 182, 72, 0.08);
+    border: 1px solid rgba(255, 182, 72, 0.22);
+    border-radius: var(--r-sm);
+    padding: .45rem .7rem;
+    line-height: 1.5;
+  }
+  .tobe-job-tip strong {
+    color: var(--amber);
+  }
 
   /* Vocabulary */
   .vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);}
@@ -1739,4 +1852,5 @@ body {
     color: #78350f !important;
   }
 }
+
 
