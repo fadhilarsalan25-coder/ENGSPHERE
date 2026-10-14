@@ -12,3 +12,4 @@ export * from './utils.js';
 export { applyTheme, toggleTheme } from './theme.js';
 export { I18N, applyLanguage, closeAllLangDropdowns } from './i18n.js';
 export { showToast } from './notifications.js';
+export { openOnboardingModal, closeOnboardingModal, initOnboarding, renderOnboardingProfileSummary } from './auth.js';
