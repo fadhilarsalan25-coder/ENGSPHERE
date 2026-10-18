@@ -1,10 +1,22 @@
 import { state, isGuestUser } from './state.js';
 import { saveState } from './storage.js';
-import { escapeHtml, formatTopic, capitalize } from './utils.js';
-import { BANK, TENSES, VOCAB } from './data.js';
+import { escapeHtml, formatTopic, capitalize, speakText } from './utils.js';
+import {
+  BANK,
+  TENSES,
+  VOCAB,
+  EXTENDED_OXFORD_LEXICON,
+  LEMMA_MAP,
+  GRAMMAR_PARTS_OF_SPEECH,
+  GRAMMAR_CURRICULUM_MODULES,
+  INDONESIAN_LEARNER_PITFALLS,
+  INTERACTIVE_SENTENCE_PATTERNS,
+  EXAM_GRAMMAR_HACKS
+} from './data.js';
 import { recordIncorrectQuestion } from './review.js';
 import { syncCloudProfile, recordCloudQuizHistory } from './supabase-client.js';
 import { openAuthModal } from './auth.js';
+import { showToast } from './notifications.js';
 
 export function renderTenses() {
   const grid = document.getElementById('tenseGrid');
@@ -172,11 +184,11 @@ export function renderVocabulary() {
 
   let displayedItems = [];
   if (searchQuery) {
-    // Search across all categories
+    // Search across all core categories
     categories.forEach(cat => {
       (VOCAB[cat] || []).forEach(item => {
         const matchesWord = item.w.toLowerCase().includes(searchQuery);
-        const matchesMeaning = item.m.toLowerCase().includes(searchQuery);
+        const matchesMeaning = item.m && item.m.toLowerCase().includes(searchQuery);
         const matchesId = item.m_id && item.m_id.toLowerCase().includes(searchQuery);
         const matchesEx = item.e && item.e.toLowerCase().includes(searchQuery);
         if (matchesWord || matchesMeaning || matchesId || matchesEx) {
@@ -184,6 +196,35 @@ export function renderVocabulary() {
         }
       });
     });
+
+    // Also include matches from Extended Oxford Lexicon
+    if (typeof EXTENDED_OXFORD_LEXICON === 'object' && EXTENDED_OXFORD_LEXICON !== null) {
+      Object.keys(EXTENDED_OXFORD_LEXICON).forEach(key => {
+        const entry = EXTENDED_OXFORD_LEXICON[key];
+        const w = entry.word || key;
+        const already = displayedItems.some(it => it.w.toLowerCase() === w.toLowerCase());
+        if (!already) {
+          const def1 = entry.meanings?.[0]?.definitions?.[0]?.definition || '';
+          const defId1 = entry.meanings?.[0]?.definitions?.[0]?.definition_id || '';
+          const ex1 = entry.meanings?.[0]?.definitions?.[0]?.example || '';
+          const matchesWord = w.toLowerCase().includes(searchQuery);
+          const matchesDef = def1.toLowerCase().includes(searchQuery);
+          const matchesId = defId1.toLowerCase().includes(searchQuery);
+          if (matchesWord || matchesDef || matchesId) {
+            displayedItems.push({
+              w,
+              p: entry.meanings?.[0]?.partOfSpeech || 'word',
+              ipa: entry.phonetic || '',
+              cefr: entry.cefr || 'C1',
+              m: def1,
+              m_id: defId1,
+              e: ex1,
+              category: 'Oxford Lexicon'
+            });
+          }
+        }
+      });
+    }
   } else {
     displayedItems = (VOCAB[category] || []).map(item => ({ ...item, category }));
   }
@@ -199,11 +240,25 @@ export function renderVocabulary() {
   if (displayedItems.length === 0) {
     grid.innerHTML = `
       <div class="card" style="grid-column: 1 / -1; text-align: center; padding: var(--sp-6);">
-        <div style="font-size: 2rem; margin-bottom: .5rem;">🔍</div>
-        <div style="font-weight: 700; font-size: 1.05rem;">${isId ? 'Tidak ada kosakata yang cocok' : 'No vocabulary words matched'}</div>
-        <p style="color: var(--muted); font-size: .85rem; margin-top: .3rem;">${isId ? `Tidak ditemukan kata dengan pencarian "${escapeHtml(searchQuery)}". Coba kata kunci lain.` : `No items found matching "${escapeHtml(searchQuery)}". Try another keyword.`}</p>
+        <div style="font-size: 2.2rem; margin-bottom: .5rem;">🔍</div>
+        <div style="font-weight: 700; font-size: 1.1rem;">${isId ? `Kata "${escapeHtml(searchQuery)}" tidak ada di flashcard dasar` : `"${escapeHtml(searchQuery)}" is not in basic flashcards`}</div>
+        <p style="color: var(--muted); font-size: .88rem; margin: .45rem auto var(--sp-4); max-width: 52ch; line-height: 1.5;">
+          ${isId 
+            ? `Tetapi kata ini tersedia di <strong>Kamus Lengkap Oxford</strong> dengan definisi baku, fonetik IPA, dan rekaman audio pengucapan asli.` 
+            : `However, you can look it up directly in the <strong>Full Oxford Dictionary</strong> with definitions, IPA, and native audio.`}
+        </p>
+        <button type="button" class="btn btn-primary" id="btnSearchFromEmptyFlashcards" style="display:inline-flex;align-items:center;gap:.5rem;margin:0 auto;font-weight:700;">
+          <span>📖</span> <span>${isId ? `Cari "${escapeHtml(searchQuery)}" di Kamus Oxford` : `Lookup "${escapeHtml(searchQuery)}" in Oxford Dictionary`}</span>
+        </button>
       </div>
     `;
+
+    document.getElementById('btnSearchFromEmptyFlashcards')?.addEventListener('click', () => {
+      setVocabMode('dictionary');
+      const dictInput = document.getElementById('dictSearchInput');
+      if (dictInput) dictInput.value = searchQuery;
+      searchDictionary(searchQuery);
+    });
     return;
   }
 
@@ -254,6 +309,763 @@ export function renderVocabulary() {
       renderVocabulary();
     });
   }
+
+  // Initialize and bind dictionary engine
+  initDictionaryEngine();
+}
+
+/* ========================================================
+   OXFORD & GLOBAL ENGLISH DICTIONARY ENGINE LOGIC
+   ======================================================== */
+
+let isDictEngineInitialized = false;
+
+export function initDictionaryEngine() {
+  updateSavedWordsCountBadge();
+
+  if (isDictEngineInitialized) return;
+  isDictEngineInitialized = true;
+
+  // Bind mode selector buttons
+  const modeButtons = [
+    { id: 'btnVocabModeDictionary', mode: 'dictionary' },
+    { id: 'btnVocabModeBrowse', mode: 'browse' },
+    { id: 'btnVocabModeSaved', mode: 'saved' }
+  ];
+
+  modeButtons.forEach(({ id, mode }) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        setVocabMode(mode);
+      });
+    }
+  });
+
+  // Bind Dictionary Search Input & Button
+  const dictInput = document.getElementById('dictSearchInput');
+  const dictBtn = document.getElementById('dictSearchBtn');
+  const dictForm = document.getElementById('dictSearchForm');
+
+  if (dictBtn && dictInput) {
+    dictBtn.addEventListener('click', () => {
+      searchDictionary(dictInput.value);
+    });
+  }
+
+  if (dictForm && dictInput) {
+    dictForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      searchDictionary(dictInput.value);
+    });
+  }
+
+  if (dictInput) {
+    dictInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchDictionary(dictInput.value);
+      }
+    });
+
+    // Real-time live suggestion & auto-lookup as user types
+    let inputDebounce = null;
+    dictInput.addEventListener('input', () => {
+      const query = (dictInput.value || '').trim();
+      clearTimeout(inputDebounce);
+
+      if (!query) {
+        const sugg = document.getElementById('dictLiveSuggestions');
+        if (sugg) {
+          sugg.classList.add('hidden');
+          sugg.innerHTML = '';
+        }
+        return;
+      }
+
+      inputDebounce = setTimeout(() => {
+        const matches = findDictionaryMatches(query, 6);
+        renderLiveSuggestions(matches, query);
+
+        // If user typed the exact word (e.g. "eloquent"), auto-render immediately!
+        const clean = query.toLowerCase().replace(/^[“"']+|[”"'.?!,:;]+$/g, '');
+        const exact = matches.find(m => m.word.toLowerCase() === clean);
+        if (exact) {
+          searchDictionary(clean);
+        }
+      }, 150);
+    });
+  }
+
+  // Bind Quick Suggestion Chips
+  document.querySelectorAll('.dict-quick-chips [data-lookup]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const word = chip.dataset.lookup;
+      if (dictInput) dictInput.value = word;
+      searchDictionary(word);
+    });
+  });
+
+  // Apply default view mode
+  setVocabMode(state.vocabMode || 'dictionary', false);
+
+  // Preload an inspiring initial Oxford standard word if container is empty
+  const resContainer = document.getElementById('dictResultContainer');
+  if (resContainer && !resContainer.hasChildNodes()) {
+    searchDictionary('serendipity');
+  }
+}
+
+export function setVocabMode(mode, save = true) {
+  state.vocabMode = mode;
+  if (save) saveState();
+
+  const paneDict = document.getElementById('paneVocabDictionary');
+  const paneBrowse = document.getElementById('paneVocabBrowse');
+  const paneSaved = document.getElementById('paneVocabSaved');
+
+  const btnDict = document.getElementById('btnVocabModeDictionary');
+  const btnBrowse = document.getElementById('btnVocabModeBrowse');
+  const btnSaved = document.getElementById('btnVocabModeSaved');
+
+  if (paneDict) paneDict.classList.toggle('hidden', mode !== 'dictionary');
+  if (paneBrowse) paneBrowse.classList.toggle('hidden', mode !== 'browse');
+  if (paneSaved) paneSaved.classList.toggle('hidden', mode !== 'saved');
+
+  if (btnDict) btnDict.classList.toggle('active', mode === 'dictionary');
+  if (btnBrowse) btnBrowse.classList.toggle('active', mode === 'browse');
+  if (btnSaved) btnSaved.classList.toggle('active', mode === 'saved');
+
+  if (mode === 'saved') {
+    renderSavedWords();
+  }
+}
+
+export function updateSavedWordsCountBadge() {
+  const badge = document.getElementById('savedWordsCountBadge');
+  if (badge) {
+    badge.textContent = String(Array.isArray(state.savedWords) ? state.savedWords.length : 0);
+  }
+}
+
+// -------------------------------------------------------------
+// Offline Oxford Dictionary Matcher & Lemma Engine
+// -------------------------------------------------------------
+export function lookupOfflineOxfordWord(query) {
+  if (!query) return null;
+  const clean = String(query).trim().toLowerCase().replace(/^[“"']+|[”"'.?!,:;]+$/g, '');
+  if (!clean) return null;
+
+  // 1. Direct match in EXTENDED_OXFORD_LEXICON
+  if (EXTENDED_OXFORD_LEXICON && EXTENDED_OXFORD_LEXICON[clean]) {
+    return {
+      ...EXTENDED_OXFORD_LEXICON[clean],
+      isOxfordCore: true,
+      isExtendedLexicon: true
+    };
+  }
+
+  // 2. Check Lemma Map -> EXTENDED_OXFORD_LEXICON
+  if (LEMMA_MAP && LEMMA_MAP[clean]) {
+    const base = LEMMA_MAP[clean];
+    if (EXTENDED_OXFORD_LEXICON && EXTENDED_OXFORD_LEXICON[base]) {
+      return {
+        ...EXTENDED_OXFORD_LEXICON[base],
+        queriedLemma: clean,
+        isOxfordCore: true,
+        isExtendedLexicon: true
+      };
+    }
+  }
+
+  // 3. Direct match in VOCAB (all categories)
+  for (const cat of Object.keys(VOCAB)) {
+    const list = VOCAB[cat] || [];
+    const found = list.find(item => item.w.toLowerCase() === clean);
+    if (found) {
+      return {
+        word: found.w,
+        phonetic: found.ipa || '',
+        phonetics: [],
+        meanings: [
+          {
+            partOfSpeech: found.p || 'word',
+            definitions: [
+              {
+                definition: found.m,
+                example: found.e,
+                definition_id: found.m_id
+              }
+            ]
+          }
+        ],
+        cefr: found.cefr || 'B1',
+        isOxfordCore: true,
+        category: cat
+      };
+    }
+  }
+
+  // 4. Lemma Map -> VOCAB
+  if (LEMMA_MAP && LEMMA_MAP[clean]) {
+    const base = LEMMA_MAP[clean];
+    for (const cat of Object.keys(VOCAB)) {
+      const list = VOCAB[cat] || [];
+      const found = list.find(item => item.w.toLowerCase() === base);
+      if (found) {
+        return {
+          word: found.w,
+          queriedLemma: clean,
+          phonetic: found.ipa || '',
+          phonetics: [],
+          meanings: [
+            {
+              partOfSpeech: found.p || 'word',
+              definitions: [
+                {
+                  definition: found.m,
+                  example: found.e,
+                  definition_id: found.m_id
+                }
+              ]
+            }
+          ],
+          cefr: found.cefr || 'B1',
+          isOxfordCore: true,
+          category: cat
+        };
+      }
+    }
+  }
+
+  // 5. English Suffix De-inflection Heuristics (-ly, -ing, -ed, -es, -s, -ment, -ness)
+  const suffixes = [
+    { s: 'ly', cut: 2 },
+    { s: 'ing', cut: 3 },
+    { s: 'ed', cut: 2 },
+    { s: 'es', cut: 2 },
+    { s: 's', cut: 1 },
+    { s: 'ment', cut: 4 },
+    { s: 'ness', cut: 4 }
+  ];
+
+  for (const suf of suffixes) {
+    if (clean.length > suf.cut + 2 && clean.endsWith(suf.s)) {
+      const stem = clean.slice(0, -suf.cut);
+      const candidates = [stem, stem + 'e'];
+      for (const cand of candidates) {
+        if (EXTENDED_OXFORD_LEXICON && EXTENDED_OXFORD_LEXICON[cand]) {
+          return {
+            ...EXTENDED_OXFORD_LEXICON[cand],
+            queriedLemma: clean,
+            isOxfordCore: true
+          };
+        }
+        for (const cat of Object.keys(VOCAB)) {
+          const list = VOCAB[cat] || [];
+          const found = list.find(item => item.w.toLowerCase() === cand);
+          if (found) {
+            return {
+              word: found.w,
+              queriedLemma: clean,
+              phonetic: found.ipa || '',
+              phonetics: [],
+              meanings: [
+                {
+                  partOfSpeech: found.p || 'word',
+                  definitions: [
+                    {
+                      definition: found.m,
+                      example: found.e,
+                      definition_id: found.m_id
+                    }
+                  ]
+                }
+              ],
+              cefr: found.cefr || 'B1',
+              isOxfordCore: true,
+              category: cat
+            };
+          }
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+export function findDictionaryMatches(query, limit = 8) {
+  if (!query) return [];
+  const q = String(query).trim().toLowerCase().replace(/^[“"']+|[”"'.?!,:;]+$/g, '');
+  if (!q) return [];
+
+  const results = [];
+  const seen = new Set();
+
+  function addMatch(w, cefr, pos, meaning, source) {
+    const key = w.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      results.push({ word: w, cefr: cefr || 'B1', pos: pos || 'word', meaning: meaning || '', source });
+    }
+  }
+
+  // Exact startsWith matches from EXTENDED_OXFORD_LEXICON
+  if (EXTENDED_OXFORD_LEXICON) {
+    for (const [key, item] of Object.entries(EXTENDED_OXFORD_LEXICON)) {
+      if (key.toLowerCase().startsWith(q)) {
+        addMatch(item.word || key, item.cefr, item.meanings?.[0]?.partOfSpeech, item.meanings?.[0]?.definitions?.[0]?.definition, 'extended');
+      }
+    }
+  }
+
+  // Exact startsWith matches from VOCAB
+  for (const cat of Object.keys(VOCAB)) {
+    for (const item of (VOCAB[cat] || [])) {
+      if (item.w.toLowerCase().startsWith(q)) {
+        addMatch(item.w, item.cefr, item.p, item.m, cat);
+      }
+    }
+  }
+
+  // If results < limit, search contains (substring)
+  if (results.length < limit) {
+    if (EXTENDED_OXFORD_LEXICON) {
+      for (const [key, item] of Object.entries(EXTENDED_OXFORD_LEXICON)) {
+        if (!key.toLowerCase().startsWith(q) && key.toLowerCase().includes(q)) {
+          addMatch(item.word || key, item.cefr, item.meanings?.[0]?.partOfSpeech, item.meanings?.[0]?.definitions?.[0]?.definition, 'extended');
+        }
+      }
+    }
+    for (const cat of Object.keys(VOCAB)) {
+      for (const item of (VOCAB[cat] || [])) {
+        if (!item.w.toLowerCase().startsWith(q) && item.w.toLowerCase().includes(q)) {
+          addMatch(item.w, item.cefr, item.p, item.m, cat);
+        }
+      }
+    }
+  }
+
+  return results.slice(0, limit);
+}
+
+function renderLiveSuggestions(matches, currentQuery) {
+  const container = document.getElementById('dictLiveSuggestions');
+  if (!container) return;
+
+  if (!matches || !matches.length) {
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    return;
+  }
+
+  const isId = (state.lang || 'id') === 'id';
+  container.innerHTML = `
+    <span style="font-size:.78rem;font-weight:700;color:var(--sky-bright);">💡 ${isId ? 'Saran kata Oxford:' : 'Oxford suggestions:'}</span>
+    ${matches.map(m => `
+      <button type="button" class="dict-suggest-chip" data-suggest="${escapeHtml(m.word)}">
+        <span>${escapeHtml(m.word)}</span>
+        <span class="dict-suggest-cefr">${escapeHtml(m.cefr)}</span>
+      </button>
+    `).join('')}
+  `;
+  container.classList.remove('hidden');
+
+  container.querySelectorAll('[data-suggest]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetWord = btn.dataset.suggest;
+      const dictInput = document.getElementById('dictSearchInput');
+      if (dictInput) dictInput.value = targetWord;
+      container.classList.add('hidden');
+      searchDictionary(targetWord);
+    });
+  });
+}
+
+export async function searchDictionary(query) {
+  const cleanWord = (query || '').trim().toLowerCase().replace(/^[“"']+|[”"'.?!,:;]+$/g, '');
+  const container = document.getElementById('dictResultContainer');
+  if (!cleanWord || !container) return;
+
+  const isId = (state.lang || 'id') === 'id';
+
+  // 1. Instant check in offline Oxford Database (0ms latency, works 100% offline)
+  const offlineMatch = lookupOfflineOxfordWord(cleanWord);
+  if (offlineMatch) {
+    renderDictionaryResult(offlineMatch);
+    const sugg = document.getElementById('dictLiveSuggestions');
+    if (sugg) sugg.classList.add('hidden');
+    return;
+  }
+
+  // 2. Show fast loading state for live global lookup
+  container.innerHTML = `
+    <div class="dict-result-card" style="text-align:center;padding:var(--sp-6);">
+      <div style="font-size:2.2rem;display:inline-block;animation:spin 2s linear infinite;">📖</div>
+      <div style="font-weight:700;font-size:1.1rem;margin-top:.75rem;">${isId ? `Mencari kata "${escapeHtml(cleanWord)}" di repositori kamus Oxford...` : `Looking up "${escapeHtml(cleanWord)}" in Oxford lexicon...`}</div>
+      <div style="font-size:.85rem;color:var(--muted);margin-top:.3rem;">${isId ? 'Memuat definisi baku, transkripsi fonetik IPA, dan rekaman audio asli' : 'Loading definitions, phonetic transcription (IPA), and native audio'}</div>
+    </div>
+  `;
+
+  // 3. Try Live Dictionary API with 2.8s strict timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 2800);
+
+  try {
+    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) {
+        renderDictionaryResult(data[0]);
+        return;
+      }
+    }
+  } catch (err) {
+    clearTimeout(timeoutId);
+    // Fall through to smart suggestions
+  }
+
+  // 4. Fallback when word is not found: Show smart suggestions
+  const closestMatches = findDictionaryMatches(cleanWord, 6);
+
+  container.innerHTML = `
+    <div class="dict-result-card" style="text-align:center;padding:var(--sp-6);">
+      <div style="font-size:2.4rem;margin-bottom:.5rem;">🔍</div>
+      <h3 style="margin:0 0 .4rem 0;">${isId ? `Kata "${escapeHtml(cleanWord)}" tidak ditemukan persis` : `Word "${escapeHtml(cleanWord)}" not found`}</h3>
+      <p style="color:var(--muted);font-size:.88rem;max-width:55ch;margin:0 auto var(--sp-4);line-height:1.5;">
+        ${isId 
+          ? 'Periksa kembali ejaan kata tersebut atau coba cari bentuk kata dasarnya (lemma).'
+          : 'Please check your spelling or search for the base lemma of the word.'}
+      </p>
+
+      ${closestMatches.length ? `
+        <div style="margin-top:.75rem;padding:var(--sp-3);background:rgba(14,165,233,0.06);border-radius:var(--r-sm);border:1px dashed rgba(14,165,233,0.25);">
+          <div style="font-size:.85rem;font-weight:700;color:var(--sky-bright);margin-bottom:.5rem;">
+            💡 ${isId ? 'Apakah maksud Anda salah satu kata berstandar Oxford ini?' : 'Did you mean one of these Oxford standard words?'}
+          </div>
+          <div class="dict-quick-chips" style="justify-content:center;margin-top:.4rem;">
+            ${closestMatches.map(m => `
+              <button type="button" class="dict-quick-chip" data-lookup="${escapeHtml(m.word)}">
+                ${escapeHtml(m.word)} <span style="opacity:.7;font-size:.7rem;">(${escapeHtml(m.cefr)})</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      ` : `
+        <div style="font-size:.85rem;color:var(--sky-bright);">
+          <strong>💡 ${isId ? 'Coba cari kata-kata populer ini:' : 'Try searching these popular words:'}</strong>
+          <div class="dict-quick-chips" style="justify-content:center;margin-top:.6rem;">
+            <button type="button" class="dict-quick-chip" data-lookup="eloquent">eloquent (C1)</button>
+            <button type="button" class="dict-quick-chip" data-lookup="serendipity">serendipity (C2)</button>
+            <button type="button" class="dict-quick-chip" data-lookup="resilience">resilience (C1)</button>
+            <button type="button" class="dict-quick-chip" data-lookup="ubiquitous">ubiquitous (C1)</button>
+            <button type="button" class="dict-quick-chip" data-lookup="accomplish">accomplish (B1)</button>
+          </div>
+        </div>
+      `}
+    </div>
+  `;
+
+  container.querySelectorAll('[data-lookup]').forEach(b => {
+    b.addEventListener('click', () => {
+      const w = b.dataset.lookup;
+      const inp = document.getElementById('dictSearchInput');
+      if (inp) inp.value = w;
+      searchDictionary(w);
+    });
+  });
+}
+
+function renderDictionaryResult(entry) {
+  const container = document.getElementById('dictResultContainer');
+  if (!container) return;
+
+  const isId = (state.lang || 'id') === 'id';
+  const word = entry.word || '';
+
+  // Extract best phonetic transcription
+  let phoneticText = entry.phonetic || '';
+  let audioUrl = '';
+
+  if (Array.isArray(entry.phonetics)) {
+    for (const p of entry.phonetics) {
+      if (!phoneticText && p.text) phoneticText = p.text;
+      if (!audioUrl && p.audio && p.audio.endsWith('.mp3')) {
+        audioUrl = p.audio;
+      }
+    }
+  }
+
+  // Check if saved in bookmarks
+  if (!Array.isArray(state.savedWords)) state.savedWords = [];
+  const isSaved = state.savedWords.some(w => (w.word || '').toLowerCase() === word.toLowerCase());
+
+  // Check if in Oxford 3000 / 5000 core list
+  let oxfordCefr = entry.cefr || '';
+  if (!oxfordCefr) {
+    for (const cat of Object.keys(VOCAB)) {
+      const found = (VOCAB[cat] || []).find(item => item.w.toLowerCase() === word.toLowerCase());
+      if (found && found.cefr) {
+        oxfordCefr = found.cefr;
+        break;
+      }
+    }
+  }
+
+  const primaryMeaning = entry.meanings?.[0]?.definitions?.[0]?.definition || '';
+  const primaryExample = entry.meanings?.[0]?.definitions?.[0]?.example || '';
+
+  const lemmaBannerHtml = entry.queriedLemma ? `
+    <div class="dict-lemma-banner">
+      <span>💡</span>
+      <span>${isId 
+        ? `Menampilkan bentuk baku: <strong>${escapeHtml(entry.word)}</strong> (hasil penyesuaian dari pencarian "<em>${escapeHtml(entry.queriedLemma)}</em>")` 
+        : `Displaying base lemma: <strong>${escapeHtml(entry.word)}</strong> (matched from "<em>${escapeHtml(entry.queriedLemma)}</em>")`}
+      </span>
+    </div>
+  ` : '';
+
+  container.innerHTML = `
+    <div class="dict-result-card">
+      ${lemmaBannerHtml}
+      <div class="dict-word-head">
+        <div class="dict-word-title-group">
+          <h2 class="dict-word-h2">${escapeHtml(word)}</h2>
+          <div class="dict-word-meta">
+            ${phoneticText ? `<span class="dict-phonetic-badge">${escapeHtml(phoneticText)}</span>` : ''}
+            <span class="dict-oxford-badge">📖 OED Standard</span>
+            ${oxfordCefr ? `<span class="pill active" style="font-size:.7rem;padding:.15rem .5rem;">CEFR ${escapeHtml(oxfordCefr)}</span>` : ''}
+          </div>
+        </div>
+
+        <div class="dict-actions-group">
+          <button type="button" class="dict-audio-btn" id="dictPlayAudioBtn" title="Dengarkan pelafalan asli">
+            <span>🔊</span> <span>${isId ? 'Dengarkan' : 'Listen'}</span>
+          </button>
+          <button type="button" class="dict-save-btn ${isSaved ? 'saved' : ''}" id="dictSaveWordBtn">
+            <span>${isSaved ? '⭐' : '☆'}</span>
+            <span>${isSaved ? (isId ? 'Tersimpan' : 'Saved') : (isId ? 'Simpan Kata' : 'Save Word')}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="dict-meanings-list">
+        ${(entry.meanings || []).map(m => `
+          <div class="dict-pos-section">
+            <div class="dict-pos-header">
+              <span class="dict-pos-tag">${escapeHtml(m.partOfSpeech || 'definition')}</span>
+            </div>
+            <ol class="dict-defs-ordered">
+              ${(m.definitions || []).slice(0, 4).map(d => `
+                <li class="dict-def-item">
+                  <div>${escapeHtml(d.definition || '')}</div>
+                  ${d.definition_id ? `<div style="font-size:.85rem;color:var(--sky-bright);margin-top:.2rem;">🇮🇩 ${escapeHtml(d.definition_id)}</div>` : ''}
+                  ${d.example ? `<div class="dict-example-box">“${escapeHtml(d.example)}”</div>` : ''}
+                </li>
+              `).join('')}
+            </ol>
+            ${Array.isArray(m.synonyms) && m.synonyms.length ? `
+              <div class="dict-synonyms-box">
+                <span style="font-weight:700;color:var(--muted);">${isId ? 'Sinonim:' : 'Synonyms:'}</span>
+                ${m.synonyms.slice(0, 6).map(syn => `
+                  <button type="button" class="dict-syn-tag" data-lookup="${escapeHtml(syn)}">${escapeHtml(syn)}</button>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Attach audio playback event
+  document.getElementById('dictPlayAudioBtn')?.addEventListener('click', () => {
+    playWordAudio(word, audioUrl);
+  });
+
+  // Attach bookmark save event
+  document.getElementById('dictSaveWordBtn')?.addEventListener('click', () => {
+    toggleSaveWord({
+      word,
+      ipa: phoneticText,
+      audioUrl,
+      meaning: primaryMeaning,
+      example: primaryExample,
+      cefr: oxfordCefr || 'B1',
+      pos: entry.meanings?.[0]?.partOfSpeech || 'noun'
+    });
+    // Re-render button state
+    const nowSaved = state.savedWords.some(w => (w.word || '').toLowerCase() === word.toLowerCase());
+    const saveBtn = document.getElementById('dictSaveWordBtn');
+    if (saveBtn) {
+      saveBtn.className = `dict-save-btn ${nowSaved ? 'saved' : ''}`;
+      saveBtn.innerHTML = `<span>${nowSaved ? '⭐' : '☆'}</span> <span>${nowSaved ? (isId ? 'Tersimpan' : 'Saved') : (isId ? 'Simpan Kata' : 'Save Word')}</span>`;
+    }
+  });
+
+  // Attach synonyms click to quick search
+  container.querySelectorAll('.dict-syn-tag[data-lookup]').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const w = tag.dataset.lookup;
+      const inp = document.getElementById('dictSearchInput');
+      if (inp) inp.value = w;
+      searchDictionary(w);
+    });
+  });
+}
+
+export function playWordAudio(word, audioUrl) {
+  if (audioUrl) {
+    try {
+      const audio = new Audio(audioUrl);
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          speakBrowserTTS(word);
+        });
+      }
+      return;
+    } catch (e) {
+      speakBrowserTTS(word);
+      return;
+    }
+  }
+  speakBrowserTTS(word);
+}
+
+function speakBrowserTTS(word) {
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(word);
+      utter.lang = 'en-US';
+      utter.rate = 0.88;
+      window.speechSynthesis.speak(utter);
+    } catch (e) {
+      console.warn('TTS error:', e);
+    }
+  }
+}
+
+export function toggleSaveWord(wordItem) {
+  if (!Array.isArray(state.savedWords)) state.savedWords = [];
+  const isId = (state.lang || 'id') === 'id';
+  const targetWord = (wordItem.word || '').toLowerCase();
+  const existingIdx = state.savedWords.findIndex(w => (w.word || '').toLowerCase() === targetWord);
+
+  if (existingIdx >= 0) {
+    state.savedWords.splice(existingIdx, 1);
+    saveState();
+    updateSavedWordsCountBadge();
+    showToast(isId ? `"${wordItem.word}" dihapus dari kosakata tersimpan` : `"${wordItem.word}" removed from saved words`);
+  } else {
+    state.savedWords.unshift({
+      word: wordItem.word,
+      ipa: wordItem.ipa || '',
+      audioUrl: wordItem.audioUrl || '',
+      meaning: wordItem.meaning || '',
+      example: wordItem.example || '',
+      cefr: wordItem.cefr || 'B1',
+      pos: wordItem.pos || 'noun',
+      savedAt: new Date().toISOString()
+    });
+    saveState();
+    updateSavedWordsCountBadge();
+    showToast(isId ? `⭐ "${wordItem.word}" disimpan ke Kosakata Saya!` : `⭐ "${wordItem.word}" saved to My Vocabulary!`);
+  }
+}
+
+export function renderSavedWords() {
+  const grid = document.getElementById('savedWordsGrid');
+  if (!grid) return;
+
+  const isId = (state.lang || 'id') === 'id';
+  const list = state.savedWords || [];
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="card" style="grid-column:1/-1;text-align:center;padding:var(--sp-6);">
+        <div style="font-size:2.5rem;margin-bottom:.5rem;">⭐</div>
+        <h4 style="margin:0 0 .4rem 0;">${isId ? 'Belum Ada Kosakata yang Disimpan' : 'No Saved Vocabulary Yet'}</h4>
+        <p style="color:var(--muted);font-size:.85rem;max-width:50ch;margin:0 auto var(--sp-4);">
+          ${isId 
+            ? 'Cari kata di Kamus Oxford dan tekan tombol "⭐ Simpan Kata" untuk membuat daftar hafalan pribadimu.'
+            : 'Look up words in the Oxford Dictionary and tap "⭐ Save Word" to build your custom flashcard collection.'}
+        </p>
+        <button type="button" class="btn btn-primary btn-sm" id="btnGoToDictFromSaved">
+          🔍 ${isId ? 'Buka Kamus Oxford' : 'Open Oxford Dictionary'}
+        </button>
+      </div>
+    `;
+
+    document.getElementById('btnGoToDictFromSaved')?.addEventListener('click', () => {
+      setVocabMode('dictionary');
+    });
+    return;
+  }
+
+  grid.innerHTML = list.map((item, idx) => `
+    <div class="flashcard" data-saved-idx="${idx}">
+      <div class="flashcard-inner">
+        <div class="flashcard-face flashcard-front">
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+            <span class="cefr-pill">CEFR ${escapeHtml(item.cefr || 'B1')}</span>
+            <button type="button" class="saved-delete-btn" data-del-word="${escapeHtml(item.word)}" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:.2rem;" title="Hapus dari simpanan">&times;</button>
+          </div>
+          <div class="word" style="margin-top:.4rem;">${escapeHtml(item.word)}</div>
+          ${item.ipa ? `<div class="ipa">${escapeHtml(item.ipa)}</div>` : ''}
+          <div class="pos">${escapeHtml(item.pos || 'word')}</div>
+          <div style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem;">
+            <button type="button" class="btn btn-ghost btn-sm saved-audio-btn" data-speak-word="${escapeHtml(item.word)}" data-speak-audio="${escapeHtml(item.audioUrl || '')}" style="font-size:.78rem;padding:.25rem .6rem;">
+              🔊 Dengarkan
+            </button>
+          </div>
+          <div style="font-size:.72rem;color:var(--sky-bright);margin-top:.4rem;opacity:.9;">
+            ${isId ? '↻ Klik kartu untuk membalik' : '↻ Tap to flip card'}
+          </div>
+        </div>
+        <div class="flashcard-face flashcard-back">
+          <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-bottom:.2rem;">
+            ${isId ? 'Definisi:' : 'Definition:'}
+          </div>
+          <div class="mean">${escapeHtml(item.meaning || '-')}</div>
+          ${item.example ? `
+            <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-top:.4rem;margin-bottom:.15rem;">
+              ${isId ? 'Contoh Penggunaan:' : 'Example Sentence:'}
+            </div>
+            <div class="ex">${escapeHtml(item.example)}</div>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.flashcard').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.saved-delete-btn') || e.target.closest('.saved-audio-btn')) return;
+      card.classList.toggle('flipped');
+    });
+  });
+
+  grid.querySelectorAll('.saved-delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const word = btn.dataset.delWord;
+      toggleSaveWord({ word });
+      renderSavedWords();
+    });
+  });
+
+  grid.querySelectorAll('.saved-audio-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playWordAudio(btn.dataset.speakWord, btn.dataset.speakAudio);
+    });
+  });
 }
 
 function prepareQuestion(orig) {
@@ -1362,3 +2174,561 @@ export function renderQuiz() {
     renderQuiz();
   });
 }
+
+// ===================================================================
+// GRAMMAR CURRICULUM & INTERACTIVE LAB MODULE
+// ===================================================================
+
+let currentGrammarTab = 'all';
+let currentGrammarSearchQuery = '';
+let activeSentencePatternIndex = 0;
+let activeTemplateIndex = 0;
+
+export function initGrammarModule() {
+  const container = document.getElementById('msub-grammar');
+  if (!container) return;
+
+  renderGrammarStructure();
+  bindGrammarEvents();
+  renderGrammarContent();
+}
+
+function renderGrammarStructure() {
+  const container = document.getElementById('msub-grammar');
+  if (!container) return;
+
+  const isId = (state.lang || 'id') === 'id';
+
+  container.innerHTML = `
+    <!-- Top Header & National Standards Badge -->
+    <div class="grammar-hero-card card" style="margin-bottom:var(--sp-4);padding:var(--sp-5);background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(99,102,241,0.08));border:1px solid rgba(14,165,233,0.25);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div style="max-width:760px;">
+          <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.4rem;">
+            <span style="font-size:1.5rem;">🇮🇩</span>
+            <h3 style="font-size:1.2rem;margin:0;font-family:var(--font-d);">
+              ${isId ? 'Tata Bahasa Inggris Standar Pendidikan Nasional' : 'National Standard English Grammar Curriculum'}
+            </h3>
+            <span class="pill active" style="font-size:.72rem;padding:.15rem .6rem;background:var(--sky);color:#fff;">
+              Kurikulum Merdeka (Fase D SMP & E-F SMA) · UTBK / SNBT
+            </span>
+          </div>
+          <p style="margin:0 0 .75rem 0;font-size:.88rem;color:var(--text);line-height:1.5;">
+            ${isId 
+              ? 'Materi tata bahasa dirancang berbasis capaian pembelajaran nasional: mulai dari pondasi kata, kalimat pasif, pengandaian (conditionals), klausa penjelas, hingga <strong>Klinik Kesalahan Khas Siswa Indonesia</strong> untuk menghindari jebakan terjemahan harfiah.'
+              : 'Grammar modules aligned with Indonesian national competency frameworks: from parts of speech, passive voice, conditionals, and clauses to our signature Indonesian Learner Pitfalls Clinic.'}
+          </p>
+          <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;">
+            <button type="button" class="btn btn-primary btn-sm" id="btnGrammarTakeQuiz" style="display:inline-flex;align-items:center;gap:.4rem;font-weight:700;">
+              <span>🎯</span> <span>${isId ? 'Latihan Kuis Grammar Sekarang' : 'Start Grammar Practice Quiz'}</span>
+            </button>
+            <span style="font-size:.8rem;color:var(--muted);">${isId ? 'Disertai audio pengucapan asli 🔊 dan pembahasan rumus kilat.' : 'Includes native audio 🔊 and exam cheat-sheets.'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Category Tabs Navigation -->
+    <div class="grammar-controls-bar" style="margin-bottom:var(--sp-4);display:flex;flex-direction:column;gap:.75rem;">
+      <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:280px;">
+          <input type="text" class="text-input" id="grammarSearchInput" placeholder="${isId ? '🔍 Cari materi grammar (contoh: passive, conditional, agree, although, relative, modals)...' : '🔍 Search grammar topics (e.g. passive, conditional, agree, modals)...'}" style="margin:0;width:100%;font-size:.88rem;padding:.5rem .85rem;">
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="grammarClearSearchBtn" style="display:none;padding:.5rem .85rem;">
+          ✕ ${isId ? 'Reset Pencarian' : 'Reset Search'}
+        </button>
+      </div>
+
+      <div class="subtabs" id="grammarCategoryTabs" style="border-bottom:none;padding-bottom:0;flex-wrap:wrap;gap:.45rem;">
+        <button class="pill ${currentGrammarTab === 'all' ? 'active' : ''}" data-gtab="all">
+          <span>🌟</span> <span>${isId ? 'Semua Materi' : 'All Modules'}</span>
+        </button>
+        <button class="pill ${currentGrammarTab === 'curriculum' ? 'active' : ''}" data-gtab="curriculum">
+          <span>🎓</span> <span>${isId ? 'Kurikulum Inti SMP/SMA/UTBK' : 'Core Curriculum'}</span>
+        </button>
+        <button class="pill ${currentGrammarTab === 'pitfalls' ? 'active' : ''}" data-gtab="pitfalls">
+          <span>⚠️</span> <span>${isId ? 'Klinik Kesalahan Siswa Indonesia' : 'Indonesian Learner Pitfalls'}</span>
+        </button>
+        <button class="pill ${currentGrammarTab === 'lab' ? 'active' : ''}" data-gtab="lab">
+          <span>🧪</span> <span>${isId ? 'Lab Struktur Kalimat' : 'Sentence Builder Lab'}</span>
+        </button>
+        <button class="pill ${currentGrammarTab === 'hacks' ? 'active' : ''}" data-gtab="hacks">
+          <span>⚡</span> <span>${isId ? 'Trik Cepat Ujian (Exam Hacks)' : 'Exam Hacks'}</span>
+        </button>
+        <button class="pill ${currentGrammarTab === 'foundations' ? 'active' : ''}" data-gtab="foundations">
+          <span>🏛️</span> <span>${isId ? 'Parts of Speech (Dasar)' : 'Parts of Speech'}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic Content Container -->
+    <div id="grammarContentArea"></div>
+  `;
+}
+
+function bindGrammarEvents() {
+  const container = document.getElementById('msub-grammar');
+  if (!container) return;
+
+  // 1. Direct Quiz Launch Button
+  document.getElementById('btnGrammarTakeQuiz')?.addEventListener('click', () => {
+    if (typeof window.setView === 'function') {
+      window.setView('practice');
+    }
+    const gChip = document.querySelector('#quizTopicChips [data-topic="grammar"]');
+    if (gChip) gChip.click();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 2. Subtabs Filtering
+  document.querySelectorAll('#grammarCategoryTabs [data-gtab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentGrammarTab = btn.dataset.gtab;
+      document.querySelectorAll('#grammarCategoryTabs [data-gtab]').forEach(b => b.classList.toggle('active', b === btn));
+      renderGrammarContent();
+    });
+  });
+
+  // 3. Search Input Filtering
+  const searchInput = document.getElementById('grammarSearchInput');
+  const clearBtn = document.getElementById('grammarClearSearchBtn');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      currentGrammarSearchQuery = (searchInput.value || '').trim().toLowerCase();
+      if (clearBtn) {
+        clearBtn.style.display = currentGrammarSearchQuery ? 'inline-block' : 'none';
+      }
+      renderGrammarContent();
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      currentGrammarSearchQuery = '';
+      clearBtn.style.display = 'none';
+      renderGrammarContent();
+    });
+  }
+}
+
+export function renderGrammarContent() {
+  const area = document.getElementById('grammarContentArea');
+  if (!area) return;
+
+  const isId = (state.lang || 'id') === 'id';
+  const query = currentGrammarSearchQuery;
+  const tab = currentGrammarTab;
+
+  let html = '';
+
+  // SECTION 1: INTERACTIVE SENTENCE PATTERN LAB
+  if ((tab === 'all' || tab === 'lab') && (!query || 'interactive sentence lab struktur pola aktif pasif conditional inversion'.includes(query))) {
+    html += renderSentencePatternLab(isId);
+  }
+
+  // SECTION 2: INDONESIAN LEARNER PITFALLS CLINIC
+  if (tab === 'all' || tab === 'pitfalls') {
+    const matchedPitfalls = query
+      ? INDONESIAN_LEARNER_PITFALLS.filter(p =>
+          p.title.toLowerCase().includes(query) ||
+          p.wrong.toLowerCase().includes(query) ||
+          p.correct.toLowerCase().includes(query) ||
+          p.explanation.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query)
+        )
+      : INDONESIAN_LEARNER_PITFALLS;
+
+    if (matchedPitfalls.length > 0) {
+      html += `
+        <div class="grammar-section-block" style="margin-bottom:var(--sp-6);">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:var(--sp-3);">
+            <div>
+              <div style="display:flex;align-items:center;gap:.5rem;">
+                <span style="font-size:1.3rem;">⚠️</span>
+                <h3 style="font-size:1.15rem;margin:0;font-family:var(--font-d);">
+                  ${isId ? 'Klinik Kesalahan Khas Siswa Indonesia (Indonesian Pitfalls Clinic)' : 'Indonesian Learner Pitfalls Clinic'}
+                </h3>
+                <span class="pill active" style="font-size:.7rem;padding:.1rem .5rem;background:#ef4444;color:#fff;">
+                  ${matchedPitfalls.length} ${isId ? 'Kasus Penting' : 'Common Cases'}
+                </span>
+              </div>
+              <p style="margin:.25rem 0 0 0;font-size:.84rem;color:var(--muted);">
+                ${isId 
+                  ? 'Kumpulan kesalahan tata bahasa yang paling sering terjadi akibat interferensi pola bahasa ibu (L1 transfer) dan terjemahan kata per kata.'
+                  : 'Critical grammar mistakes commonly triggered by mother-tongue interference and word-for-word translation from Indonesian.'}
+              </p>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:var(--sp-4);">
+            ${matchedPitfalls.map(p => `
+              <div class="card pitfall-card" style="padding:var(--sp-4);border-left:4px solid #ef4444;display:flex;flex-direction:column;justify-content:space-between;">
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.4rem;">
+                    <span style="font-size:.72rem;font-weight:700;color:var(--muted-dim);text-transform:uppercase;letter-spacing:.05em;">${escapeHtml(p.category)}</span>
+                    <button type="button" class="btn-audio-speak" data-speak="${escapeHtml(p.correct)}" title="Dengarkan pengucapan yang benar" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:.1rem .3rem;">🔊</button>
+                  </div>
+                  <h4 style="font-size:.98rem;margin:0 0 .5rem 0;color:var(--text);font-family:var(--font-d);">${escapeHtml(p.title)}</h4>
+
+                  <div style="display:flex;flex-direction:column;gap:.35rem;margin-bottom:.65rem;background:rgba(0,0,0,0.15);padding:.55rem .75rem;border-radius:var(--r-sm);">
+                    <div style="font-size:.85rem;color:#f87171;display:flex;align-items:flex-start;gap:.4rem;">
+                      <span style="font-weight:700;">❌ Salah:</span>
+                      <span style="text-decoration:line-through;opacity:.9;">"${escapeHtml(p.wrong)}"</span>
+                    </div>
+                    <div style="font-size:.86rem;color:#34d399;font-weight:700;display:flex;align-items:flex-start;gap:.4rem;">
+                      <span>✅ Benar:</span>
+                      <span>"${escapeHtml(p.correct)}"</span>
+                    </div>
+                  </div>
+
+                  <p style="font-size:.82rem;line-height:1.45;color:var(--muted);margin:0 0 .6rem 0;">
+                    ${escapeHtml(p.explanation)}
+                  </p>
+                </div>
+
+                <div style="border-top:1px dashed var(--line);padding-top:.45rem;font-size:.78rem;color:var(--sky-bright);">
+                  <strong>📌 Kaidah Baku:</strong> ${escapeHtml(p.rule)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // SECTION 3: NATIONAL CURRICULUM CORE MODULES
+  if (tab === 'all' || tab === 'curriculum') {
+    const matchedCurriculum = query
+      ? GRAMMAR_CURRICULUM_MODULES.filter(m =>
+          m.title.toLowerCase().includes(query) ||
+          m.fase.toLowerCase().includes(query) ||
+          m.summary.toLowerCase().includes(query) ||
+          m.formula.toLowerCase().includes(query) ||
+          m.example.toLowerCase().includes(query) ||
+          m.tips.toLowerCase().includes(query)
+        )
+      : GRAMMAR_CURRICULUM_MODULES;
+
+    if (matchedCurriculum.length > 0) {
+      html += `
+        <div class="grammar-section-block" style="margin-bottom:var(--sp-6);">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:var(--sp-3);">
+            <span style="font-size:1.3rem;">🎓</span>
+            <h3 style="font-size:1.15rem;margin:0;font-family:var(--font-d);">
+              ${isId ? 'Topik Inti Kurikulum SMP, SMA & Seleksi Masuk PTN / UTBK' : 'Core National Curriculum Modules (SMP, SMA & SNBT)'}
+            </h3>
+            <span class="pill active" style="font-size:.7rem;padding:.1rem .5rem;">${matchedCurriculum.length} Modul Lengkap</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--sp-4);">
+            ${matchedCurriculum.map(mod => `
+              <div class="card curriculum-card" style="padding:var(--sp-5);">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">
+                  <div>
+                    <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem;">
+                      <h4 style="font-size:1.08rem;margin:0;font-family:var(--font-d);">${escapeHtml(mod.title)}</h4>
+                      <span class="pill" style="font-size:.68rem;padding:.12rem .5rem;background:rgba(14,165,233,0.15);color:var(--sky-bright);border:1px solid rgba(14,165,233,0.3);">
+                        ${escapeHtml(mod.fase)}
+                      </span>
+                      <span class="pill active" style="font-size:.68rem;padding:.12rem .5rem;">
+                        ${escapeHtml(mod.tag)}
+                      </span>
+                    </div>
+                    <p style="margin:0;font-size:.85rem;color:var(--muted);">${escapeHtml(mod.summary)}</p>
+                  </div>
+                  <button type="button" class="btn-audio-speak" data-speak="${escapeHtml(mod.example)}" title="Dengarkan contoh kalimat" style="background:var(--navy-900);border:1px solid var(--line);border-radius:var(--r-pill);cursor:pointer;font-size:.82rem;padding:.3rem .7rem;color:var(--text);display:inline-flex;align-items:center;gap:.3rem;">
+                    <span>🔊</span> <span>Dengarkan</span>
+                  </button>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.2);border-radius:var(--r-sm);padding:.55rem .85rem;margin-bottom:.75rem;font-family:monospace;font-size:.85rem;color:var(--sky-bright);border-left:3px solid var(--sky);">
+                  <strong>Formula:</strong> ${escapeHtml(mod.formula)}
+                </div>
+
+                <!-- Pattern Breakdown Table -->
+                <div style="overflow-x:auto;margin-bottom:.75rem;">
+                  <table class="conj-table" style="width:100%;font-size:.82rem;">
+                    <thead>
+                      <tr>
+                        <th style="width:28%;">${isId ? 'Tipe / Tense' : 'Type / Tense'}</th>
+                        <th style="width:36%;">${isId ? 'Bentuk Dasar / Aktif' : 'Base / Active Form'}</th>
+                        <th style="width:36%;">${isId ? 'Bentuk Target / Pasif' : 'Target / Passive Form'}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${mod.table.map(row => `
+                        <tr>
+                          <td style="font-weight:700;color:var(--sky-bright);">${escapeHtml(row.tense)}</td>
+                          <td style="opacity:.9;">${escapeHtml(row.active)}</td>
+                          <td style="font-weight:600;color:var(--text);">${escapeHtml(row.passive)}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Example Sentence Box -->
+                <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.2);border-radius:var(--r-sm);padding:.55rem .85rem;margin-bottom:.55rem;">
+                  <div style="font-size:.85rem;">
+                    <div style="font-style:italic;color:var(--text);">${escapeHtml(mod.example)}</div>
+                    <div style="font-size:.78rem;color:var(--muted);margin-top:.15rem;">🇮🇩 ${escapeHtml(mod.example_id)}</div>
+                  </div>
+                </div>
+
+                <!-- Exam Tip -->
+                <div style="font-size:.8rem;color:#fbbf24;background:rgba(245,158,11,0.08);border:1px dashed rgba(245,158,11,0.3);padding:.4rem .7rem;border-radius:var(--r-sm);">
+                  💡 <strong>${isId ? 'Tips Trik Ujian:' : 'Exam Strategy:'}</strong> ${escapeHtml(mod.tips)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // SECTION 4: EXAM GRAMMAR HACKS
+  if (tab === 'all' || tab === 'hacks') {
+    const matchedHacks = query
+      ? EXAM_GRAMMAR_HACKS.filter(h =>
+          h.title.toLowerCase().includes(query) ||
+          h.rule.toLowerCase().includes(query) ||
+          h.tip.toLowerCase().includes(query) ||
+          h.wrong.toLowerCase().includes(query) ||
+          h.correct.toLowerCase().includes(query)
+        )
+      : EXAM_GRAMMAR_HACKS;
+
+    if (matchedHacks.length > 0) {
+      html += `
+        <div class="grammar-section-block" style="margin-bottom:var(--sp-6);">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:var(--sp-3);">
+            <span style="font-size:1.3rem;">⚡</span>
+            <h3 style="font-size:1.15rem;margin:0;font-family:var(--font-d);">
+              ${isId ? 'Trik Cepat Soal Ujian (Grammar Hacks for Exams & UTBK)' : 'Exam Grammar Hacks'}
+            </h3>
+            <span class="pill active" style="font-size:.7rem;padding:.1rem .5rem;">${matchedHacks.length} Cheat Sheets</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:var(--sp-4);">
+            ${matchedHacks.map(h => `
+              <div class="card hack-card" style="padding:var(--sp-4);border-top:3px solid var(--sky);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;">
+                  <span class="pill active" style="font-size:.68rem;padding:.1rem .45rem;">${escapeHtml(h.tag)}</span>
+                </div>
+                <h4 style="font-size:.95rem;margin:0 0 .4rem 0;font-family:var(--font-d);">${escapeHtml(h.title)}</h4>
+                <p style="font-size:.83rem;color:var(--text);margin:0 0 .5rem 0;line-height:1.45;">${escapeHtml(h.rule)}</p>
+
+                <div style="background:rgba(0,0,0,0.18);border-radius:var(--r-sm);padding:.45rem .65rem;margin-bottom:.55rem;font-size:.8rem;">
+                  <div style="color:#f87171;margin-bottom:.2rem;">${escapeHtml(h.wrong)}</div>
+                  <div style="color:#34d399;font-weight:600;">${escapeHtml(h.correct)}</div>
+                </div>
+
+                <div style="font-size:.78rem;color:var(--sky-bright);line-height:1.35;">
+                  <strong>💡 Kunci Jawaban:</strong> ${escapeHtml(h.tip)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // SECTION 5: PARTS OF SPEECH (FOUNDATIONS)
+  if (tab === 'all' || tab === 'foundations') {
+    const matchedPOS = query
+      ? GRAMMAR_PARTS_OF_SPEECH.filter(p =>
+          p.name.toLowerCase().includes(query) ||
+          p.desc.toLowerCase().includes(query) ||
+          p.ex.toLowerCase().includes(query) ||
+          p.sentence.toLowerCase().includes(query)
+        )
+      : GRAMMAR_PARTS_OF_SPEECH;
+
+    if (matchedPOS.length > 0) {
+      html += `
+        <div class="grammar-section-block" style="margin-bottom:var(--sp-6);">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:var(--sp-3);">
+            <span style="font-size:1.3rem;">🏛️</span>
+            <h3 style="font-size:1.15rem;margin:0;font-family:var(--font-d);">
+              ${isId ? 'Fondasi Dasar: 8 Kelas Kata (Parts of Speech)' : 'Foundations: 8 Parts of Speech'}
+            </h3>
+            <span class="pill active" style="font-size:.7rem;padding:.1rem .5rem;">Fase D (SMP)</span>
+          </div>
+
+          <div class="pos-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:var(--sp-4);">
+            ${matchedPOS.map(pos => `
+              <div class="card pos-card" style="padding:var(--sp-4);display:flex;flex-direction:column;justify-content:space-between;">
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem;">
+                    <h4 style="font-size:.95rem;margin:0;font-family:var(--font-d);">${escapeHtml(pos.name)}</h4>
+                    <button type="button" class="btn-audio-speak" data-speak="${escapeHtml(pos.sentence)}" title="Dengarkan contoh kalimat" style="background:none;border:none;cursor:pointer;font-size:.95rem;padding:.1rem;">🔊</button>
+                  </div>
+                  <p style="font-size:.82rem;color:var(--muted);margin:0 0 .4rem 0;line-height:1.4;">${escapeHtml(pos.desc)}</p>
+                  <div style="font-size:.78rem;color:var(--sky-bright);margin-bottom:.45rem;font-family:monospace;background:rgba(14,165,233,0.06);padding:.25rem .5rem;border-radius:var(--r-sm);">
+                    ${escapeHtml(pos.ex)}
+                  </div>
+                </div>
+
+                <div style="border-top:1px dashed var(--line);padding-top:.45rem;font-size:.78rem;">
+                  <div style="font-style:italic;color:var(--text);">"${escapeHtml(pos.sentence)}"</div>
+                  <div style="color:var(--muted-dim);font-size:.72rem;margin-top:.15rem;">🇮🇩 ${escapeHtml(pos.sentence_id)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // EMPTY SEARCH FALLBACK
+  if (!html) {
+    html = `
+      <div class="card" style="text-align:center;padding:var(--sp-6);">
+        <div style="font-size:2.4rem;margin-bottom:.5rem;">🔍</div>
+        <h3 style="margin:0 0 .4rem 0;">${isId ? `Tidak ada materi grammar yang cocok dengan "${escapeHtml(query)}"` : `No grammar topics matched "${escapeHtml(query)}"`}</h3>
+        <p style="color:var(--muted);font-size:.88rem;max-width:55ch;margin:0 auto var(--sp-4);line-height:1.5;">
+          ${isId 
+            ? 'Coba gunakan kata kunci umum seperti: "passive", "conditional", "agree", "although", "modals", atau "gerund".' 
+            : 'Try using common keywords like "passive", "conditional", "agree", "although", "modals", or "gerund".'}
+        </p>
+        <button type="button" class="btn btn-primary btn-sm" id="btnResetSearchFromEmpty">
+          ${isId ? 'Tampilkan Semua Materi' : 'Show All Modules'}
+        </button>
+      </div>
+    `;
+  }
+
+  area.innerHTML = html;
+
+  // Bind audio speak buttons
+  area.querySelectorAll('.btn-audio-speak[data-speak]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const text = btn.dataset.speak;
+      speakText(text);
+    });
+  });
+
+  // Bind reset search button if shown
+  document.getElementById('btnResetSearchFromEmpty')?.addEventListener('click', () => {
+    const inp = document.getElementById('grammarSearchInput');
+    if (inp) inp.value = '';
+    currentGrammarSearchQuery = '';
+    const clearBtn = document.getElementById('grammarClearSearchBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    renderGrammarContent();
+  });
+
+  // Bind interactive sentence lab controls
+  bindSentencePatternLabEvents();
+}
+
+function renderSentencePatternLab(isId) {
+  const pattern = INTERACTIVE_SENTENCE_PATTERNS[activeSentencePatternIndex] || INTERACTIVE_SENTENCE_PATTERNS[0];
+  const template = pattern.templates[activeTemplateIndex] || pattern.templates[0];
+
+  return `
+    <div class="card sentence-lab-card" style="margin-bottom:var(--sp-6);padding:var(--sp-5);border:1px solid rgba(14,165,233,0.3);background:linear-gradient(135deg,rgba(15,23,42,0.9),rgba(30,41,59,0.9));box-shadow:var(--shadow-2);">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:var(--sp-3);">
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span style="font-size:1.4rem;">🧪</span>
+          <div>
+            <h3 style="font-size:1.15rem;margin:0;font-family:var(--font-d);">
+              ${isId ? 'Lab Struktur Kalimat Interaktif (Sentence Builder Lab)' : 'Interactive Sentence Pattern Lab'}
+            </h3>
+            <div style="font-size:.8rem;color:var(--muted);">${escapeHtml(pattern.desc)}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+          ${INTERACTIVE_SENTENCE_PATTERNS.map((p, idx) => `
+            <button type="button" class="pill ${idx === activeSentencePatternIndex ? 'active' : ''} btn-switch-pattern" data-pattern-index="${idx}" style="font-size:.75rem;padding:.2rem .6rem;">
+              ${escapeHtml(p.name)}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Template Transformer Switcher -->
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;">
+        <span style="font-size:.78rem;font-weight:700;color:var(--muted);">${isId ? 'Pilih Sudut Pandang Pola:' : 'Select Pattern View:'}</span>
+        ${pattern.templates.map((tpl, tIdx) => `
+          <button type="button" class="btn btn-sm ${tIdx === activeTemplateIndex ? 'btn-primary' : 'btn-ghost'} btn-switch-template" data-template-index="${tIdx}" style="font-size:.78rem;padding:.25rem .75rem;">
+            ${escapeHtml(tpl.label)}
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- Visual Color-Coded Chips Diagram -->
+      <div style="background:var(--navy-900);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:var(--sp-4);margin-bottom:.75rem;">
+        <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-dim);margin-bottom:.5rem;">
+          ${isId ? 'Diagram Komponen Pembentuk Kalimat (Color-Coded Structure):' : 'Sentence Structure Diagram:'}
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;">
+          ${template.chips.map(chip => {
+            const colorStyles = {
+              blue: 'background:rgba(59,130,246,0.18);border-color:#3b82f6;color:#93c5fd;',
+              green: 'background:rgba(16,185,129,0.18);border-color:#10b981;color:#6ee7b7;',
+              yellow: 'background:rgba(245,158,11,0.18);border-color:#f59e0b;color:#fcd34d;',
+              purple: 'background:rgba(168,85,247,0.18);border-color:#a855f7;color:#d8b4fe;',
+              cyan: 'background:rgba(6,182,212,0.18);border-color:#06b6d4;color:#67e8f9;',
+              orange: 'background:rgba(249,115,22,0.18);border-color:#f97316;color:#fdba74;'
+            }[chip.color] || 'background:rgba(14,165,233,0.15);border-color:var(--sky);color:var(--sky-bright);';
+
+            return `
+              <div style="border:1px solid;border-radius:var(--r-sm);padding:.35rem .75rem;${colorStyles}display:inline-flex;flex-direction:column;align-items:center;transition:transform .15s ease;">
+                <span style="font-weight:700;font-size:.92rem;">${escapeHtml(chip.text)}</span>
+                <span style="font-size:.65rem;opacity:.85;text-transform:uppercase;letter-spacing:.03em;margin-top:.1rem;">${escapeHtml(chip.role)}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Resulting Full Sentence with Audio Playback -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem;background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.25);border-radius:var(--r-sm);padding:.6rem 1rem;">
+        <div>
+          <div style="font-size:.98rem;font-weight:700;color:var(--text);font-family:var(--font-d);">
+            “${escapeHtml(template.sentence)}”
+          </div>
+          <div style="font-size:.82rem;color:var(--sky-bright);margin-top:.15rem;">
+            🇮🇩 ${escapeHtml(template.translation)}
+          </div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm btn-speak-lab" data-speak="${escapeHtml(template.sentence)}" style="display:inline-flex;align-items:center;gap:.35rem;font-weight:700;">
+          <span>🔊</span> <span>${isId ? 'Dengarkan Kalimat' : 'Listen'}</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function bindSentencePatternLabEvents() {
+  document.querySelectorAll('.btn-switch-pattern').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSentencePatternIndex = parseInt(btn.dataset.patternIndex, 10) || 0;
+      activeTemplateIndex = 0;
+      renderGrammarContent();
+    });
+  });
+
+  document.querySelectorAll('.btn-switch-template').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTemplateIndex = parseInt(btn.dataset.templateIndex, 10) || 0;
+      renderGrammarContent();
+    });
+  });
+
+  document.querySelectorAll('.btn-speak-lab[data-speak]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      speakText(btn.dataset.speak);
+    });
+  });
+}
+
