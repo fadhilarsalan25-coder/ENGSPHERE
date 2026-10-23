@@ -465,53 +465,90 @@
         </div>
       </div>
       <div id="msub-vocabulary" class="hidden">
-        <div class="vocab-header-card card" style="margin-bottom:var(--sp-4);padding:var(--sp-4) var(--sp-5);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);">
-          <div>
-            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;flex-wrap:wrap;">
-              <span style="font-size:1.25rem;">📖</span>
-              <h3 style="font-size:1.05rem;margin:0;font-family:var(--font-d);" data-i18n="vocab_oxford_heading">Oxford 3000™ & 5000™ Standard Core Vocabulary</h3>
-              <span class="pill active" style="font-size:.72rem;padding:.15rem .55rem;" id="vocabWordCountBadge">370 Oxford Words</span>
-            </div>
-            <p style="margin:0;font-size:.84rem;color:var(--muted);max-width:70ch;" data-i18n="vocab_intro">Tap any flashcard to flip between the word, phonetic transcription (IPA), CEFR proficiency level, Oxford definition, and authentic example sentence.</p>
-          </div>
-          <div style="display:flex;gap:.5rem;align-items:center;width:100%;max-width:340px;">
-            <input type="text" class="text-input" id="vocabSearchInput" placeholder="🔍 Search Oxford vocabulary..." style="padding:.45rem .75rem;font-size:.85rem;margin:0;width:100%;">
-          </div>
-        </div>
-        <div class="subtabs" id="vocabCategoryTabs" style="border-bottom:none;padding-bottom:0;margin-bottom:var(--sp-4);flex-wrap:wrap;"></div>
-        <div class="vocab-grid" id="vocabGrid"></div>
-      </div>
-      <div id="msub-grammar" class="hidden">
-        <p style="max-width:60ch;" data-i18n="grammar_intro">Grammar is just the set of patterns that hold a sentence together. Start with the building blocks (parts of speech), then the order they go in.</p>
-        <h4 style="font-size:.95rem;margin-bottom:var(--sp-3);" data-i18n="pos_heading">Parts of speech</h4>
-        <div class="pos-grid">
-          <div class="card pos-card"><h4 data-i18n="pos_noun_h4">Noun</h4><p data-i18n="pos_noun_p">A person, place, thing or idea.</p><div class="ex">teacher, Jakarta, freedom</div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_verb_h4">Verb</h4><p data-i18n="pos_verb_p">An action or state.</p><div class="ex">run, is, believe</div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_adj_h4">Adjective</h4><p data-i18n="pos_adj_p">Describes a noun.</p><div class="ex">a <em>quiet</em> street</div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_adv_h4">Adverb</h4><p data-i18n="pos_adv_p">Describes a verb, adjective, or another adverb.</p><div class="ex">she runs <em>quickly</em></div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_pron_h4">Pronoun</h4><p data-i18n="pos_pron_p">Replaces a noun.</p><div class="ex">he, they, it, this</div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_prep_h4">Preposition</h4><p data-i18n="pos_prep_p">Shows relation (place, time, direction).</p><div class="ex">on, at, since, between</div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_conj_h4">Conjunction</h4><p data-i18n="pos_conj_p">Joins words or clauses.</p><div class="ex">and, but, because</div></div>
-          <div class="card pos-card"><h4 data-i18n="pos_art_h4">Article</h4><p data-i18n="pos_art_p">Marks a noun as specific or general.</p><div class="ex">a, an, the</div></div>
+        <!-- Vocabulary Mode Selector Tabs -->
+        <div class="vocab-mode-bar" style="display:flex;gap:.5rem;margin-bottom:var(--sp-4);flex-wrap:wrap;">
+          <button type="button" class="pill active" id="btnVocabModeDictionary" data-vmode="dictionary" style="display:flex;align-items:center;gap:.4rem;font-weight:700;">
+            <span>🔍</span> <span>Kamus Oxford &amp; Global Lexicon</span>
+          </button>
+          <button type="button" class="pill" id="btnVocabModeBrowse" data-vmode="browse" style="display:flex;align-items:center;gap:.4rem;font-weight:700;">
+            <span>📚</span> <span>Kurikulum Oxford 3000™ &amp; 5000™</span>
+          </button>
+          <button type="button" class="pill" id="btnVocabModeSaved" data-vmode="saved" style="display:flex;align-items:center;gap:.4rem;font-weight:700;">
+            <span>⭐</span> <span>Kosakata Tersimpan (<span id="savedWordsCountBadge">0</span>)</span>
+          </button>
         </div>
 
-        <div class="rule-card card">
-          <h4 data-i18n="grm_svo_h4">Basic sentence structure — SVO</h4>
-          <span class="tc-formula">Subject + Verb + Object</span>
-          <p style="margin:0;font-size:.9rem;" data-i18n="grm_svo_p">English word order is fixed: "<strong style="color:var(--text);">She (S)</strong> <strong style="color:var(--sky-bright);">reads (V)</strong> <strong style="color:var(--text);">books (O)</strong>." Move the order and the meaning changes or the sentence becomes ungrammatical.</p>
+        <!-- PANE 1: DICTIONARY SEARCH ENGINE (LIVE OXFORD / GLOBAL LEXICON) -->
+        <div id="paneVocabDictionary">
+          <div class="dict-box">
+            <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;">
+              <span style="font-size:1.4rem;">📖</span>
+              <h3 style="font-size:1.15rem;margin:0;font-family:var(--font-d);">Kamus Bahasa Inggris Berstandar Oxford</h3>
+              <span class="dict-oxford-badge">OED / Oxford Lexicon Standard</span>
+            </div>
+            <p style="margin:0 0 var(--sp-4) 0;font-size:.86rem;color:var(--muted);line-height:1.45;">
+              Cari kata bahasa Inggris apa saja di dunia untuk melihat transkripsi fonetik IPA, definisi lengkap menurut kelas kata (*part of speech*), contoh kalimat otentik, serta dengarkan <strong>audio pengucapan asli (Native Audio Pronunciation 🔊)</strong>.
+            </p>
+
+            <form id="dictSearchForm" class="dict-search-wrap" onsubmit="return false;">
+              <input type="text" class="dict-search-input" id="dictSearchInput" placeholder="Ketik kata bahasa Inggris (contoh: eloquent, serendipity, accomplish)..." autocomplete="off" spellcheck="false">
+              <button type="button" class="btn btn-primary dict-search-btn" id="dictSearchBtn">🔍 Cari Kata</button>
+            </form>
+
+            <!-- Real-time suggestions & auto-complete bar -->
+            <div id="dictLiveSuggestions" class="dict-live-suggestions hidden" style="margin-top:-.35rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;"></div>
+
+            <div class="dict-quick-chips">
+              <span style="font-weight:700;">💡 Coba kata:</span>
+              <button type="button" class="dict-quick-chip" data-lookup="serendipity">serendipity</button>
+              <button type="button" class="dict-quick-chip" data-lookup="resilience">resilience</button>
+              <button type="button" class="dict-quick-chip" data-lookup="ubiquitous">ubiquitous</button>
+              <button type="button" class="dict-quick-chip" data-lookup="eloquent">eloquent</button>
+              <button type="button" class="dict-quick-chip" data-lookup="perseverance">perseverance</button>
+              <button type="button" class="dict-quick-chip" data-lookup="integrity">integrity</button>
+              <button type="button" class="dict-quick-chip" data-lookup="accomplish">accomplish</button>
+            </div>
+          </div>
+
+          <!-- Dictionary Result Container -->
+          <div id="dictResultContainer"></div>
         </div>
-        <div class="rule-card card">
-          <h4 data-i18n="grm_sva_h4">Subject–verb agreement</h4>
-          <p style="margin:0;font-size:.9rem;" data-i18n="grm_sva_p">A singular subject takes a singular verb, and a plural subject takes a plural verb: "He <strong style="color:var(--text);">runs</strong>" vs. "They <strong style="color:var(--text);">run</strong>."</p>
+
+        <!-- PANE 2: OXFORD 3000 & 5000 CURRICULUM BROWSER (FLASHCARDS) -->
+        <div id="paneVocabBrowse" class="hidden">
+          <div class="vocab-header-card card" style="margin-bottom:var(--sp-4);padding:var(--sp-4) var(--sp-5);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);">
+            <div>
+              <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;flex-wrap:wrap;">
+                <span style="font-size:1.25rem;">🎓</span>
+                <h3 style="font-size:1.05rem;margin:0;font-family:var(--font-d);" data-i18n="vocab_oxford_heading">Oxford 3000™ &amp; 5000™ Standard Core Vocabulary</h3>
+                <span class="pill active" style="font-size:.72rem;padding:.15rem .55rem;" id="vocabWordCountBadge">370 Oxford Words</span>
+              </div>
+              <p style="margin:0;font-size:.84rem;color:var(--muted);max-width:70ch;" data-i18n="vocab_intro">Klik kartu flashcard untuk membalik antara kata, transkripsi fonetik (IPA), level CEFR, definisi Oxford, dan contoh kalimat nyata.</p>
+            </div>
+            <div style="display:flex;gap:.5rem;align-items:center;width:100%;max-width:340px;">
+              <input type="text" class="text-input" id="vocabSearchInput" placeholder="🔍 Filter kurikulum kata inti..." style="padding:.45rem .75rem;font-size:.85rem;margin:0;width:100%;">
+            </div>
+          </div>
+          <div class="subtabs" id="vocabCategoryTabs" style="border-bottom:none;padding-bottom:0;margin-bottom:var(--sp-4);flex-wrap:wrap;"></div>
+          <div class="vocab-grid" id="vocabGrid"></div>
         </div>
-        <div class="rule-card card">
-          <h4 data-i18n="grm_art_h4">A, an, or the?</h4>
-          <p style="margin:0;font-size:.9rem;" data-i18n="grm_art_p"><strong style="color:var(--text);">a / an</strong> introduce something not yet specific ("a dog", "an apple" — use <em>an</em> before a vowel sound). <strong style="color:var(--text);">the</strong> points to a particular one: "the dog", "the apple".</p>
+
+        <!-- PANE 3: SAVED WORDS (MY VOCABULARY) -->
+        <div id="paneVocabSaved" class="hidden">
+          <div class="card" style="margin-bottom:var(--sp-4);padding:var(--sp-4) var(--sp-5);">
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <span style="font-size:1.2rem;">⭐</span>
+              <h3 style="font-size:1.05rem;margin:0;font-family:var(--font-d);">Daftar Kosakata Favorit Saya</h3>
+            </div>
+            <p style="margin:.3rem 0 0 0;font-size:.85rem;color:var(--muted);">
+              Koleksi kata yang telah Anda simpan dari pencarian kamus. Latih pelafalannya kapan saja menggunakan tombol audio.
+            </p>
+          </div>
+          <div class="vocab-grid" id="savedWordsGrid"></div>
         </div>
-        <div class="rule-card card">
-          <h4 data-i18n="grm_negq_h4">Making a sentence negative or a question</h4>
-          <p style="margin:0;font-size:.9rem;" data-i18n="grm_negq_p">Most verbs need a helper: <strong style="color:var(--text);">do / does / did</strong>. "I like tea" → "I <strong style="color:var(--text);">don't</strong> like tea." "You live here" → "<strong style="color:var(--text);">Do</strong> you live here?"</p>
-        </div>
+      </div>
+      <div id="msub-grammar" class="hidden">
+        <!-- Rendered dynamically with Indonesian National Standards -->
       </div>
     </section>
 
@@ -878,6 +915,18 @@
             <button class="btn btn-primary" id="savePersonalizedBtn" style="padding:.6rem 1.4rem;font-weight:700;">💾 Save Personalized Preferences</button>
           </div>
         </div>
+
+        <!-- Onboarding Intake Interview Summary Card -->
+        <div class="setting-card" style="margin-top:var(--sp-4);" id="hubOnboardingSummaryCard">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.35rem;">
+            <h5 style="margin:0;"><span style="font-size:1.1rem;">📋</span> Profil &amp; Wawancara Belajar Personal</h5>
+            <button type="button" class="btn btn-ghost btn-sm" id="reopenOnboardingBtn" style="font-size:.8rem;padding:.3rem .65rem;border-color:var(--sky-dim);color:var(--sky-bright);">
+              📝 Perbarui / Ulangi Wawancara
+            </button>
+          </div>
+          <p style="margin:0 0 .5rem 0;font-size:.84rem;color:var(--muted);">Hasil wawancara minat, status, dan target belajarmu saat pertama kali mendaftar akun di EngSphere.</p>
+          <div id="hubOnboardingSummaryGrid" class="onboard-summary-chips-grid"></div>
+        </div>
       </div>
 
       <!-- TAB 2: DATA CONTROL -->
@@ -987,11 +1036,59 @@
   </div>
 </div>
 
+<!-- Onboarding / New Learner Intake Interview Modal -->
+<div class="modal-overlay hidden" id="onboardingModalOverlay">
+  <div class="modal-box onboarding-modal-box">
+    <!-- Header with Progress Bar & Tutor Identity -->
+    <div class="onboard-modal-header">
+      <div class="onboard-header-top">
+        <div class="onboard-tutor-tag">
+          <span class="tutor-avatar">🎓</span>
+          <span class="tutor-name">Tutor EngSphere</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeOnboardingModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="onboard-progress-container">
+        <div class="onboard-progress-track">
+          <div class="onboard-progress-fill" id="onboardingProgressBar" style="width:20%;"></div>
+        </div>
+        <div class="onboard-progress-info">
+          <span class="onboard-step-txt" id="onboardingStepCounter">Pertanyaan 1 dari 5</span>
+          <button type="button" class="onboard-skip-link" id="onboardingSkipBtn">Lewati untuk sekarang</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Dynamic Body -->
+    <div class="onboard-modal-body">
+      <!-- Question Pane (Populated dynamically) -->
+      <div id="onboardingQuestionPane"></div>
+
+      <!-- Final Summary & Completion Pane -->
+      <div id="onboardingSummaryPane" class="hidden"></div>
+    </div>
+
+    <!-- Modal Actions Footer -->
+    <div class="onboard-modal-footer">
+      <button type="button" class="btn btn-ghost btn-sm hidden" id="onboardingPrevBtn">
+        ⬅️ Kembali
+      </button>
+      <div style="flex:1;"></div>
+      <button type="button" class="btn btn-primary btn-sm" id="onboardingNextBtn">
+        Lanjut ➡️
+      </button>
+      <button type="button" class="btn btn-primary btn-sm hidden" id="onboardingFinishBtn" style="background:var(--success);border-color:var(--success);font-weight:700;">
+        Mulai Belajar Sekarang 🚀
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <!-- Supabase Client Library (Backend Cloud Sync) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="modules/app.js?v=2.2" type="module"></script>
+<script src="./modules/app.js?v=2.2" type="module"></script>
 </body>
 </html>
-
