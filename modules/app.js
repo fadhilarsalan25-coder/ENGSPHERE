@@ -1,8 +1,10 @@
-import './bootstrap.js';
-import { setView } from './bootstrap.js';
-import { openAuthModal, loginWithGoogle, continueAsGuest } from './auth.js';
-import { state, saveState, isGuestUser } from './state.js';
-import { getSupabase, fetchCloudProfile } from './supabase-client.js';
+const APP_VERSION = '2.2';
+
+import './bootstrap.js?v=' + APP_VERSION;
+import { setView } from './bootstrap.js?v=' + APP_VERSION;
+import { openAuthModal, loginWithGoogle, continueAsGuest } from './auth.js?v=' + APP_VERSION;
+import { state, saveState, isGuestUser } from './state.js?v=' + APP_VERSION;
+import { getSupabase, fetchCloudProfile } from './supabase-client.js?v=' + APP_VERSION;
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -72,8 +74,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             await applyUserSession(session);
           }
         });
-      } catch (e) {
-        console.warn('Session check fallback:', e);
+      } catch (error) {
+        console.warn('Session check failed:', error);
       }
     }
 
