@@ -351,7 +351,7 @@ export const TENSES = [
   }
 ];
 
-export { VOCAB } from './vocab-data.js';
+export { VOCAB, EXTENDED_OXFORD_LEXICON, LEMMA_MAP } from './vocab-data.js';
 
 export const Q = (q, o, a, x, id, x_id) => ({
   id: id || (q.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 36)),
@@ -492,3 +492,516 @@ export const BANK = {
 };
 
 export const STORAGE_KEY = 'engsphere-state';
+
+// ===================================================================
+// GRAMMAR DATA FOR INDONESIAN NATIONAL EDUCATION STANDARDS
+// Aligned with Kurikulum Merdeka (Fase D SMP & Fase E/F SMA) & UTBK/SNBT
+// ===================================================================
+
+export const GRAMMAR_PARTS_OF_SPEECH = [
+  {
+    id: 'noun',
+    name: 'Noun (Kata Benda)',
+    fase: 'Fase D (SMP)',
+    desc: 'Nama orang, tempat, benda konkret, atau gagasan abstrak.',
+    formula: 'Article / Determiner + Noun',
+    ex: 'teacher, Jakarta, laptop, freedom, education',
+    sentence: 'The dedicated teacher inspired students across Jakarta.',
+    sentence_id: 'Guru yang berdedikasi itu menginspirasi para siswa di seluruh Jakarta.'
+  },
+  {
+    id: 'verb',
+    name: 'Verb (Kata Kerja)',
+    fase: 'Fase D (SMP)',
+    desc: 'Menyatakan tindakan, proses, peristiwa, atau keadaan mental.',
+    formula: 'Subject + Verb (+ Object)',
+    ex: 'develop, study, believe, communicate, transform',
+    sentence: 'Regular practice transforms learning into lasting skill.',
+    sentence_id: 'Latihan rutin mengubah proses belajar menjadi keterampilan yang bertahan lama.'
+  },
+  {
+    id: 'adjective',
+    name: 'Adjective (Kata Sifat)',
+    fase: 'Fase D (SMP)',
+    desc: 'Menerangkan sifat, kondisi, ukuran, atau karakter kata benda.',
+    formula: 'Adjective + Noun ATAU Be + Adjective',
+    ex: 'diligent, effective, sustainable, crucial, innovative',
+    sentence: 'Diligent students achieve remarkable results in national exams.',
+    sentence_id: 'Siswa yang tekun meraih hasil luar biasa dalam ujian nasional.'
+  },
+  {
+    id: 'adverb',
+    name: 'Adverb (Kata Keterangan)',
+    fase: 'Fase D (SMP)',
+    desc: 'Menerangkan cara, waktu, frekuensi, tempat, atau intensitas kata kerja/sifat.',
+    formula: 'Verb + Adverb ATAU Adverb + Adjective',
+    ex: 'fluently, rigorously, extremely, yesterday, rarely',
+    sentence: 'She explained the complex grammar formula extremely clearly.',
+    sentence_id: 'Dia menjelaskan rumus tata bahasa yang rumit itu dengan sangat jelas.'
+  },
+  {
+    id: 'pronoun',
+    name: 'Pronoun (Kata Ganti)',
+    fase: 'Fase D (SMP)',
+    desc: 'Menggantikan kata benda agar kalimat tidak repetitif (Subject, Object, Possessive, Reflexive).',
+    formula: 'Subject: I, you, we, they, he, she, it · Object: me, him, them',
+    ex: 'they, ourselves, someone, anyone, which',
+    sentence: 'Although the questions were challenging, they solved them independently.',
+    sentence_id: 'Meskipun soal-soal tersebut menantang, mereka menyelesaikannya secara mandiri.'
+  },
+  {
+    id: 'preposition',
+    name: 'Preposition (Kata Depan)',
+    fase: 'Fase D (SMP)',
+    desc: 'Menunjukkan hubungan posisi, tempat, waktu, arah, atau metode antar kata.',
+    formula: 'Preposition + Noun Phrase / Gerund (V-ing)',
+    ex: 'in, on, at, between, despite, throughout',
+    sentence: 'We will gather at the auditorium in the morning for orientation.',
+    sentence_id: 'Kita akan berkumpul di auditorium pada pagi hari untuk masa orientasi.'
+  },
+  {
+    id: 'conjunction',
+    name: 'Conjunction (Kata Sambung)',
+    fase: 'Fase E (SMA)',
+    desc: 'Menghubungkan kata, frasa, atau klausa (koordinatif, subordinatif, korelatif).',
+    formula: 'FANBOYS (for, and, nor, but, or, yet, so) · Subordinatif (because, although, if)',
+    ex: 'and, although, because, however, nevertheless',
+    sentence: 'Although Indonesian grammar has no tenses, students can master English patterns rapidly.',
+    sentence_id: 'Meskipun tata bahasa Indonesia tidak memiliki tenses, siswa dapat menguasai pola bahasa Inggris dengan cepat.'
+  },
+  {
+    id: 'article',
+    name: 'Article & Determiner',
+    fase: 'Fase D (SMP)',
+    desc: 'Menentukan apakah kata benda bersifat spesifik (the) atau umum/pertama kali disebut (a/an).',
+    formula: 'a + konsonan bunyi · an + vokal bunyi · the + spesifik',
+    ex: 'a university (bunyi /juː/), an honest man (bunyi /ɒ/), the sun',
+    sentence: 'An honest student received a university scholarship yesterday.',
+    sentence_id: 'Seorang siswa yang jujur menerima beasiswa universitas kemarin.'
+  }
+];
+
+export const GRAMMAR_CURRICULUM_MODULES = [
+  {
+    id: 'passive-voice',
+    title: '1. Passive Voice (Kalimat Pasif)',
+    fase: 'Fase E (SMA Kelas X) & Langganan Soal UTBK/SNBT',
+    tag: 'Sangat Sering Diuji',
+    summary: 'Digunakan saat fokus utama kalimat tertuju pada objek/hasil tindakan, atau ketika pelaku tindakan tidak diketahui/tidak penting.',
+    formula: 'Subject (Objek asal) + To Be (disesuaikan tenses) + Past Participle (V3) (+ by Agent)',
+    table: [
+      { tense: 'Present Simple', active: 'Active: The teacher explains the rule.', passive: 'Passive: The rule is explained by the teacher.' },
+      { tense: 'Past Simple', active: 'Active: The government built the bridge.', passive: 'Passive: The bridge was built by the government.' },
+      { tense: 'Present Continuous', active: 'Active: Technicians are fixing the server.', passive: 'Passive: The server is being fixed by technicians.' },
+      { tense: 'Present Perfect', active: 'Active: Scientists have discovered a cure.', passive: 'Passive: A cure has been discovered by scientists.' },
+      { tense: 'Modals (Can/Must/Should)', active: 'Active: You must submit the form today.', passive: 'Passive: The form must be submitted today.' }
+    ],
+    tips: 'Kunci Ujian: Perhatikan subjek kalimat pasif (tunggal vs jamak) untuk menentukan to be (is vs are / was vs were). Pastikan kata kerja utama selalu berbentuk Verb 3!',
+    example: 'Active: "Alexander Fleming discovered penicillin in 1928." → Passive: "Penicillin was discovered by Alexander Fleming in 1928."',
+    example_id: 'Penisilin ditemukan oleh Alexander Fleming pada tahun 1928.'
+  },
+  {
+    id: 'conditional-sentences',
+    title: '2. Conditional Sentences (Kalimat Pengandaian)',
+    fase: 'Fase F (SMA Kelas XI-XII) & Seleksi PTN/Kedinasan',
+    tag: 'Wajib Ujian Nasional & UTBK',
+    summary: 'Struktur pengandaian yang menyatakan situasi nyata, kebiasaan ilmiah, kondisi masa depan, situasi imajinatif saat ini, atau penyesalan masa lalu.',
+    formula: 'If + Condition Clause, Main / Result Clause',
+    table: [
+      {
+        tense: 'Type 0 (Fakta / Kebenaran Ilmiah)',
+        active: 'Rumus: If + Simple Present (V1), Simple Present (V1)',
+        passive: 'Contoh: If you heat water to 100°C, it boils. (Pasti terjadi secara ilmiah).'
+      },
+      {
+        tense: 'Type 1 (Peluang Nyata Masa Depan)',
+        active: 'Rumus: If + Simple Present (V1), Subject + will + V1',
+        passive: 'Contoh: If she studies diligently, she will pass the national entrance exam.'
+      },
+      {
+        tense: 'Type 2 (Pengandaian Tak Nyata Saat Ini)',
+        active: 'Rumus: If + Past Simple (V2/were), Subject + would + V1',
+        passive: 'Contoh: If I were the minister of education, I would improve teacher welfare. (Fakta: I am not).'
+      },
+      {
+        tense: 'Type 3 (Penyesalan / Kontrafaktual Masa Lampau)',
+        active: 'Rumus: If + Past Perfect (had + V3), Subject + would have + V3',
+        passive: 'Contoh: If we had left earlier, we would not have missed the morning flight.'
+      }
+    ],
+    tips: 'Jebakan Soal: Pada Type 2, to be lampau yang digunakan selalu "WERE" untuk semua subjek (If I were, If he were, If she were), bukan "was" dalam ragam formal standar!',
+    example: 'If they had followed the safety guidelines, the incident would not have occurred.',
+    example_id: 'Seandainya mereka mematuhi pedoman keselamatan, insiden itu tidak akan terjadi.'
+  },
+  {
+    id: 'relative-clauses',
+    title: '3. Relative Clauses / Adjective Clauses',
+    fase: 'Fase E (SMA Kelas X-XI) & Reading Comprehension',
+    tag: 'Struktur Kalimat Majemuk',
+    summary: 'Klausa penjelas yang berfungsi seperti kata sifat untuk mendeskripsikan kata benda tanpa harus membuat dua kalimat terpisah.',
+    formula: 'Noun Head + [Who / Whom / Whose / Which / That] + Clause',
+    table: [
+      { tense: 'Who (Subjek Orang)', active: 'The student won the competition. The student studies here.', passive: 'Gabungan: The student WHO won the competition studies here.' },
+      { tense: 'Whom (Objek Orang)', active: 'The lecturer is respected. We interviewed him yesterday.', passive: 'Gabungan: The lecturer WHOM we interviewed yesterday is respected.' },
+      { tense: 'Whose (Kepemilikan)', active: 'The author gave a lecture. Her book became a bestseller.', passive: 'Gabungan: The author WHOSE book became a bestseller gave a lecture.' },
+      { tense: 'Which / That (Benda/Hewan)', active: 'The vaccine was approved. It was developed locally.', passive: 'Gabungan: The vaccine WHICH / THAT was developed locally was approved.' }
+    ],
+    tips: 'Defining vs Non-Defining: Jika klausa memberi informasi tambahan yang bukan penentu identitas utama (pakai koma), gunakan "which", JANGAN gunakan "that"!',
+    example: 'The laboratory which was inaugurated last month is equipped with modern spectrometers.',
+    example_id: 'Laboratorium yang diresmikan bulan lalu itu dilengkapi dengan spektrometer modern.'
+  },
+  {
+    id: 'reported-speech',
+    title: '4. Reported Speech (Direct to Indirect Speech)',
+    fase: 'Fase F (SMA Kelas XI-XII) & Narrative / News Texts',
+    tag: 'Komunikasi Formal',
+    summary: 'Cara melaporkan perkataan orang lain dengan menyesuaikan perubahan waktu (tenses), kata ganti orang (pronouns), dan keterangan waktu/tempat.',
+    formula: 'Reporting Verb (said / told) + (that) + Backshifted Tense',
+    table: [
+      { tense: 'Present Simple → Past Simple', active: 'Direct: "I work at a hospital," Maria said.', passive: 'Reported: Maria said that she worked at a hospital.' },
+      { tense: 'Present Continuous → Past Continuous', active: 'Direct: "We are developing an app," they said.', passive: 'Reported: They said that they were developing an app.' },
+      { tense: 'Past Simple → Past Perfect', active: 'Direct: "I finished the report," David said.', passive: 'Reported: David said that he had finished the report.' },
+      { tense: 'Modals Shift (Will → Would, Can → Could)', active: 'Direct: "I will call you tomorrow," Kenji promised.', passive: 'Reported: Kenji promised that he would call me the next day.' }
+    ],
+    tips: 'Keterangan Waktu: Ingat perubahan keterangan: now → then, today → that day, yesterday → the day before, tomorrow → the following/next day, here → there.',
+    example: 'The principal announced that all classes would resume in the main campus next week.',
+    example_id: 'Kepala sekolah mengumumkan bahwa seluruh kelas akan kembali diadakan di kampus utama minggu depan.'
+  },
+  {
+    id: 'gerund-infinitive',
+    title: '5. Gerunds vs. To-Infinitives',
+    fase: 'Fase E-F SMA & Soal Error Recognition',
+    tag: 'Pilihan Kata Kerja Spesifik',
+    summary: 'Kapan kata kerja kedua berbentuk V-ing (Gerund) dan kapan wajib berbentuk To + V1 (Infinitive) setelah kata kerja tertentu atau preposisi.',
+    formula: 'Verb + Gerund (V-ing) ATAU Verb + To-Infinitive (to + V1) ATAU Preposition + Gerund',
+    table: [
+      {
+        tense: 'Wajib Diikuti Gerund (V-ing)',
+        active: 'Verbs: enjoy, avoid, consider, practice, suggest, mind, postpone, finish, admit, deny',
+        passive: 'Contoh: We should avoid making hasty conclusions without empirical data.'
+      },
+      {
+        tense: 'Wajib Diikuti To-Infinitive (to + V1)',
+        active: 'Verbs: decide, hope, plan, refuse, promise, offer, agree, afford, manage, prepare',
+        passive: 'Contoh: The committee decided to postpone the conference until next semester.'
+      },
+      {
+        tense: 'Semua Preposisi Wajib Gerund!',
+        active: 'Rumus: Preposisi (of, in, at, on, by, for, about, without) + V-ing',
+        passive: 'Contoh: Thank you for listening. · She succeeded by studying consistently.'
+      },
+      {
+        tense: 'Perubahan Makna (Stop / Remember)',
+        active: 'Stop to V1: berhenti sejenak untuk melakukan hal lain · Stop V-ing: berhenti total dari kebiasaan',
+        passive: 'Contoh: He stopped smoking (berhenti merokok selamanya). He stopped to smoke (berhenti jalan untuk merokok).'
+      }
+    ],
+    tips: 'Hafalan Cepat: Rumus emas ujian: "Preposisi SELALU diikuti Gerund (V-ing)". Tidak pernah ada preposisi diikuti V1 polos!',
+    example: 'She is interested in pursuing a doctoral degree in renewable energy engineering.',
+    example_id: 'Dia tertarik untuk menempuh gelar doktoral di bidang teknik energi terbarukan.'
+  },
+  {
+    id: 'degrees-comparison',
+    title: '6. Degrees of Comparison (Tingkat Perbandingan)',
+    fase: 'Fase D (SMP) & Descriptive / Analytical Texts',
+    tag: 'Struktur Deskriptif',
+    summary: 'Membandingkan sifat atau kualitas antara dua hal (Comparative) atau satu hal di antara seluruh kelompok (Superlative).',
+    formula: 'Positive (as ... as) · Comparative (-er than / more ... than) · Superlative (the -est / the most ...)',
+    table: [
+      { tense: '1 Suku Kata (Syllable)', active: 'tall → taller than → the tallest', passive: 'fast → faster than → the fastest' },
+      { tense: '2 Suku Kata berakhiran -y', active: 'easy → easier than → the easiest', passive: 'happy → happier than → the happiest' },
+      { tense: '2+ Suku Kata', active: 'crucial → more crucial than → the most crucial', passive: 'intelligent → more intelligent than → the most intelligent' },
+      { tense: 'Bentuk Tidak Beraturan (Irregular)', active: 'good → better than → the best', passive: 'bad → worse than → the worst · far → farther/further than → farthest/furthest' }
+    ],
+    tips: 'Jebakan Double Comparative: Jangan gunakan kata ganda seperti "more better" ❌ (cukup "better" ✅) atau "most highest" ❌ (cukup "highest" ✅).',
+    example: 'Public transportation is far more environmentally friendly than private vehicles.',
+    example_id: 'Transportasi umum jauh lebih ramah lingkungan daripada kendaraan pribadi.'
+  },
+  {
+    id: 'conjunctions-connectors',
+    title: '7. Conjunctions & Connectors of Logic',
+    fase: 'Fase E (SMA Kelas X) & Argumentative Writing',
+    tag: 'Kohesi Paragraf Ujian',
+    summary: 'Kata hubung yang memperlihatkan hubungan logika antar klausa: sebab-akibat, kontras/pertentangan, penambahan, dan kesimpulan.',
+    formula: 'Clause Connectors (Although, Because) vs Prepositional Connectors (Despite, Because of)',
+    table: [
+      {
+        tense: 'Sebab-Akibat (Clause vs Noun Phrase)',
+        active: 'Because / Since / As + Subject + Verb (Klausa Lengkap)',
+        passive: 'Because of / Due to / Owing to + Noun Phrase (Frasa Benda tanpa kata kerja)'
+      },
+      {
+        tense: 'Kontras / Pertentangan',
+        active: 'Although / Even though / Though + Subject + Verb',
+        passive: 'In spite of / Despite + Noun Phrase / Gerund (Jangan tambahkan "of" setelah despite!)'
+      },
+      {
+        tense: 'Transisi Antarkalimat',
+        active: 'However (namun), Therefore (oleh karena itu), Furthermore (selain itu), In contrast',
+        passive: 'Contoh: The experiment was risky. However, the team proceeded cautiously.'
+      }
+    ],
+    tips: 'Jebakan Soal: "Despite" TIDAK PERNAH diikuti "of" ("Despite the rain" ✅, BUKAN "Despite of the rain" ❌). Sedangkan "In spite" WAJIB pakai "of" ("In spite of the rain" ✅).',
+    example: 'Despite the heavy rain, all candidates arrived punctually for the national scholarship interview.',
+    example_id: 'Meskipun hujan deras, seluruh kandidat tiba tepat waktu untuk wawancara beasiswa nasional.'
+  },
+  {
+    id: 'modals-past',
+    title: '8. Modals of Deduction & Past Regret',
+    fase: 'Fase F (SMA Kelas XII) & Soal Penalaran SNBT',
+    tag: 'Tingkat Lanjut (Advanced)',
+    summary: 'Menyatakan tingkat keyakinan (deduksi logis) atau penyesalan atas peristiwa yang sudah terjadi di masa lampau.',
+    formula: 'Modal Verb + have + Past Participle (V3)',
+    table: [
+      { tense: 'Must have + V3', active: 'Artinya: "Pasti dulu telah..." (Keyakinan 95%+ masa lalu)', passive: 'The ground is soaked; it must have rained heavily last night.' },
+      { tense: 'Cannot have / Couldn’t have + V3', active: 'Artinya: "Mustahil dulu telah..." (Ketidakyakinan mutlak)', passive: 'He couldn’t have stolen the file because he was in Surabaya.' },
+      { tense: 'Should have + V3', active: 'Artinya: "Seharusnya dulu dilakukan (tapi tidak dilakukan)"', passive: 'We should have double-checked the flight departure time.' },
+      { tense: 'Might / May have + V3', active: 'Artinya: "Mungkin saja dulu..." (Kemungkinan 50%)', passive: 'She didn’t answer; she might have left her phone at the office.' }
+    ],
+    tips: 'Kunci SNBT: "Should have + V3" selalu menyiratkan fakta sebaliknya: "I should have studied" berarti faktanya "I did not study" (penyesalan).',
+    example: 'The team should have substantiated their claims with peer-reviewed statistical evidence.',
+    example_id: 'Tim tersebut seharusnya memperkuat klaim mereka dengan bukti statistik yang telah ditelaah sejawat.'
+  }
+];
+
+export const INDONESIAN_LEARNER_PITFALLS = [
+  {
+    id: 'pitfall-agree',
+    title: '1. "She is agree" vs "She agrees"',
+    category: 'Word Class Confusion (Verb vs Adjective)',
+    wrong: 'She is agree with our proposal.',
+    correct: 'She agrees with our proposal.',
+    explanation: 'Dalam bahasa Indonesia, kata "setuju" sering diperlakukan setara kata sifat sehingga siswa terbiasa menambahkan "to be (is/are)". Namun dalam bahasa Inggris, "agree" adalah Kata Kerja murni (Verb), sehingga langsung dikonjugasikan dengan subjek tanpa to be!',
+    rule: 'Subject + Verb (agree / agrees / agreed)',
+    note: 'Kecuali Anda menggunakan bentuk frasa sifat: "She is in agreement with our proposal."'
+  },
+  {
+    id: 'pitfall-very-like',
+    title: '2. "I very like it" vs "I really like it"',
+    category: 'L1 Direct Translation (Adverb Placement)',
+    wrong: 'I very like this English learning app.',
+    correct: 'I really like this app. / I like this app very much.',
+    explanation: 'Kata "sangat" dalam bahasa Indonesia diletakkan di depan kata kerja ("sangat suka"). Namun dalam bahasa Inggris, kata keterangan "very" HANYA bisa memodifikasi kata sifat atau kata keterangan lain (contoh: very good, very fast), BUKAN kata kerja. Untuk kata kerja, gunakan "really" atau letakkan "very much" di akhir kalimat!',
+    rule: 'really + Verb ATAU Verb + Object + very much',
+    note: 'Contoh benar: "I really appreciate your guidance." ATAU "I appreciate your guidance very much."'
+  },
+  {
+    id: 'pitfall-modal-to',
+    title: '3. "Must to study" vs "Must study"',
+    category: 'Modal Auxiliary Error',
+    wrong: 'Every student must to obey the school regulations.',
+    correct: 'Every student must obey the school regulations.',
+    explanation: 'Modal verbs murni dalam bahasa Inggris (can, could, may, might, must, should, will, would, shall) WAJIB diikuti oleh kata kerja bentuk dasar tanpa "to" (Bare Infinitive).',
+    rule: 'Modal (can/must/should/will) + Base Verb (V1 murni tanpa to dan tanpa -s/-ed/-ing)',
+    note: 'Bandingkan dengan semi-modal yang memang memiliki "to" dari rumusnya: have to, ought to, be able to.'
+  },
+  {
+    id: 'pitfall-double-conjunction',
+    title: '4. "Although..., but..." (Konektor Ganda Redundan)',
+    category: 'Redundant Conjunctions',
+    wrong: 'Although it rained heavily, but we arrived on time.',
+    correct: 'Although it rained heavily, we arrived on time.',
+    explanation: 'Dalam percakapan bahasa Indonesia sering terdengar: "Meskipun hujan, tetapi kami tetap datang". Namun dalam bahasa Inggris, jika anak kalimat sudah diawali konjungsi subordinatif "Although" atau "Even though", induk kalimat TIDAK BOLEH lagi memakai kata "but"!',
+    rule: 'Pilih salah satu: "Although [Klausa 1], [Klausa 2]" ATAU "[Klausa 1], but [Klausa 2]"',
+    note: 'Aturan serupa berlaku untuk "Because..., so..." ❌ → Cukup gunakan "Because [Klausa 1], [Klausa 2]" ✅.'
+  },
+  {
+    id: 'pitfall-transitive-wait',
+    title: '5. "Wait you" vs "Wait for you"',
+    category: 'Preposition Omission (Intransitive Verbs)',
+    wrong: 'Please wait me in front of the library.',
+    correct: 'Please wait for me in front of the library.',
+    explanation: 'Dalam bahasa Indonesia, kata "menunggu" adalah kata kerja transitif langsung ("menunggumu"). Tetapi dalam bahasa Inggris, kata kerja "wait" adalah intransitif dan WAJIB dipasangkan dengan preposisi "for" sebelum menyebutkan orang atau benda yang ditunggu.',
+    rule: 'wait for + someone / something (Bandingkan dengan kata "await" yang bersifat transitif: "await your reply")',
+    note: 'Pasangan kata lain yang sering tertinggal preposisinya: "listen to" (bukan listen me ❌), "pay for" (bukan pay the ticket ❌).'
+  },
+  {
+    id: 'pitfall-advices',
+    title: '6. "An advice / many advices" vs "Some advice"',
+    category: 'Uncountable Noun Pluralization',
+    wrong: 'The counselor gave me many useful advices.',
+    correct: 'The counselor gave me a lot of useful advice / many pieces of advice.',
+    explanation: 'Kata "advice" (nasihat), "information" (informasi), "homework" (PR), "furniture" (perabot), dan "baggage" (bagasi) dalam bahasa Inggris adalah Uncountable Noun (benda tak terhitung). Kata-kata ini TIDAK PERNAH memiliki bentuk jamak dengan akhiran -s, dan tidak boleh diawali artikel "an"!',
+    rule: 'Uncountable: some advice, a piece of advice, valuable advice (TIDAK ADA "advices")',
+    note: 'Untuk menghitung, gunakan partitif: "a piece of advice" (satu nasihat) atau "two pieces of advice" (dua nasihat).'
+  },
+  {
+    id: 'pitfall-borrow-lend',
+    title: '7. "Borrow me money" vs "Lend me money"',
+    category: 'Directional Verb Confusion',
+    wrong: 'Could you please borrow me twenty thousand rupiahs?',
+    correct: 'Could you please lend me twenty thousand rupiahs?',
+    explanation: 'Bahasa Indonesia sering memakai kata dasar "pinjam" untuk kedua arah ("pinjam" dan "meminjamkan"). Dalam bahasa Inggris: BORROW berarti mengambil pinjaman dari orang lain (take from), sedangkan LEND berarti meminjamkan barang kepada orang lain (give to).',
+    rule: 'Can I BORROW your pen? (Bolehkah saya meminjam penamu?) VS Could you LEND me your pen? (Bisakah kamu meminjamkan penamu ke saya?)',
+    note: 'Pasangan serupa: "learn" (belajar) vs "teach" (mengajar).'
+  },
+  {
+    id: 'pitfall-subject-preposition',
+    title: '8. "The price of these items are..." vs "is..."',
+    category: 'Subject-Verb Agreement with Prepositional Phrases',
+    wrong: 'The price of these high-end smartphones are very expensive.',
+    correct: 'The price of these high-end smartphones is very high.',
+    explanation: 'Siswa Indonesia sering terjebak melihat kata benda jamak tepat sebelum kata kerja ("smartphones are"). Padahal subjek sejatinya adalah kata "The price" (Tunggal), sedangkan "of these high-end smartphones" hanyalah frasa preposisi pelengkap! Selain itu, harga diungkapkan dengan "high/low", bukan "expensive".',
+    rule: 'Subjek tunggal (The price) + Verb tunggal (is). Abaikan kata benda di dalam frasa preposisi (of ...)!',
+    note: 'Contoh lain: "The quality of the modules IS (bukan are) guaranteed."'
+  },
+  {
+    id: 'pitfall-look-forward',
+    title: '9. "Look forward to meet you" vs "to meeting you"',
+    category: 'Preposition "To" followed by Gerund',
+    wrong: 'I look forward to hear from you soon.',
+    correct: 'I look forward to hearing from you soon.',
+    explanation: 'Banyak orang mengira "to" pada kalimat selalu berupa penanda infinitive (to + V1). Namun pada frasa "look forward to", kata "to" berkedudukan sebagai PREPOSISI (menuju ke arah). Karena merupakan preposisi, maka kata kerja setelahnya WAJIB berbentuk Gerund (V-ing)!',
+    rule: 'look forward to + Gerund (V-ing) / Noun Phrase',
+    note: 'Frasa serupa: "be used to + V-ing", "object to + V-ing", "committed to + V-ing".'
+  },
+  {
+    id: 'pitfall-ever-visited',
+    title: '10. "I have ever gone" vs "I have been to"',
+    category: 'Tense & Adverb Nuance in Affirmative Sentences',
+    wrong: 'I have ever gone to Bali three years ago.',
+    correct: 'I visited Bali three years ago. / I have been to Bali before.',
+    explanation: 'Kata "pernah" dalam bahasa Indonesia sering diterjemahkan mentah-mentah menjadi "ever". Namun dalam bahasa Inggris baku, "ever" umumnya HANYA digunakan pada kalimat tanya ("Have you ever been to Bali?") atau kalimat superlatif. Pada kalimat positif, cukup gunakan Present Perfect ("I have been to Bali") atau Simple Past jika ada keterangan waktu lampau spesifik ("I visited Bali three years ago").',
+    rule: 'Tanya: "Have you ever...?" · Afirmatif Pengalaman: "I have been to..." · Waktu Lampau Tertentu: Past Simple (V2)',
+    note: 'Kata "have gone" berarti orang tersebut pergi dan SAAT INI BELUM KEMBALI, sedangkan "have been" berarti sudah pergi dan sudah kembali.'
+  }
+];
+
+export const INTERACTIVE_SENTENCE_PATTERNS = [
+  {
+    id: 'active-passive',
+    name: 'Transformasi Kalimat Aktif ➔ Pasif',
+    desc: 'Lihat bagaimana objek kalimat aktif berpindah menjadi fokus subjek pada kalimat pasif dengan penyesuaian to be dan Verb 3.',
+    templates: [
+      {
+        type: 'Active',
+        label: 'Kalimat Aktif (Focus on Agent)',
+        chips: [
+          { text: 'The teacher', role: 'Subject (Pelaku)', color: 'blue' },
+          { text: 'explains', role: 'Active Verb (V1)', color: 'green' },
+          { text: 'the grammar rule', role: 'Object (Penerima)', color: 'yellow' },
+          { text: 'in class every day', role: 'Adverbial of Place & Time', color: 'purple' }
+        ],
+        sentence: 'The teacher explains the grammar rule in class every day.',
+        translation: 'Guru menjelaskan aturan tata bahasa itu di kelas setiap hari.'
+      },
+      {
+        type: 'Passive',
+        label: 'Kalimat Pasif (Focus on Result / Object)',
+        chips: [
+          { text: 'The grammar rule', role: 'New Subject (Objek asal)', color: 'yellow' },
+          { text: 'is', role: 'To Be (Present Singular)', color: 'cyan' },
+          { text: 'explained', role: 'Past Participle (V3)', color: 'green' },
+          { text: 'by the teacher', role: 'Agent (Pelaku)', color: 'blue' },
+          { text: 'in class every day', role: 'Adverbial', color: 'purple' }
+        ],
+        sentence: 'The grammar rule is explained by the teacher in class every day.',
+        translation: 'Aturan tata bahasa itu dijelaskan oleh guru di kelas setiap hari.'
+      }
+    ]
+  },
+  {
+    id: 'conditional-type2',
+    name: 'Conditional Sentence Type 2 (Pengandaian Sekarang)',
+    desc: 'Pola pengandaian situasi yang bertolak belakang dengan kenyataan saat ini menggunakan bentuk Past Simple (were) dan Would + V1.',
+    templates: [
+      {
+        type: 'Hypothetical Condition',
+        label: 'Klausa Pengandaian (If-Clause)',
+        chips: [
+          { text: 'If', role: 'Conditional Marker', color: 'orange' },
+          { text: 'I', role: 'Subject', color: 'blue' },
+          { text: 'were', role: 'Past Subjunctive (Bukan was)', color: 'cyan' },
+          { text: 'fluent in English', role: 'Complement (Sifat)', color: 'yellow' }
+        ],
+        sentence: 'If I were fluent in English,',
+        translation: 'Seandainya saya fasih berbahasa Inggris saat ini (faktanya: belum fasih),'
+      },
+      {
+        type: 'Hypothetical Result',
+        label: 'Klausa Hasil (Result Clause)',
+        chips: [
+          { text: 'I', role: 'Subject', color: 'blue' },
+          { text: 'would apply', role: 'Modal Past (would) + V1', color: 'green' },
+          { text: 'for international scholarships', role: 'Object', color: 'yellow' },
+          { text: 'with high confidence', role: 'Adverbial', color: 'purple' }
+        ],
+        sentence: 'I would apply for international scholarships with high confidence.',
+        translation: 'saya akan melamar beasiswa internasional dengan rasa percaya diri tinggi.'
+      }
+    ]
+  },
+  {
+    id: 'question-inversion',
+    name: 'Pola Kalimat Tanya dengan Kata Kerja Bantu (Inversion)',
+    desc: 'Bahasa Inggris memindahkan kata kerja bantu (auxiliary do/does/did) ke posisi sebelum subjek saat membentuk pertanyaan.',
+    templates: [
+      {
+        type: 'Statement',
+        label: 'Kalimat Pernyataan (S + V + O)',
+        chips: [
+          { text: 'You', role: 'Subject', color: 'blue' },
+          { text: 'understand', role: 'Main Verb (V1)', color: 'green' },
+          { text: 'this sentence structure', role: 'Object', color: 'yellow' }
+        ],
+        sentence: 'You understand this sentence structure.',
+        translation: 'Anda memahami struktur kalimat ini.'
+      },
+      {
+        type: 'Question',
+        label: 'Kalimat Tanya (Auxiliary + S + V1 + O?)',
+        chips: [
+          { text: 'Do', role: 'Auxiliary Verb (Depan)', color: 'cyan' },
+          { text: 'you', role: 'Subject', color: 'blue' },
+          { text: 'understand', role: 'Base Verb (V1 murni)', color: 'green' },
+          { text: 'this sentence structure?', role: 'Object', color: 'yellow' }
+        ],
+        sentence: 'Do you understand this sentence structure?',
+        translation: 'Apakah Anda memahami struktur kalimat ini?'
+      }
+    ]
+  }
+];
+
+export const EXAM_GRAMMAR_HACKS = [
+  {
+    title: 'Hack 1: Aturan Kesejajaran (The Parallelism Rule)',
+    tag: 'Trik Paling Sering di UTBK/SNBT',
+    rule: 'Bila ada kata penghubung "and", "or", atau "but", kelas kata dan struktur gramatikal sebelum dan sesudah WAJIB setara.',
+    wrong: 'She enjoys reading novels, swimming, and to cook delicious meals. ❌',
+    correct: 'She enjoys reading novels, swimming, and cooking delicious meals. ✅',
+    tip: 'Jika kata sebelumnya berbentuk gerund (-ing), kata berikutnya juga harus berbentuk gerund (-ing), bukan to-infinitive!'
+  },
+  {
+    title: 'Hack 2: Indefinite Pronouns Selalu Dianggap Tunggal (Singular)',
+    tag: 'Jebakan Soal Pilihan Ganda',
+    rule: 'Subjek yang berakhiran -body, -one, -thing (Everybody, Everyone, Someone, Anyone, Each) selalu berpasangan dengan kata kerja tunggal (singular verb).',
+    wrong: 'Everybody in this conference have submitted their papers. ❌',
+    correct: 'Everybody in this conference has submitted their paper. ✅',
+    tip: 'Jangan terkecoh oleh banyaknya orang yang hadir; "Everybody" berarti setiap orang secara individual, sehingga predikatnya adalah "has" atau "is", bukan "have" atau "are"!'
+  },
+  {
+    title: 'Hack 3: Preposisi Wajib Diikuti Gerund (Preposition + V-ing)',
+    tag: 'Rumus Emas Tata Bahasa',
+    rule: 'Setiap kata kerja yang berada tepat setelah preposisi (in, on, at, by, for, about, without, before, after) SELALU berakhiran -ing.',
+    wrong: 'He improved his English by listen to daily podcasts. ❌',
+    correct: 'He improved his English by listening to daily podcasts. ✅',
+    tip: 'Ingat rumus kilat: Preposition + Noun / Gerund. Tidak ada preposisi yang diikuti kata kerja bentuk pertama polos!'
+  },
+  {
+    title: 'Hack 4: Inversi Kata Keterangan Negatif (Negative Inversion)',
+    tag: 'Soal Tingkat Lanjut (Advanced)',
+    rule: 'Jika sebuah kalimat diawali kata keterangan bernada negatif atau restriktif (Rarely, Seldom, Never, Scarcely, Not only), susunan kata kerja bantu dan subjek WAJIB dibalik seperti kalimat tanya.',
+    wrong: 'Rarely we have seen such impressive academic progress. ❌',
+    correct: 'Rarely have we seen such impressive academic progress. ✅',
+    tip: 'Pola: Negative Adverb + Auxiliary Verb (have/do/did/was) + Subject + Main Verb.'
+  },
+  {
+    title: 'Hack 5: Waspadai Jebakan Pemborosan Kata (Redundancy Traps)',
+    tag: 'Ketepatan Kosakata Ujian',
+    rule: 'Soal ujian bahasa Inggris sering menyisipkan kata yang bermakna ganda yang dianggap tidak baku dalam standar formal.',
+    wrong: 'Please repeat again your statement. ❌ · He returned back home. ❌ · She is more better. ❌',
+    correct: 'Please repeat your statement. ✅ · He returned home. ✅ · She is much better. ✅',
+    tip: '"Repeat" sudah berarti mengatakan kembali, jadi tidak perlu "again". "Return" sudah berarti kembali, jadi tidak perlu "back".'
+  }
+];
