@@ -2,9 +2,25 @@ import { state, loadState, saveState, applyStreak, levelForXp, levelLabel, getPr
 import { escapeHtml, showToast, formatTopic, capitalize } from './utils.js';
 import { renderReviewSection, seedSampleReviewQuestions, startReviewQuiz } from './review.js';
 import { renderTenses, renderVocabulary, startQuickQuiz, runAiAdaptiveTest } from './quiz.js';
-import { openAuthModal, openProfileModal, closeAllModals, signUpUser, loginUser, loginWithGoogle, continueAsGuest, signOutUser, exportUserData, importUserData } from './auth.js';
+import {
+  openAuthModal,
+  openProfileModal,
+  closeAllModals,
+  signUpUser,
+  loginUser,
+  loginWithGoogle,
+  continueAsGuest,
+  signOutUser,
+  exportUserData,
+  importUserData,
+  openOnboardingModal,
+  closeOnboardingModal,
+  initOnboarding,
+  renderOnboardingProfileSummary
+} from './auth.js';
 import { initLandingScrollAnimations } from './landing.js';
 import { bindNavigation, setView as navSetView } from './navigation.js';
+import { initGrammarModule, renderGrammarContent } from './quiz.js';
 
 export const I18N = {
   en: {
@@ -64,7 +80,7 @@ export const I18N = {
     ql_review_desc: 'Review and retry questions you answered incorrectly.',
     ql_tenses_desc: 'All 12 tenses, explained with examples.',
     ql_tobe_desc: "Am, is, are — and how they're used.",
-    ql_vocab_desc: '128 Oxford standard flashcards across 8 essential themes.',
+    ql_vocab_desc: 'Comprehensive Oxford dictionary lookup, native audio pronunciation, and CEFR flashcards.',
     ql_grammar_desc: 'Parts of speech and sentence structure.',
     ql_ai_desc: 'Adaptive questions matched to your level.',
 
@@ -308,7 +324,7 @@ export const I18N = {
     ql_review_desc: 'Tinjau dan ulangi pertanyaan yang sebelumnya salah dijawab.',
     ql_tenses_desc: '12 macam tenses, lengkap dengan rumus dan contoh kalimat.',
     ql_tobe_desc: 'Am, is, are, was, were — fungsi dan cara penggunaannya.',
-    ql_vocab_desc: '128 kartu kosakata standar Oxford dalam 8 tema esensial & akademis.',
+    ql_vocab_desc: 'Kamus lengkap berstandar Oxford, pencarian kata global, audio pelafalan asli & flashcard CEFR.',
     ql_grammar_desc: 'Bagian kalimat (Parts of Speech) dan aturan tata bahasa.',
     ql_ai_desc: 'Soal latihan yang disesuaikan dengan tingkat kemampuan Anda.',
 
@@ -759,6 +775,9 @@ export function syncProfileHubUI() {
       notesInput.value = state.personalizedLearning.customNotes;
     }
   }
+
+  // Render onboarding summary chips in Profile Hub
+  renderOnboardingProfileSummary();
 }
 
 export function syncLevelUI() {
@@ -866,6 +885,7 @@ export function applyLanguage(lang, persist = true, notify = false) {
     renderReviewSection();
     renderTenses();
     renderVocabulary();
+    renderOnboardingProfileSummary();
   } catch (e) {}
   if (persist) saveState();
   if (notify) showToast(I18N[state.lang]?.switchMsg || 'Language updated');
@@ -1051,6 +1071,9 @@ export function bindChipSelectors() {
       });
       if (state.selectedMaterial === 'vocabulary') {
         renderVocabulary();
+      }
+      if (state.selectedMaterial === 'grammar') {
+        renderGrammarContent();
       }
     });
   });
@@ -1306,6 +1329,9 @@ export function initNavigation() {
   document.getElementById('profileModalOverlay')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) closeAllModals();
   });
+  document.getElementById('onboardingModalOverlay')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeAllModals();
+  });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeAllModals();
   });
@@ -1379,6 +1405,10 @@ export function init() {
   window.renderHistory = renderHistory;
   window.applyLanguage = applyLanguage;
   window.translateUI = translateUI;
+  window.openOnboardingModal = openOnboardingModal;
+  window.closeOnboardingModal = closeOnboardingModal;
+  window.initGrammarModule = initGrammarModule;
+  window.renderGrammarContent = renderGrammarContent;
 
   loadState();
   applyTheme(state.theme, false);
@@ -1388,10 +1418,12 @@ export function init() {
   syncLevelUI();
   renderTenses();
   renderVocabulary();
+  initGrammarModule();
   renderBadges();
   renderHistory();
   renderReviewSection();
   initNavigation();
+  initOnboarding();
   bindChipSelectors();
   initLandingScrollAnimations();
   syncQuizGuestRestrictionsUI();
@@ -1413,3 +1445,4 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+
