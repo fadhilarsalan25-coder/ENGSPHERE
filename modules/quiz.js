@@ -1,7 +1,7 @@
 import { state, isGuestUser } from './state.js';
 import { saveState } from './storage.js';
 import { escapeHtml, formatTopic, capitalize, speakText } from './utils.js';
-import {
+import { 
   BANK, 
   TENSES,
   VOCAB,
