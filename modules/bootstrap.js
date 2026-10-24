@@ -20,7 +20,7 @@ import {
 } from './auth.js';
 import { initLandingScrollAnimations } from './landing.js';
 import { bindNavigation, setView as navSetView } from './navigation.js';
-import { initGrammarModule, renderGrammarContent } from './quiz.js';
+import { initGrammarModule, renderGrammarContent } from './quiz.js'; 
 
 export const I18N = {
   en: {
