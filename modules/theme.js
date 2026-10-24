@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { saveState } from './storage.js';
 
 export function applyTheme(theme, persist = true) {
-  state.theme = theme === 'light' ? 'light' : 'dark';
+  state.theme = theme === 'light' ? 'light' : 'dark'; 
   const light = state.theme === 'light';
   document.documentElement.setAttribute('data-theme', state.theme);
   document.body.setAttribute('data-theme', state.theme);
