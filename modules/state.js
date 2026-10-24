@@ -7,7 +7,7 @@ export const createDefaultState = () => ({
   supabaseUserId: null,
   theme: 'dark',
   lang: 'en',
-  level: 1,
+  level: 1, 
   xp: 0,
   streak: 0,
   lastActiveDay: null,
