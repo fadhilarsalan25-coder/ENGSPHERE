@@ -3,7 +3,7 @@
 export const SUPABASE_URL = 'https://nrofcdnxsxssdgecfduj.supabase.co';
 export const SUPABASE_ANON_KEY = 'sb_publishable_1QdLz7VRMPCKz1Tio-0NaQ_dHkEU5Vr';
 
-let supabaseClient = null;
+let supabaseClient = null; 
 
 export function getSupabase() {
   if (supabaseClient) return supabaseClient;
