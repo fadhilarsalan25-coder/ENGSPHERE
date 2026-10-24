@@ -7,7 +7,7 @@ import {
   signInWithSupabase,
   signInWithGoogle,
   signOutFromSupabase,
-  fetchCloudProfile,
+  fetchCloudProfile, 
   fetchCloudQuizHistory,
   isSupabaseReady,
   syncCloudProfile
