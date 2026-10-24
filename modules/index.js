@@ -1,7 +1,7 @@
 /*
  * ES-module boundary for the application.
  *
- * The current script.js remains the compatibility runtime while features are
+ * The current script.js remains the compatibility runtime while features are 
  * extracted into modules incrementally. New code should import shared state,
  * storage, utilities, theme, i18n and notifications from this directory rather
  * than adding more code to script.js.
