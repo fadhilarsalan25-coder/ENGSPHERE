@@ -3,7 +3,7 @@ import { $, $$, on } from './dom.js';
 export function setView(name, onViewChange = () => {}) {
   if (name === 'landing') {
     const landing = $('#landing');
-    const app = $('#app');
+    const app = $('#app'); 
     if (landing) landing.classList.remove('hidden');
     if (app) app.classList.add('hidden');
     if (typeof onViewChange === 'function') onViewChange(name);
